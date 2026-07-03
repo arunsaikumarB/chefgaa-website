@@ -7,7 +7,9 @@
 
 html,
 body {
-  overflow-x: hidden;
+  /* clip (not hidden) prevents horizontal scroll without creating a
+     scroll container, which would otherwise break position: sticky. */
+  overflow-x: clip;
 }
 
 html {

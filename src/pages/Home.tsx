@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Section } from "../components/Section";
 import { SectionHeading } from "../components/SectionHeading";
@@ -15,6 +16,8 @@ import {
   AnalyticsIcon,
   PaymentIcon,
 } from "../components/Icons";
+
+const PosShowcase = lazy(() => import("../components/PosShowcase"));
 
 const features: {
   title: string;
@@ -135,13 +138,18 @@ export function Home() {
       </Section>
 
       {/* POS band */}
-      <Section bg="gray">
+      <Section bg="white">
         <SectionHeading
           title="Built for Speed & Efficiency"
           intro="The Chefgaa POS keeps your front and back of house in perfect sync."
         />
         <CheckList items={posBullets} columns={3} />
       </Section>
+
+      {/* Scroll-driven POS showcase */}
+      <Suspense fallback={null}>
+        <PosShowcase />
+      </Suspense>
 
       {/* Online ordering band */}
       <Section bg="white">
