@@ -69,7 +69,6 @@ export function CateringServices() {
         <SectionHeading
           title="From inquiry to event, in one flow."
           intro="Everything you need to quote, schedule, and deliver catering that keeps clients coming back."
-          className="mb-14"
         />
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {features.map((f, i) => (

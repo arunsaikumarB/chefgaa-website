@@ -20,11 +20,11 @@ export function CheckList({ items, columns = 2 }: CheckListProps) {
         ? "sm:grid-cols-2"
         : "grid-cols-1";
   return (
-    <ul className={`grid grid-cols-1 gap-x-10 gap-y-8 ${colClass}`}>
+    <ul className={`grid grid-cols-1 gap-x-10 gap-y-10 ${colClass}`}>
       {items.map((item, i) => (
         <Reveal key={item.title} delay={i * 0.05}>
-          <li className="flex gap-3">
-            <span className="mt-[3px] flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-electric-blue text-paper">
+          <li className="flex items-start gap-3">
+            <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-electric-blue text-paper">
               <CheckIcon />
             </span>
             <div>
@@ -32,7 +32,7 @@ export function CheckList({ items, columns = 2 }: CheckListProps) {
                 {item.title}
               </p>
               {item.body && (
-                <p className="mt-1 text-[17px] leading-[1.47] text-mid-gray">
+                <p className="mt-2 text-[17px] leading-[1.47] text-mid-gray">
                   {item.body}
                 </p>
               )}

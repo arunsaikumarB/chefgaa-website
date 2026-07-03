@@ -60,7 +60,6 @@ export function About() {
         <SectionHeading
           title="What we stand for."
           intro="The values that shape every decision we make."
-          className="mb-14"
         />
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {values.map((v, i) => (

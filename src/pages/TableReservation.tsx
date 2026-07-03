@@ -73,7 +73,6 @@ export function TableReservation() {
         <SectionHeading
           title="Reservations, handled."
           intro="From the first booking to the final check, keep your tables working for you."
-          className="mb-14"
         />
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {features.map((f, i) => (

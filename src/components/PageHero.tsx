@@ -22,7 +22,7 @@ export function PageHero({
 }: PageHeroProps) {
   const bgClass = bg === "gray" ? "bg-canvas" : "bg-paper";
   return (
-    <section className={`${bgClass} pt-28 pb-16 md:pt-40 md:pb-[120px]`}>
+    <section className={`${bgClass} pt-[108px] pb-16 md:pt-[164px] md:pb-[120px]`}>
       <div className="mx-auto w-full max-w-[1000px] px-6 md:px-10">
         <motion.div
           className="flex flex-col items-center text-center"
@@ -42,7 +42,7 @@ export function PageHero({
             </p>
           )}
           {children && (
-            <div className="mt-9 flex flex-col items-center gap-5 sm:flex-row">
+            <div className="mt-10 flex flex-col items-center gap-5 sm:flex-row">
               {children}
             </div>
           )}

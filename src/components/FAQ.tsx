@@ -20,7 +20,7 @@ export function FAQ({ items, bg = "white", heading = "Frequently asked questions
 
   return (
     <Section bg={bg}>
-      <SectionHeading title={heading} className="mb-12" />
+      <SectionHeading title={heading} />
       <div className="border-t border-hairline">
         {items.map((item, i) => {
           const isOpen = open === i;

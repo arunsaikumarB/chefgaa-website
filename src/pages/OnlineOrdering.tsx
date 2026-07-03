@@ -87,11 +87,15 @@ export function OnlineOrdering() {
         <SectionHeading
           title="Convenience at your fingertips."
           intro="Everything guests need to order with confidence — and everything you need to fulfill with ease."
-          className="mb-14"
         />
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="flex flex-wrap justify-center gap-6">
           {features.map((f, i) => (
-            <FeatureCard key={f.title} {...f} delay={(i % 3) * 0.08} />
+            <FeatureCard
+              key={f.title}
+              {...f}
+              delay={(i % 3) * 0.08}
+              className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
+            />
           ))}
         </div>
       </Section>
@@ -100,7 +104,6 @@ export function OnlineOrdering() {
         <SectionHeading
           title="Built to grow your business."
           intro="Online ordering isn't just convenient — it's a measurable lift for your bottom line."
-          className="mb-14"
         />
         <CheckList items={benefits} columns={2} />
       </Section>

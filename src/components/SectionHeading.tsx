@@ -15,13 +15,16 @@ export function SectionHeading({
   className = "",
 }: SectionHeadingProps) {
   const alignClass = align === "center" ? "text-center mx-auto" : "text-left";
+  const introAlign = align === "center" ? "mx-auto" : "";
   return (
-    <div className={`${alignClass} max-w-[720px] ${className}`}>
+    <div className={`${alignClass} mb-8 max-w-[720px] md:mb-12 ${className}`}>
       <h2 className="font-sf-pro-display text-[32px] font-semibold leading-[1.1] tracking-[-0.01em] md:text-[40px] lg:text-[56px] lg:leading-[1.07] lg:tracking-[-0.28px]">
         {title}
       </h2>
       {intro && (
-        <p className="mt-5 text-[19px] leading-[1.4] text-mid-gray md:text-[21px]">
+        <p
+          className={`mt-4 max-w-[600px] text-[19px] leading-[1.4] text-mid-gray md:text-[21px] ${introAlign}`}
+        >
           {intro}
         </p>
       )}

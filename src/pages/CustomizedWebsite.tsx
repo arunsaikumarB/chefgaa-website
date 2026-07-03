@@ -73,7 +73,6 @@ export function CustomizedWebsite() {
         <SectionHeading
           title="Everything a modern restaurant site should be."
           intro="Fast, findable, and unmistakably yours — on every device."
-          className="mb-14"
         />
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {features.map((f, i) => (

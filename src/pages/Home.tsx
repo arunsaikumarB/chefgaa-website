@@ -91,7 +91,7 @@ export function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-paper pt-32 pb-16 md:pt-44 md:pb-[120px]">
+      <section className="bg-paper pt-[108px] pb-16 md:pt-[164px] md:pb-[120px]">
         <div className="mx-auto w-full max-w-[1000px] px-6 md:px-10">
           <motion.div
             className="flex flex-col items-center text-center"
@@ -102,11 +102,11 @@ export function Home() {
             <h1 className="font-sf-pro-display text-[40px] font-bold leading-[1.05] tracking-[-0.5px] text-primary-ink md:text-[72px] md:tracking-[-1.2px] lg:text-[96px] lg:leading-[1.04] lg:tracking-[-1.44px]">
               All-in-One POS &amp; Online Ordering for Restaurants.
             </h1>
-            <p className="mt-6 max-w-[620px] text-[19px] leading-[1.4] text-mid-gray md:mt-8 md:text-[21px]">
+            <p className="mt-6 max-w-[620px] text-[19px] leading-[1.4] text-mid-gray md:text-[21px]">
               Streamline operations, boost sales, and enhance customer experience
               with Chefgaa&apos;s powerful restaurant management solution.
             </p>
-            <div className="mt-9 flex flex-col items-center gap-5 sm:flex-row">
+            <div className="mt-10 flex flex-col items-center gap-5 sm:flex-row">
               <PrimaryButton to="/contact">Request a Demo</PrimaryButton>
               <ArrowLink to="/contact">Get in Touch</ArrowLink>
             </div>
@@ -119,7 +119,6 @@ export function Home() {
         <SectionHeading
           title="Everything your restaurant needs, in one place."
           intro="Six powerful tools working together — so you can spend less time managing software and more time serving guests."
-          className="mb-14"
         />
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((f, i) => (
@@ -140,7 +139,6 @@ export function Home() {
         <SectionHeading
           title="Built for Speed & Efficiency"
           intro="The Chefgaa POS keeps your front and back of house in perfect sync."
-          className="mb-14"
         />
         <CheckList items={posBullets} columns={3} />
       </Section>
@@ -150,14 +148,13 @@ export function Home() {
         <SectionHeading
           title="Take Your Restaurant Online"
           intro="Own your online ordering experience — from browsing the menu to the moment it arrives."
-          className="mb-14"
         />
         <CheckList items={orderingBullets} columns={3} />
       </Section>
 
       {/* Why Chefgaa */}
       <Section bg="gray">
-        <SectionHeading title="Why Chefgaa" className="mb-14" />
+        <SectionHeading title="Why Chefgaa" />
         <CheckList items={whyChefgaa} columns={2} />
       </Section>
 
@@ -180,7 +177,6 @@ export function Home() {
       <Section bg="gray">
         <SectionHeading
           title="Works with the tools you already use."
-          className="mb-12"
           align="center"
         />
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-6">
