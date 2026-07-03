@@ -198,6 +198,8 @@ type Step = {
   label: string;
   heading: string;
   body: string;
+  location: string;
+  bg: string;
   Screen: () => ReactNode;
 };
 
@@ -205,25 +207,33 @@ const STEPS: Step[] = [
   {
     label: "01 — Ordering",
     heading: "Take orders in seconds",
-    body: "A fast, tappable menu and a live order summary keep every ticket moving.",
+    body: "A fast, tappable menu and a live order summary keep every ticket moving on the restaurant floor.",
+    location: "Dine-in restaurant",
+    bg: "/scenes/scene-restaurant.jpg",
     Screen: MenuScreen,
   },
   {
     label: "02 — Payments",
     heading: "Payments, every way guests pay",
-    body: "Card, cash, UPI, or split — approved in a tap, every single time.",
+    body: "Card, cash, UPI, or split — approved in a tap at the cafe billing counter.",
+    location: "Cafe billing counter",
+    bg: "/scenes/scene-cafe.jpg",
     Screen: CheckoutScreen,
   },
   {
     label: "03 — Insights",
     heading: "Know your business in real time",
-    body: "Sales, orders, and average ticket, updating live as you serve.",
+    body: "Sales, orders, and average ticket, updating live behind the bar as you serve.",
+    location: "Bar & bistro",
+    bg: "/scenes/scene-bar.jpg",
     Screen: AnalyticsScreen,
   },
   {
     label: "04 — Online",
     heading: "Online orders flow straight in",
-    body: "Chefgaa, UberEats, and DoorDash orders all land in one clean queue.",
+    body: "Chefgaa, UberEats, and DoorDash orders all land in one clean queue at the pickup counter.",
+    location: "Takeaway & pickup",
+    bg: "/scenes/scene-takeaway.jpg",
     Screen: OrdersScreen,
   },
 ];
@@ -236,6 +246,10 @@ function Caption({ step }: { step: Step }) {
         {step.heading}
       </h3>
       <p className="mt-3 text-[17px] leading-[1.47] text-mid-gray">{step.body}</p>
+      <p className="mt-4 flex items-center gap-2 text-[13px] font-medium text-primary-ink">
+        <span className="h-1.5 w-1.5 rounded-full bg-electric-blue" />
+        {step.location}
+      </p>
     </div>
   );
 }
@@ -282,8 +296,19 @@ export default function PosShowcase() {
         className="relative hidden md:block"
         style={{ height: "400vh" }}
       >
-        <div className="sticky top-0 flex h-screen items-center">
-          <div className="mx-auto grid w-full max-w-[1200px] grid-cols-[1fr_auto_1fr] items-center gap-8 px-10">
+        <div className="sticky top-0 h-screen overflow-hidden">
+          {/* Location backgrounds — crossfade in sync with the screen states */}
+          {STEPS.map((step, i) => (
+            <motion.div
+              key={`bg-${i}`}
+              style={{ opacity: ops[i], backgroundImage: `url(${step.bg})` }}
+              className="absolute inset-0 bg-cover bg-center"
+            />
+          ))}
+          {/* Soft wash keeps the light theme and caption legibility */}
+          <div className="absolute inset-0 bg-paper/60" />
+
+          <div className="relative mx-auto grid h-full w-full max-w-[1200px] grid-cols-[1fr_auto_1fr] items-center gap-8 px-10">
             {/* Left captions — steps 01 & 03 */}
             <div className="relative h-[360px]">
               {[0, 2].map((i) => (
@@ -337,21 +362,34 @@ export default function PosShowcase() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col items-center"
+            className="relative overflow-hidden rounded-[28px] p-6"
           >
-            <PosDeviceFrame className="w-full max-w-[340px]">
-              <div className="absolute inset-0 p-3">
-                <step.Screen />
+            {/* Matching location backdrop */}
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${step.bg})` }}
+            />
+            <div className="absolute inset-0 bg-paper/65" />
+
+            <div className="relative flex flex-col items-center">
+              <PosDeviceFrame className="w-full max-w-[320px]">
+                <div className="absolute inset-0 p-3">
+                  <step.Screen />
+                </div>
+              </PosDeviceFrame>
+              <div className="mt-8 text-center">
+                <p className="text-[14px] font-medium text-ember">{step.label}</p>
+                <h3 className="mt-2 font-sf-pro-display text-[28px] font-semibold leading-tight tracking-[-0.01em] text-primary-ink">
+                  {step.heading}
+                </h3>
+                <p className="mx-auto mt-3 max-w-[320px] text-[17px] leading-[1.47] text-mid-gray">
+                  {step.body}
+                </p>
+                <p className="mt-4 flex items-center justify-center gap-2 text-[13px] font-medium text-primary-ink">
+                  <span className="h-1.5 w-1.5 rounded-full bg-electric-blue" />
+                  {step.location}
+                </p>
               </div>
-            </PosDeviceFrame>
-            <div className="mt-8 text-center">
-              <p className="text-[14px] font-medium text-ember">{step.label}</p>
-              <h3 className="mt-2 font-sf-pro-display text-[28px] font-semibold leading-tight tracking-[-0.01em] text-primary-ink">
-                {step.heading}
-              </h3>
-              <p className="mx-auto mt-3 max-w-[320px] text-[17px] leading-[1.47] text-mid-gray">
-                {step.body}
-              </p>
             </div>
           </motion.div>
         ))}
