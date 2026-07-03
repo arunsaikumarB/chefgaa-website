@@ -1,8 +1,4 @@
 @import "tailwindcss";
-@import "@fontsource/inter/latin-400.css";
-@import "@fontsource/inter/latin-500.css";
-@import "@fontsource/inter/latin-600.css";
-@import "@fontsource/inter/latin-700.css";
 @import "./styles/theme.css";
 
 html,
@@ -15,20 +11,22 @@ body {
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  font-feature-settings: normal;
+  font-variant: normal;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   margin: 0;
   font-family: var(--font-sf-pro-text);
+  color: #1d1d1f;
   font-size: 17px;
   font-weight: 400;
   line-height: 1.47;
   letter-spacing: -0.022em;
-  color: var(--color-primary-ink);
   background-color: var(--color-paper);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: "numr";
 }
 
 h1,
@@ -38,8 +36,9 @@ h4,
 h5,
 h6 {
   font-family: var(--font-sf-pro-display);
+  font-feature-settings: normal;
   margin: 0;
-  color: var(--color-primary-ink);
+  color: #1d1d1f;
 }
 
 p {

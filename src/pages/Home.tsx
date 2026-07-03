@@ -102,7 +102,7 @@ export function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <h1 className="font-sf-pro-display text-[40px] font-bold leading-[1.05] tracking-[-0.5px] text-primary-ink md:text-[72px] md:tracking-[-1.2px] lg:text-[96px] lg:leading-[1.04] lg:tracking-[-1.44px]">
+            <h1 className="font-sf-pro-display text-[40px] font-bold leading-[1.05] tracking-[-0.5px] text-primary-ink md:text-[72px] md:tracking-[-0.8px] lg:text-[96px] lg:leading-[1.04] lg:tracking-[-1px]">
               All-in-One POS &amp; Online Ordering for Restaurants.
             </h1>
             <p className="mt-6 max-w-[620px] text-[19px] leading-[1.4] text-mid-gray md:text-[21px]">
@@ -169,7 +169,7 @@ export function Home() {
       {/* Pricing teaser */}
       <Section bg="white">
         <Reveal className="flex flex-col items-center text-center">
-          <h2 className="font-sf-pro-display text-[32px] font-semibold leading-[1.07] tracking-[-0.01em] md:text-[40px] lg:text-[56px] lg:tracking-[-0.28px]">
+          <h2 className="font-sf-pro-display text-[32px] font-semibold leading-[1.07] tracking-[-0.01em] md:text-[40px] lg:text-[56px] lg:tracking-[-0.2px]">
             Plans that grow with you.
           </h2>
           <p className="mt-5 max-w-[520px] text-[19px] leading-[1.4] text-mid-gray md:text-[21px]">

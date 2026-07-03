@@ -25,7 +25,7 @@ export function CTABand({
   return (
     <Section bg={bg}>
       <Reveal className="flex flex-col items-center text-center">
-        <h2 className="font-sf-pro-display text-[32px] font-semibold leading-[1.07] tracking-[-0.01em] md:text-[40px] lg:text-[56px] lg:tracking-[-0.28px]">
+        <h2 className="font-sf-pro-display text-[32px] font-semibold leading-[1.07] tracking-[-0.01em] md:text-[40px] lg:text-[56px] lg:tracking-[-0.2px]">
           {title}
         </h2>
         <p className="mt-5 max-w-[560px] text-[19px] leading-[1.4] text-mid-gray md:text-[21px]">

@@ -18,7 +18,7 @@ export function SectionHeading({
   const introAlign = align === "center" ? "mx-auto" : "";
   return (
     <div className={`${alignClass} mb-8 max-w-[720px] md:mb-12 ${className}`}>
-      <h2 className="font-sf-pro-display text-[32px] font-semibold leading-[1.1] tracking-[-0.01em] md:text-[40px] lg:text-[56px] lg:leading-[1.07] lg:tracking-[-0.28px]">
+      <h2 className="font-sf-pro-display text-[32px] font-semibold leading-[1.1] tracking-[-0.01em] md:text-[40px] lg:text-[56px] lg:leading-[1.07] lg:tracking-[-0.2px]">
         {title}
       </h2>
       {intro && (

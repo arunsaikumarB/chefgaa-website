@@ -106,7 +106,7 @@ export function Pricing() {
                   {plan.tagline}
                 </p>
                 <div className="mt-8 flex items-baseline gap-1">
-                  <span className="font-sf-pro-display text-[56px] font-bold leading-none tracking-[-0.28px]">
+                  <span className="font-sf-pro-display text-[56px] font-bold leading-none tracking-[-0.2px]">
                     {plan.price}
                   </span>
                   <span className="text-[17px] text-mid-gray">{plan.cadence}</span>
