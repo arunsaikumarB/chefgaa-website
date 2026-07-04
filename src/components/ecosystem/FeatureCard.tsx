@@ -96,7 +96,7 @@ export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
         role="article"
         aria-label={feature.title}
         tabIndex={0}
-        className="flex w-[380px] min-h-[156px] flex-col justify-center rounded-[28px] border border-black/[0.05] bg-paper px-9 py-8"
+        className="flex w-[380px] min-h-[150px] items-start gap-5 rounded-[26px] border border-black/[0.05] bg-paper px-7 py-7"
         style={{
           boxShadow: highlighted
             ? "0 30px 64px rgba(0,0,0,0.13)"
@@ -123,21 +123,23 @@ export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
         {/* Icon animates on hover only */}
         <IconMotion animation={feature.iconAnimation} active={highlighted}>
           <div
-            className="mb-4 flex h-12 w-12 items-center justify-center rounded-[14px] transition-colors"
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[16px] transition-colors"
             style={{
-              backgroundColor: highlighted ? `${feature.accent}22` : `${feature.accent}14`,
+              backgroundColor: highlighted ? `${feature.accent}24` : `${feature.accent}14`,
               color: feature.accent,
             }}
           >
-            <Icon size={24} strokeWidth={1.7} aria-hidden="true" />
+            <Icon size={28} strokeWidth={1.8} aria-hidden="true" />
           </div>
         </IconMotion>
-        <h3 className="font-sf-pro-display text-[20px] font-semibold leading-snug text-[#111111]">
-          {feature.title}
-        </h3>
-        <p className="mt-2 text-[15px] leading-[1.55] text-mid-gray">
-          {feature.description}
-        </p>
+        <div className="flex min-w-0 flex-col">
+          <h3 className="font-sf-pro-display text-[19px] font-semibold leading-tight text-[#111111]">
+            {feature.title}
+          </h3>
+          <p className="mt-1.5 text-[14.5px] leading-[1.5] text-mid-gray">
+            {feature.description}
+          </p>
+        </div>
       </motion.article>
     );
   }
