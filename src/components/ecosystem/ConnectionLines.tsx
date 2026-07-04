@@ -1,13 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useReducedMotion } from "framer-motion";
-import {
-  ANIMATION_ORDER,
-  SVG_CENTER,
-  SVG_VIEWBOX,
-  buildCurvePath,
-  getFeature,
-  toSvgCoords,
-} from "./features";
+import { ANIMATION_ORDER, SVG_CENTER, SVG_VIEWBOX, buildCurvePath, getFeature } from "./features";
 
 type ConnectionLinesProps = {
   lineProgress: Record<string, number>;
@@ -44,8 +37,7 @@ export function ConnectionLines({
       {ANIMATION_ORDER.map((id) => {
         const feat = getFeature(id);
         if (!feat) return null;
-        const end = toSvgCoords(feat.left, feat.top);
-        const pathD = buildCurvePath(SVG_CENTER.x, SVG_CENTER.y, end.x, end.y);
+        const pathD = buildCurvePath(SVG_CENTER.x, SVG_CENTER.y, feat.svg.x, feat.svg.y);
         const progress = lineProgress[id] ?? 0;
         const lit = highlightedId === id || pulseId === id;
 
