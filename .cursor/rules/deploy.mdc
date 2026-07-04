@@ -1,0 +1,26 @@
+---
+description: Auto-commit and push to main after completing user-requested changes
+alwaysApply: true
+---
+
+# Deploy workflow (chefgaa-website)
+
+After completing implementation changes the user asked for, **commit and push to `main` automatically** — do not wait for the user to say "deploy" each time.
+
+## Deploy steps
+
+1. Run `npm run build` and fix any errors first.
+2. Commit with a concise message focused on why.
+3. Push to `origin main` (Netlify auto-deploys from GitHub).
+
+## Do NOT
+
+- Run `netlify deploy` CLI.
+- Push secrets (`.env`, credentials).
+- Force-push to `main` unless the user explicitly requests it.
+
+## Live site note
+
+Changes go live on **https://chefgaapos.netlify.app/** (Netlify from this repo).
+
+**go.chefgaa.com** is a separate Azure-hosted site — pushing here does not update that domain until DNS is pointed to Netlify.
