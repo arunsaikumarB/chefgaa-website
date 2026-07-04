@@ -17,12 +17,11 @@ export function GlowPlatform({ visible, breathing = false }: GlowPlatformProps) 
       aria-hidden="true"
     >
       <motion.div
-        className="h-[480px] w-[480px] rounded-full"
+        className="h-[min(520px,36vw)] w-[min(520px,36vw)] rounded-full"
         style={{
           background:
-            "radial-gradient(circle, rgba(255,110,20,0.16) 0%, rgba(200,216,224,0.08) 35%, transparent 68%)",
+            "radial-gradient(circle, rgba(255,110,20,0.16) 0%, rgba(0,113,227,0.06) 35%, transparent 68%)",
           filter: "blur(32px)",
-          willChange: "opacity",
         }}
         animate={
           breathing && !reduce
@@ -36,8 +35,8 @@ export function GlowPlatform({ visible, breathing = false }: GlowPlatformProps) 
         }
       />
       <div
-        className="absolute inset-[20%] rounded-full border border-ember/[0.06] bg-paper/30"
-        style={{ boxShadow: "0 12px 48px rgba(255,110,20,0.08)" }}
+        className="absolute inset-[20%] rounded-full border border-ember/[0.08] bg-paper/30"
+        style={{ boxShadow: "0 12px 48px rgba(255,110,20,0.1)" }}
       />
     </motion.div>
   );

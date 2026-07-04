@@ -5,88 +5,51 @@ import type { EcosystemFeature, IconAnimation } from "./features";
 type FeatureCardProps = {
   feature: EcosystemFeature;
   visible: boolean;
-  dimmed: boolean;
   highlighted: boolean;
+  dimmed: boolean;
   onHover: (id: string | null) => void;
 };
 
-function IconMotion({
+function HoverIconAnimation({
   animation,
-  children,
   active,
+  children,
 }: {
   animation: IconAnimation;
-  children: ReactNode;
   active: boolean;
+  children: ReactNode;
 }) {
   const reduce = useReducedMotion();
-  if (reduce) return <>{children}</>;
+  if (!active || reduce) return <>{children}</>;
 
-  const cfg: Record<
-    IconAnimation,
-    { animate: Record<string, number | number[]>; transition: object }
-  > = {
-    "brain-pulse": {
-      animate: active ? { scale: [1, 1.08, 1] } : {},
-      transition: { duration: 1.2, repeat: active ? Infinity : 0, repeatDelay: 0.8 },
-    },
-    "megaphone-wiggle": {
-      animate: active ? { rotate: [-4, 4, -2, 0] } : {},
-      transition: { duration: 0.5 },
-    },
-    "cube-rotate": {
-      animate: active ? { rotateY: [0, 180, 360] } : {},
-      transition: { duration: 1.2, repeat: active ? Infinity : 0, repeatDelay: 1.2 },
-    },
-    "globe-rotate": {
-      animate: active ? { rotate: [0, 10, -10, 0] } : {},
-      transition: { duration: 1.6, repeat: active ? Infinity : 0, repeatDelay: 0.6 },
-    },
-    "calendar-flip": {
-      animate: active ? { rotateX: [0, 14, 0] } : {},
-      transition: { duration: 0.55 },
-    },
-    steam: {
-      animate: active ? { y: [0, -2, 0], opacity: [1, 0.8, 1] } : {},
-      transition: { duration: 1.6, repeat: active ? Infinity : 0 },
-    },
-    "users-pulse": {
-      animate: active ? { scale: [1, 1.08, 1] } : {},
-      transition: { duration: 0.8, repeat: active ? 2 : 0 },
-    },
-    "badge-shine": {
-      animate: active ? { scale: [1, 1.06, 1] } : {},
-      transition: { duration: 0.65 },
-    },
-    "phone-float": {
-      animate: active ? { y: [0, -3, 0] } : {},
-      transition: { duration: 1.4, repeat: active ? Infinity : 0 },
-    },
-    "card-flip": {
-      animate: active ? { rotateY: [0, 12, 0] } : {},
-      transition: { duration: 0.7, repeat: active ? 2 : 0 },
-    },
-    "bars-animate": {
-      animate: active ? { y: [0, -2, 0] } : {},
-      transition: { duration: 0.5, repeat: active ? 2 : 0 },
-    },
-    "cart-slide": {
-      animate: active ? { x: [0, 3, 0] } : {},
-      transition: { duration: 0.8, repeat: active ? 2 : 0 },
-    },
-    default: { animate: {}, transition: {} },
+  const cfg: Record<IconAnimation, object> = {
+    "brain-pulse": { scale: [1, 1.12, 1], transition: { duration: 0.5 } },
+    "megaphone-wiggle": { rotate: [-6, 6, -3, 0], transition: { duration: 0.45 } },
+    "cube-rotate": { rotateY: [0, 180, 360], transition: { duration: 0.9 } },
+    "globe-rotate": { rotate: [0, 14, -14, 0], transition: { duration: 0.8 } },
+    "calendar-flip": { rotateX: [0, 20, 0], transition: { duration: 0.5 } },
+    steam: { y: [0, -3, 0], transition: { duration: 0.6, repeat: 1 } },
+    "users-pulse": { scale: [1, 1.1, 1], transition: { duration: 0.5 } },
+    "badge-shine": { scale: [1, 1.1, 1], transition: { duration: 0.45 } },
+    "phone-float": { y: [0, -4, 0], transition: { duration: 0.6 } },
+    "card-flip": { rotateY: [0, 18, 0], transition: { duration: 0.5 } },
+    "bars-animate": { y: [0, -2, 0], transition: { duration: 0.4, repeat: 2 } },
+    "cart-slide": { x: [0, 4, 0], transition: { duration: 0.45 } },
+    default: {},
   };
 
-  const c = cfg[animation] ?? cfg.default;
   return (
-    <motion.div animate={c.animate} transition={c.transition} style={{ willChange: "transform" }}>
+    <motion.div
+      animate={cfg[animation] as { scale?: number[]; rotate?: number[]; rotateY?: number[]; rotateX?: number[]; y?: number[]; x?: number[]; transition?: object }}
+      style={{ willChange: "transform" }}
+    >
       {children}
     </motion.div>
   );
 }
 
 export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
-  function FeatureCard({ feature, visible, dimmed, highlighted, onHover }, ref) {
+  function FeatureCard({ feature, visible, highlighted, dimmed, onHover }, ref) {
     const Icon = feature.icon;
 
     return (
@@ -96,49 +59,46 @@ export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
         role="article"
         aria-label={feature.title}
         tabIndex={0}
-        className="flex w-[380px] min-h-[150px] items-start gap-5 rounded-[26px] border border-black/[0.05] bg-paper px-7 py-7"
+        className="pointer-events-auto w-[340px] min-h-[120px] shrink-0 rounded-[28px] border border-black/[0.05] bg-paper px-7 py-6"
         style={{
           boxShadow: highlighted
-            ? "0 30px 64px rgba(0,0,0,0.13)"
+            ? "0 20px 48px rgba(0,0,0,0.1)"
             : "0 12px 40px rgba(0,0,0,0.06)",
-          zIndex: highlighted ? 40 : 1,
           willChange: "transform, opacity",
         }}
         initial={false}
         animate={{
-          opacity: visible ? (dimmed ? 0.5 : 1) : 0,
-          scale: visible ? (highlighted ? 1.04 : 1) : 0.85,
-          y: visible ? (highlighted ? -10 : 0) : 22,
+          opacity: visible ? (dimmed ? 0.65 : 1) : 0,
+          scale: visible ? (highlighted ? 1.03 : 1) : 0.85,
+          y: visible ? (highlighted ? -8 : 0) : 20,
         }}
         transition={{
-          opacity: { duration: 0.3, ease: "easeOut" },
-          scale: { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
-          y: { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
+          opacity: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+          scale: { type: "spring", stiffness: 300, damping: 26 },
+          y: { type: "spring", stiffness: 300, damping: 26 },
         }}
         onMouseEnter={() => onHover(feature.id)}
         onMouseLeave={() => onHover(null)}
         onFocus={() => onHover(feature.id)}
         onBlur={() => onHover(null)}
       >
-        {/* Icon animates on hover only */}
-        <IconMotion animation={feature.iconAnimation} active={highlighted}>
-          <div
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[16px] transition-colors"
-            style={{
-              backgroundColor: highlighted ? `${feature.accent}24` : `${feature.accent}14`,
-              color: feature.accent,
-            }}
-          >
-            <Icon size={28} strokeWidth={1.8} aria-hidden="true" />
+        <div className="flex items-start gap-4">
+          <HoverIconAnimation animation={feature.iconAnimation} active={highlighted}>
+            <div
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px]"
+              style={{ backgroundColor: `${feature.accent}18`, color: feature.accent }}
+            >
+              <Icon size={24} strokeWidth={1.75} aria-hidden="true" />
+            </div>
+          </HoverIconAnimation>
+          <div className="min-w-0 flex-1 pt-0.5">
+            <h3 className="font-sf-pro-display text-[17px] font-semibold leading-snug text-[#111111]">
+              {feature.title}
+            </h3>
+            <p className="mt-1.5 text-[15px] leading-[1.5] text-mid-gray">
+              {feature.description}
+            </p>
           </div>
-        </IconMotion>
-        <div className="flex min-w-0 flex-col">
-          <h3 className="font-sf-pro-display text-[19px] font-semibold leading-tight text-[#111111]">
-            {feature.title}
-          </h3>
-          <p className="mt-1.5 text-[14.5px] leading-[1.5] text-mid-gray">
-            {feature.description}
-          </p>
         </div>
       </motion.article>
     );

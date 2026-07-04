@@ -37,213 +37,197 @@ export type EcosystemFeature = {
   icon: LucideIcon;
   iconAnimation: IconAnimation;
   accent: string;
+  /** Position in 2000×1000 composition space */
   x: number;
   y: number;
 };
 
-/** Wide canvas — cards spread edge-to-edge, scaled by width to fill the section */
-export const CANVAS = { width: 1720, height: 1240 } as const;
-export const CENTER = { x: 860, y: 560 } as const;
-export const POS_IMAGE = "/ecosystem/pos-hardware.png";
+export const COMPOSITION = { width: 2000, height: 1000 } as const;
+export const CENTER = { x: 1000, y: 480 } as const;
 
-/**
- * Five columns of balance: 5 left · 3 center · 5 right around the POS.
- * Card box ≈ 380 × 156 → outer columns sit at the section edges.
- */
-export const FEATURES: EcosystemFeature[] = [
-  {
-    id: "marketing",
-    title: "Marketing",
-    description: "Campaigns and offers that bring guests back again and again.",
-    icon: Megaphone,
-    iconAnimation: "megaphone-wiggle",
-    accent: "#ff6e14",
-    x: 230,
-    y: 110,
-  },
+/** Spread wide — matches reference radial layout */
+export const ECOSYSTEM_FEATURES: EcosystemFeature[] = [
   {
     id: "ai-insights",
     title: "AI Insights",
-    description: "Smart recommendations that boost revenue and reduce waste.",
+    description: "AI-powered insights and smart recommendations.",
     icon: Brain,
     iconAnimation: "brain-pulse",
     accent: "#8b5cf6",
-    x: 860,
-    y: 110,
+    x: 1000,
+    y: 55,
+  },
+  {
+    id: "marketing",
+    title: "Marketing",
+    description: "Run campaigns, promotions and grow your brand.",
+    icon: Megaphone,
+    iconAnimation: "megaphone-wiggle",
+    accent: "#f97316",
+    x: 200,
+    y: 175,
   },
   {
     id: "kitchen",
     title: "Kitchen Display",
-    description: "Route tickets to stations in real time with zero confusion.",
+    description: "Real-time orders, seamless kitchen flow.",
     icon: ChefHat,
     iconAnimation: "steam",
-    accent: "#ff6e14",
-    x: 1490,
-    y: 110,
+    accent: "#f97316",
+    x: 1800,
+    y: 175,
   },
   {
     id: "inventory",
     title: "Inventory",
-    description: "Track stock levels and cut waste before it costs you.",
+    description: "Track stock, manage suppliers, reduce waste.",
     icon: Package,
     iconAnimation: "cube-rotate",
     accent: "#22c55e",
-    x: 230,
-    y: 360,
+    x: 200,
+    y: 395,
   },
   {
     id: "online-ordering",
     title: "Online Ordering",
-    description: "Commission-free orders flowing straight into your kitchen.",
+    description: "Accept orders online, increase revenue.",
     icon: ShoppingCart,
     iconAnimation: "cart-slide",
-    accent: "#0071e3",
-    x: 1490,
-    y: 360,
+    accent: "#3b82f6",
+    x: 1800,
+    y: 395,
   },
   {
     id: "crm",
     title: "CRM",
-    description: "Know every guest, their preferences, and visit history.",
+    description: "Know your customers, build lasting relationships.",
     icon: Users,
     iconAnimation: "users-pulse",
     accent: "#8b5cf6",
-    x: 230,
-    y: 610,
-  },
-  {
-    id: "catering",
-    title: "Catering",
-    description: "Quote, schedule, and deliver large-format orders easily.",
-    icon: Truck,
-    iconAnimation: "default",
-    accent: "#ec4899",
-    x: 1490,
-    y: 610,
+    x: 260,
+    y: 615,
   },
   {
     id: "loyalty",
     title: "Loyalty",
-    description: "Reward regulars with points, tiers, and exclusive perks.",
+    description: "Reward customers, boost repeat visits.",
     icon: Award,
     iconAnimation: "badge-shine",
     accent: "#ec4899",
-    x: 230,
-    y: 860,
+    x: 490,
+    y: 715,
   },
   {
     id: "website",
     title: "Website",
-    description: "A beautiful branded site with ordering built right in.",
+    description: "Beautiful restaurant website in minutes.",
     icon: Globe,
     iconAnimation: "globe-rotate",
-    accent: "#0071e3",
-    x: 860,
-    y: 870,
+    accent: "#3b82f6",
+    x: 1000,
+    y: 815,
   },
   {
     id: "reservations",
     title: "Reservations",
-    description: "Smart table booking with no-show protection built in.",
+    description: "Manage bookings, tables and waitlists.",
     icon: Calendar,
     iconAnimation: "calendar-flip",
     accent: "#ef4444",
-    x: 1490,
-    y: 860,
+    x: 1510,
+    y: 715,
   },
   {
-    id: "mobile-app",
-    title: "Mobile App",
-    description: "Your restaurant in every guest's pocket, fully branded.",
-    icon: Smartphone,
-    iconAnimation: "phone-float",
-    accent: "#0071e3",
-    x: 230,
-    y: 1110,
+    id: "catering",
+    title: "Catering",
+    description: "Manage catering, events and bulk orders.",
+    icon: Truck,
+    iconAnimation: "default",
+    accent: "#ec4899",
+    x: 1750,
+    y: 615,
   },
   {
     id: "analytics",
     title: "Analytics",
-    description: "Sales, labor, and performance insights the moment they happen.",
+    description: "Real-time reports, smarter decisions.",
     icon: BarChart3,
     iconAnimation: "bars-animate",
     accent: "#8b5cf6",
-    x: 860,
-    y: 1120,
+    x: 1000,
+    y: 880,
+  },
+  {
+    id: "mobile-app",
+    title: "Mobile App",
+    description: "Manage on the go, anytime, anywhere.",
+    icon: Smartphone,
+    iconAnimation: "phone-float",
+    accent: "#3b82f6",
+    x: 200,
+    y: 855,
   },
   {
     id: "payments",
     title: "Payments",
-    description: "Cards, wallets, and contactless — all in one seamless flow.",
+    description: "Multiple payment options, fast and secure.",
     icon: CreditCard,
     iconAnimation: "card-flip",
-    accent: "#eab308",
-    x: 1490,
-    y: 1110,
+    accent: "#f97316",
+    x: 1800,
+    y: 855,
   },
 ];
 
-/** Clockwise wiring + reveal order */
+/** Clockwise wiring order */
 export const ANIMATION_ORDER = [
   "ai-insights",
   "kitchen",
   "online-ordering",
-  "catering",
   "reservations",
   "payments",
   "analytics",
   "website",
-  "mobile-app",
-  "loyalty",
   "crm",
   "inventory",
   "marketing",
+  "loyalty",
+  "mobile-app",
+  "catering",
 ] as const;
-
-/** Scroll-scrub helper — 0..1 slice for the item at `index` within a phase */
-export function itemProgress(
-  progress: number,
-  start: number,
-  end: number,
-  index: number,
-  total: number
-): number {
-  const span = end - start;
-  const slot = span / total;
-  const s = start + index * slot;
-  return Math.max(0, Math.min(1, (progress - s) / slot));
-}
 
 export const METRICS = [
-  { value: 20, suffix: "+", label: "Modules", icon: "modules" as const },
-  { value: 100, suffix: "%", label: "Unified Platform", icon: "unified" as const },
-  { value: 0, suffix: "", label: "Synchronization", text: "Real-time", icon: "sync" as const },
-  { value: 0, suffix: "", label: "Integrations", text: "Unlimited", icon: "infinity" as const },
-  { value: 0, suffix: "", label: "Ready", text: "Enterprise", icon: "enterprise" as const },
+  { value: 20, suffix: "+", label: "Modules" },
+  { value: 100, suffix: "%", label: "Unified Platform" },
+  { text: "Real-time", label: "Synchronization" },
+  { text: "Unlimited", label: "Integrations" },
 ] as const;
-
-export function getFeature(id: string): EcosystemFeature | undefined {
-  return FEATURES.find((f) => f.id === id);
-}
 
 export function buildCurvePath(
   sx: number,
   sy: number,
   ex: number,
   ey: number,
-  bend = 0.22
+  bend = 0.18
 ): string {
+  const mx = (sx + ex) / 2;
+  const my = (sy + ey) / 2;
   const dx = ex - sx;
   const dy = ey - sy;
-  const dist = Math.hypot(dx, dy) || 1;
-  const px = -dy / dist;
-  const py = dx / dist;
-  const bendAmt = dist * bend;
-
-  const c1x = sx + dx * 0.34 + px * bendAmt;
-  const c1y = sy + dy * 0.34 + py * bendAmt;
-  const c2x = sx + dx * 0.66 - px * bendAmt * 0.48;
-  const c2y = sy + dy * 0.66 - py * bendAmt * 0.48;
-
+  const c1x = mx - dy * bend;
+  const c1y = my + dx * bend;
+  const c2x = mx + dy * bend * 0.4;
+  const c2y = my - dx * bend * 0.4;
   return `M ${sx} ${sy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${ex} ${ey}`;
+}
+
+export function getFeature(id: string): EcosystemFeature | undefined {
+  return ECOSYSTEM_FEATURES.find((f) => f.id === id);
+}
+
+export function toPercent(x: number, y: number) {
+  return {
+    left: `${(x / COMPOSITION.width) * 100}%`,
+    top: `${(y / COMPOSITION.height) * 100}%`,
+  };
 }

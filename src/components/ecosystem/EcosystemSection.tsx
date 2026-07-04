@@ -1,215 +1,263 @@
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useReducedMotion } from "framer-motion";
-import { StoryCard } from "./StoryCard";
-import { CarouselNav } from "./CarouselNav";
-import { CAROUSEL_SLIDES, POS_HERO_IMAGE } from "./carouselSlides";
+import { useInView } from "react-intersection-observer";
+import { motion, useReducedMotion } from "framer-motion";
+import { SectionBackground } from "./SectionBackground";
+import { AnimatedPOS } from "./AnimatedPOS";
+import { GlowPlatform } from "./GlowPlatform";
+import { ConnectionLines } from "./ConnectionLines";
+import { FeatureCard } from "./FeatureCard";
+import { FloatingMetrics } from "./FloatingMetrics";
+import {
+  ANIMATION_ORDER,
+  CENTER,
+  COMPOSITION,
+  ECOSYSTEM_FEATURES,
+  toPercent,
+} from "./features";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const CARD_GAP = 40;
-
-function updateCardStates(cards: HTMLElement[], activeFloat: number) {
-  cards.forEach((card, i) => {
-    const dist = Math.abs(i - activeFloat);
-    const t = Math.min(dist, 1);
-    const opacity = 1 - t * 0.4;
-    const scale = 1 - t * 0.1;
-    const rotate = t * 2 * (i < activeFloat ? -1 : 1);
-    const blur = t * 10;
-
-    gsap.set(card, {
-      opacity,
-      scale,
-      rotation: rotate,
-      filter: `blur(${blur}px)`,
-      transformOrigin: "center center",
-    });
-  });
-}
-
 export default function EcosystemSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const pinRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const posRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
+  const hasAnimated = useRef(false);
 
-  const scrollToIndex = useCallback((index: number) => {
-    const st = scrollTriggerRef.current;
-    if (!st) return;
-    const progress = index / (CAROUSEL_SLIDES.length - 1);
-    const scrollPos = st.start + progress * (st.end - st.start);
-    window.scrollTo({ top: scrollPos, behavior: "smooth" });
-  }, []);
+  const [posVisible, setPosVisible] = useState(false);
+  const [platformVisible, setPlatformVisible] = useState(false);
+  const [lineProgress, setLineProgress] = useState<Record<string, number>>({});
+  const [cardVisible, setCardVisible] = useState<Record<string, boolean>>({});
+  const [sequenceComplete, setSequenceComplete] = useState(false);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [pulseId, setPulseId] = useState<string | null>(null);
+  const [posGlowing, setPosGlowing] = useState(false);
+  const [floating, setFloating] = useState(false);
 
-  useLayoutEffect(() => {
-    if (reduce) return;
+  const { ref: inViewRef, inView } = useInView({ threshold: 0.4, triggerOnce: true });
 
-    const pin = pinRef.current;
-    const track = trackRef.current;
-    const section = sectionRef.current;
-    if (!pin || !track || !section) return;
+  const setRefs = useCallback(
+    (node: HTMLElement | null) => {
+      (sectionRef as React.MutableRefObject<HTMLElement | null>).current = node;
+      inViewRef(node);
+    },
+    [inViewRef]
+  );
 
-    const cards = gsap.utils.toArray<HTMLElement>("[data-story-card]", track);
-    if (!cards.length) return;
+  useEffect(() => {
+    if (!inView || hasAnimated.current) return;
 
-    const getScrollDistance = () => {
-      const lastCard = cards[cards.length - 1];
-      const firstCard = cards[0];
-      if (!lastCard || !firstCard) return 0;
-      const lastRect = lastCard.getBoundingClientRect();
-      const firstRect = firstCard.getBoundingClientRect();
-      const offset =
-        lastRect.left - firstRect.left + lastRect.width / 2 - window.innerWidth / 2;
-      return Math.max(0, offset);
-    };
+    if (reduce) {
+      hasAnimated.current = true;
+      setPosVisible(true);
+      setPlatformVisible(true);
+      setFloating(true);
+      const lines: Record<string, number> = {};
+      const cards: Record<string, boolean> = {};
+      ANIMATION_ORDER.forEach((id) => {
+        lines[id] = 1;
+        cards[id] = true;
+      });
+      setLineProgress(lines);
+      setCardVisible(cards);
+      setSequenceComplete(true);
+      return;
+    }
+
+    hasAnimated.current = true;
 
     const ctx = gsap.context(() => {
-      const tween = gsap.to(track, {
-        x: () => -getScrollDistance(),
-        ease: "none",
+      const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: pin,
-          start: "top top",
-          end: () => `+=${getScrollDistance()}`,
-          pin: true,
-          scrub: 1,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          snap: {
-            snapTo: (value) => {
-              const steps = CAROUSEL_SLIDES.length - 1;
-              return Math.round(value * steps) / steps;
-            },
-            duration: { min: 0.15, max: 0.45 },
-            ease: "power2.inOut",
-          },
-          onUpdate: (self) => {
-            const activeFloat = self.progress * (CAROUSEL_SLIDES.length - 1);
-            setActiveIndex(Math.round(activeFloat));
-            updateCardStates(cards, activeFloat);
-          },
+          trigger: sectionRef.current,
+          start: "top 60%",
+          once: true,
+        },
+        onComplete: () => {
+          setSequenceComplete(true);
+          setFloating(true);
         },
       });
 
-      scrollTriggerRef.current = tween.scrollTrigger ?? null;
+      tl.fromTo(
+        headerRef.current,
+        { opacity: 0, y: 80 },
+        { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" },
+        0
+      );
 
-      // Initial state
-      updateCardStates(cards, 0);
-    }, section);
+      tl.to({}, { duration: 0.2 });
 
-    const onResize = () => ScrollTrigger.refresh();
-    window.addEventListener("resize", onResize);
+      tl.call(() => setPosVisible(true));
+      tl.fromTo(
+        posRef.current,
+        { opacity: 0, scale: 0.75, rotateX: 10 },
+        { opacity: 1, scale: 1, rotateX: 0, duration: 0.85, ease: "back.out(1.15)" },
+        "<"
+      );
 
-    return () => {
-      window.removeEventListener("resize", onResize);
-      scrollTriggerRef.current = null;
-      ctx.revert();
-    };
-  }, [reduce]);
+      tl.call(() => setPlatformVisible(true));
+      tl.fromTo({}, {}, { duration: 0.35 });
 
-  // Reduced motion: show all cards stacked vertically
-  if (reduce) {
-    return (
-      <section
-        id="ecosystem"
-        className="bg-paper py-20 md:py-28"
-        aria-labelledby="ecosystem-heading"
-      >
-        <EcosystemHeader />
-        <PosHero />
-        <div className="mx-auto mt-12 flex max-w-[1000px] flex-col gap-8 px-6">
-          {CAROUSEL_SLIDES.map((slide) => (
-            <StoryCard key={slide.id} slide={slide} active />
-          ))}
-        </div>
-      </section>
-    );
-  }
+      ANIMATION_ORDER.forEach((id) => {
+        const obj = { p: 0 };
+        tl.to(obj, {
+          p: 1,
+          duration: 0.42,
+          ease: "power2.inOut",
+          onUpdate: () => {
+            setLineProgress((prev) => ({ ...prev, [id]: obj.p }));
+          },
+          onComplete: () => {
+            setCardVisible((prev) => ({ ...prev, [id]: true }));
+          },
+        });
+      });
+
+      tl.to({}, { duration: 0.15 });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [inView, reduce]);
+
+  useEffect(() => {
+    if (!sequenceComplete || reduce) return;
+    const interval = setInterval(() => {
+      const id = ANIMATION_ORDER[Math.floor(Math.random() * ANIMATION_ORDER.length)];
+      setPulseId(id);
+      setTimeout(() => setPulseId(null), 1200);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [sequenceComplete, reduce]);
+
+  useEffect(() => {
+    if (hoveredId) {
+      setPosGlowing(true);
+      setPulseId(hoveredId);
+    } else {
+      setPosGlowing(false);
+      if (!reduce) setPulseId(null);
+    }
+  }, [hoveredId, reduce]);
+
+  const anyHovered = hoveredId !== null;
 
   return (
     <section
-      ref={sectionRef}
+      ref={setRefs}
       id="ecosystem"
-      className="bg-paper"
+      className="relative min-h-screen overflow-visible bg-paper py-16 md:py-20 lg:py-24"
       aria-labelledby="ecosystem-heading"
     >
-      <div className="px-6 pt-20 md:pt-28">
-        <EcosystemHeader />
-        <PosHero />
-      </div>
+      <SectionBackground />
 
-      {/* Pinned horizontal carousel */}
       <div
-        ref={pinRef}
-        className="relative h-screen w-full overflow-hidden"
-        style={{ touchAction: "pan-y" }}
+        ref={headerRef}
+        className="relative z-10 mx-auto max-w-[720px] px-6 text-center opacity-0"
       >
-        <div
-          ref={trackRef}
-          className="flex h-full items-center will-change-transform"
-          style={{
-            gap: CARD_GAP,
-            paddingLeft: "max(24px, calc((100vw - min(88vw, 1000px)) / 2))",
-            paddingRight: "max(24px, calc((100vw - min(88vw, 1000px)) / 2))",
-          }}
+        <span className="inline-flex items-center rounded-full border border-hairline/80 bg-paper px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-ember shadow-sm">
+          All-in-One Restaurant Operating System
+        </span>
+        <h2
+          id="ecosystem-heading"
+          className="mt-5 font-sf-pro-display text-[36px] font-semibold leading-[1.08] tracking-[-0.2px] text-[#111111] md:text-[48px] lg:text-[56px]"
         >
-          {CAROUSEL_SLIDES.map((slide, i) => (
-            <StoryCard key={slide.id} slide={slide} active={i === activeIndex} />
-          ))}
-        </div>
-
-        <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-paper via-paper/90 to-transparent">
-          <CarouselNav activeIndex={activeIndex} onSelect={scrollToIndex} />
-        </div>
+          The{" "}
+          <span
+            className="bg-clip-text text-transparent"
+            style={{
+              backgroundImage:
+                "linear-gradient(135deg, #b64400 0%, #ff6e14 45%, #d4540a 100%)",
+            }}
+          >
+            Chefgaa
+          </span>{" "}
+          Ecosystem
+        </h2>
+        <p className="mt-5 text-[19px] leading-[1.47] text-mid-gray md:text-[21px]">
+          Everything your restaurant needs.
+          <br />
+          Connected beautifully.
+          <br />
+          Powered by one intelligent platform.
+        </p>
       </div>
-    </section>
-  );
-}
 
-function EcosystemHeader() {
-  return (
-    <div className="mx-auto max-w-[720px] text-center">
-      <span className="inline-flex items-center rounded-full border border-hairline/80 bg-paper px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-ember shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
-        All-in-One Restaurant Operating System
-      </span>
-      <h2
-        id="ecosystem-heading"
-        className="mt-5 font-sf-pro-display text-[36px] font-semibold leading-[1.08] tracking-[-0.2px] text-[#111111] md:text-[48px] lg:text-[56px]"
+      {/* Desktop / tablet — full-width radial ecosystem */}
+      <div
+        ref={canvasRef}
+        className="relative z-10 mx-auto mt-6 hidden w-full max-w-[2200px] px-3 md:block lg:mt-8 lg:px-6"
+        style={{ aspectRatio: `${COMPOSITION.width} / ${COMPOSITION.height}` }}
       >
-        The{" "}
-        <span
-          className="bg-clip-text text-transparent"
-          style={{
-            backgroundImage:
-              "linear-gradient(135deg, #b64400 0%, #ff6e14 45%, #d4540a 100%)",
-          }}
-        >
-          Chefgaa
-        </span>{" "}
-        Ecosystem
-      </h2>
-      <p className="mt-5 text-[16px] leading-[1.5] text-mid-gray md:whitespace-nowrap md:text-[18px]">
-        Everything your restaurant needs. Connected beautifully. Powered by one intelligent platform.
-      </p>
-    </div>
-  );
-}
-
-function PosHero() {
-  return (
-    <div className="mx-auto mt-12 flex max-w-[900px] flex-col items-center md:mt-16">
-      <div className="overflow-hidden rounded-[32px] bg-[#050506] shadow-[0_40px_100px_rgba(0,0,0,0.22)] ring-1 ring-white/[0.06]">
-        <img
-          src={POS_HERO_IMAGE}
-          alt="Chefgaa POS system with receipt printer, cash drawer, and barcode scanner"
-          className="h-auto w-full max-w-[900px] object-cover"
-          draggable={false}
+        <ConnectionLines
+          lineProgress={lineProgress}
+          highlightedId={hoveredId}
+          pulseId={pulseId}
+          showParticles={sequenceComplete}
         />
+
+        <div
+          className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
+          style={toPercent(CENTER.x, CENTER.y)}
+          ref={posRef}
+        >
+          <GlowPlatform visible={platformVisible} breathing={sequenceComplete} />
+          <AnimatedPOS
+            assemble={posVisible ? 1 : 0}
+            glowing={posGlowing}
+            floating={floating}
+          />
+        </div>
+
+        {ECOSYSTEM_FEATURES.map((feature, i) => (
+          <div
+            key={feature.id}
+            className="absolute z-30 -translate-x-1/2 -translate-y-1/2"
+            style={toPercent(feature.x, feature.y)}
+          >
+            <motion.div
+              animate={
+                sequenceComplete && !reduce
+                  ? { y: [0, i % 2 === 0 ? -2 : 2, 0] }
+                  : { y: 0 }
+              }
+              transition={
+                sequenceComplete && !reduce
+                  ? { duration: 5 + (i % 3), repeat: Infinity, ease: "easeInOut" }
+                  : undefined
+              }
+            >
+              <FeatureCard
+                feature={feature}
+                visible={!!cardVisible[feature.id]}
+                dimmed={anyHovered && hoveredId !== feature.id}
+                highlighted={hoveredId === feature.id}
+                onHover={setHoveredId}
+              />
+            </motion.div>
+          </div>
+        ))}
       </div>
-    </div>
+
+      {/* Mobile timeline */}
+      <div className="relative z-10 mt-10 flex flex-col items-center gap-8 px-6 md:hidden">
+        <AnimatedPOS assemble={1} floating={sequenceComplete} />
+        {ECOSYSTEM_FEATURES.map((feature) => (
+          <FeatureCard
+            key={feature.id}
+            feature={feature}
+            visible
+            dimmed={false}
+            highlighted={hoveredId === feature.id}
+            onHover={setHoveredId}
+          />
+        ))}
+      </div>
+
+      <FloatingMetrics active={sequenceComplete || !!reduce} />
+    </section>
   );
 }

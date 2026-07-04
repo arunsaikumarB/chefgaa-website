@@ -1,39 +1,46 @@
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Check, Infinity, Layers, RefreshCw, Shield } from "lucide-react";
 import { METRICS } from "./features";
 
-const ICONS = {
-  modules: Layers,
-  unified: Check,
-  sync: RefreshCw,
-  infinity: Infinity,
-  enterprise: Shield,
-} as const;
-
-function useCountUp(target: number, active: boolean, duration = 1.4) {
-  const [value, setValue] = useState(0);
+function useCountUp(target: number, active: boolean) {
+  const [val, setVal] = useState(0);
   const reduce = useReducedMotion();
 
   useEffect(() => {
     if (!active) return;
     if (reduce || target === 0) {
-      setValue(target);
+      setVal(target);
       return;
     }
     let start: number | null = null;
     let raf = 0;
+    const dur = 1400;
     const tick = (ts: number) => {
       if (start === null) start = ts;
-      const p = Math.min((ts - start) / (duration * 1000), 1);
-      setValue(Math.round(target * (1 - Math.pow(1 - p, 3))));
+      const p = Math.min((ts - start) / dur, 1);
+      setVal(Math.round(target * (1 - Math.pow(1 - p, 3))));
       if (p < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [active, target, duration, reduce]);
+  }, [active, target, reduce]);
 
-  return value;
+  return val;
+}
+
+export function FloatingMetrics({ active }: { active: boolean }) {
+  return (
+    <motion.div
+      className="relative z-30 mx-auto mt-8 flex w-full max-w-[900px] flex-wrap items-center justify-center gap-x-10 gap-y-4 rounded-full border border-black/[0.05] bg-paper/80 px-8 py-5 shadow-[0_12px_40px_rgba(0,0,0,0.06)] backdrop-blur-md md:mt-10"
+      initial={{ opacity: 0, y: 24 }}
+      animate={active ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {METRICS.map((m) => (
+        <MetricItem key={m.label} metric={m} active={active} />
+      ))}
+    </motion.div>
+  );
 }
 
 function MetricItem({
@@ -43,33 +50,21 @@ function MetricItem({
   metric: (typeof METRICS)[number];
   active: boolean;
 }) {
-  const count = useCountUp(metric.value, active && metric.value > 0);
-  const Icon = ICONS[metric.icon];
+  const count = useCountUp("value" in metric ? metric.value : 0, active);
 
   return (
-    <div className="flex min-w-[140px] flex-col items-center gap-1.5 px-4 text-center">
-      <Icon size={16} className="text-ember/70" strokeWidth={1.8} aria-hidden="true" />
-      <p className="font-sf-pro-display text-[22px] font-bold tracking-tight text-[#111111]">
-        {"text" in metric && metric.text ? metric.text : `${count}${metric.suffix}`}
+    <div className="text-center">
+      <p className="font-sf-pro-display text-[26px] font-bold tracking-tight text-[#111111] md:text-[32px]">
+        {"text" in metric && metric.text ? (
+          metric.text
+        ) : (
+          <>
+            {count}
+            {metric.suffix}
+          </>
+        )}
       </p>
-      <p className="text-[13px] leading-snug text-mid-gray">{metric.label}</p>
+      <p className="mt-0.5 text-[13px] text-mid-gray md:text-[14px]">{metric.label}</p>
     </div>
-  );
-}
-
-export function FloatingMetrics({ active }: { active: boolean }) {
-  return (
-    <motion.div
-      className="mx-auto mt-8 flex max-w-[1000px] flex-wrap items-center justify-center gap-x-2 gap-y-4 rounded-[28px] border border-black/[0.04] bg-paper/70 px-6 py-5 backdrop-blur-md md:mt-10 md:gap-x-4 md:px-10"
-      style={{ boxShadow: "0 12px 40px rgba(0,0,0,0.05)" }}
-      initial={{ opacity: 0, y: 24 }}
-      animate={active ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      aria-label="Platform metrics"
-    >
-      {METRICS.map((m) => (
-        <MetricItem key={m.label} metric={m} active={active} />
-      ))}
-    </motion.div>
   );
 }
