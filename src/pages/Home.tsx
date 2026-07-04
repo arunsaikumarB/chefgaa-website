@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Section } from "../components/Section";
 import { SectionHeading } from "../components/SectionHeading";
+import { ModulesCarousel } from "../components/ModulesCarousel";
 import { CheckList } from "../components/CheckList";
 import { CTABand } from "../components/CTABand";
 import { Reveal } from "../components/Reveal";
@@ -64,7 +65,10 @@ export function Home() {
         </div>
       </section>
 
-      {/* Chefgaa Ecosystem — Apple-style horizontal storytelling */}
+      {/* Module carousel */}
+      <ModulesCarousel />
+
+      {/* Chefgaa Ecosystem — premium interactive */}
       <Suspense fallback={null}>
         <EcosystemSection />
       </Suspense>
