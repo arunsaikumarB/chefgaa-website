@@ -1,6 +1,5 @@
 import { forwardRef } from "react";
 import { motion } from "framer-motion";
-import { POS_IMAGE } from "./features";
 
 type AnimatedPOSProps = {
   visible: boolean;
@@ -8,6 +7,11 @@ type AnimatedPOSProps = {
   floating?: boolean;
 };
 
+/**
+ * Center hero placeholder. The final rendered POS image will be dropped in
+ * later — for now this is a clean, transparent anchor so the wiring and
+ * layout stay centered without a visible box.
+ */
 export const AnimatedPOS = forwardRef<HTMLDivElement, AnimatedPOSProps>(
   function AnimatedPOS({ visible, glowing = false, floating = false }, ref) {
     return (
@@ -21,25 +25,19 @@ export const AnimatedPOS = forwardRef<HTMLDivElement, AnimatedPOSProps>(
         }
       >
         <motion.div
-          className="relative h-full w-full"
+          className="flex h-[360px] w-[360px] items-center justify-center rounded-full border border-dashed border-hairline/60"
           animate={{
             opacity: visible ? 1 : 0,
             scale: visible ? 1 : 0.75,
-            filter: glowing
-              ? "drop-shadow(0 0 48px rgba(255,110,20,0.35))"
-              : "drop-shadow(0 16px 40px rgba(0,0,0,0.12))",
+            boxShadow: glowing
+              ? "0 0 64px rgba(255,110,20,0.18)"
+              : "0 0 0 rgba(0,0,0,0)",
           }}
-          transition={{ duration: 0.01 }}
+          transition={{ duration: 0.4 }}
         >
-          <img
-            src={POS_IMAGE}
-            alt="Chefgaa POS hardware — terminal, receipt printer, and barcode scanner"
-            width={620}
-            height={620}
-            className="h-full w-full object-contain"
-            style={{ background: "transparent" }}
-            draggable={false}
-          />
+          <span className="text-[13px] font-medium text-quiet-dot">
+            POS image goes here
+          </span>
         </motion.div>
       </motion.div>
     );

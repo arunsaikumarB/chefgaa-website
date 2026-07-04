@@ -17,8 +17,6 @@ import {
   FEATURES,
 } from "./features";
 
-const TABLET_MAX = 1279;
-
 function EcosystemCanvas({
   lineProgress,
   cardVisible,
@@ -49,15 +47,19 @@ function EcosystemCanvas({
   heroRef: RefObject<HTMLDivElement>;
 }) {
   const stageRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState(0.5);
 
   useLayoutEffect(() => {
     const update = () => {
       const stage = stageRef.current;
       if (!stage) return;
-      const pw = stage.clientWidth;
-      const fit = Math.min(pw / CANVAS.width, 1);
-      setScale(window.innerWidth <= TABLET_MAX ? fit : 1);
+      const availW = stage.clientWidth;
+      // Fit the whole 1900px composition to the available width, and cap
+      // by viewport height so it never runs off-screen. Always scale (never
+      // rely on the untransformed layout box), so cards stay evenly placed.
+      const byWidth = availW / CANVAS.width;
+      const byHeight = (window.innerHeight * 0.82) / CANVAS.height;
+      setScale(Math.min(byWidth, byHeight, 1));
     };
     update();
     window.addEventListener("resize", update);
@@ -65,63 +67,64 @@ function EcosystemCanvas({
   }, []);
 
   const anyHover = hoveredId !== null;
+  const scaledW = CANVAS.width * scale;
+  const scaledH = CANVAS.height * scale;
 
   return (
-    <div
-      ref={stageRef}
-      className="relative mx-auto flex w-full max-w-[1900px] items-center justify-center overflow-visible px-4"
-    >
-      <div
-        className="relative overflow-visible"
-        style={{
-          width: CANVAS.width,
-          height: CANVAS.height,
-          transform: scale < 1 ? `scale(${scale})` : undefined,
-          transformOrigin: "top center",
-        }}
-      >
-        <div className="absolute inset-0 z-[10]">
-          <ConnectionLines
-            lineProgress={lineProgress}
-            highlightedId={hoveredId}
-            pulseId={pulseId}
-            showParticles={sequenceComplete}
-            glowPulse={glowPulse}
-          />
-        </div>
-
+    <div ref={stageRef} className="relative mx-auto flex w-full justify-center px-4">
+      {/* Wrapper reserves the SCALED size so layout stays centered with no overflow */}
+      <div style={{ width: scaledW, height: scaledH }} className="relative">
         <div
-          className="absolute z-[15] -translate-x-1/2 -translate-y-1/2"
-          style={{ left: CENTER.x, top: CENTER.y }}
+          className="absolute left-0 top-0 origin-top-left"
+          style={{
+            width: CANVAS.width,
+            height: CANVAS.height,
+            transform: `scale(${scale})`,
+          }}
         >
-          <GlowPlatform visible={platformVisible} breathing={sequenceComplete} />
-        </div>
-
-        <div
-          ref={heroRef}
-          className="absolute z-[20] -translate-x-1/2 -translate-y-1/2 opacity-0"
-          style={{ left: CENTER.x, top: CENTER.y, width: 620, height: 620, perspective: 900 }}
-        >
-          <HardwareGroup visible={hardwareVisible} />
-          <AnimatedPOS visible={posVisible} glowing={posGlowing} floating={floating} />
-        </div>
-
-        {FEATURES.map((feat) => (
-          <div
-            key={feat.id}
-            className="absolute z-[30] -translate-x-1/2 -translate-y-1/2"
-            style={{ left: feat.x, top: feat.y }}
-          >
-            <FeatureCard
-              feature={feat}
-              visible={!!cardVisible[feat.id]}
-              dimmed={anyHover && hoveredId !== feat.id}
-              highlighted={hoveredId === feat.id}
-              floating={sequenceComplete}
-              onHover={setHoveredId}
+          <div className="absolute inset-0 z-[10]">
+            <ConnectionLines
+              lineProgress={lineProgress}
+              highlightedId={hoveredId}
+              pulseId={pulseId}
+              showParticles={sequenceComplete}
+              glowPulse={glowPulse}
             />
           </div>
-        ))}
+
+          <div
+            className="absolute z-[15] -translate-x-1/2 -translate-y-1/2"
+            style={{ left: CENTER.x, top: CENTER.y }}
+          >
+            <GlowPlatform visible={platformVisible} breathing={sequenceComplete} />
+          </div>
+
+          <div
+            ref={heroRef}
+            className="absolute z-[20] -translate-x-1/2 -translate-y-1/2 opacity-0"
+            style={{ left: CENTER.x, top: CENTER.y, width: 620, height: 620, perspective: 900 }}
+          >
+            <HardwareGroup visible={hardwareVisible} />
+            <AnimatedPOS visible={posVisible} glowing={posGlowing} floating={floating} />
+          </div>
+
+          {FEATURES.map((feat) => (
+            <div
+              key={feat.id}
+              className="absolute z-[30] -translate-x-1/2 -translate-y-1/2"
+              style={{ left: feat.x, top: feat.y }}
+            >
+              <FeatureCard
+                feature={feat}
+                visible={!!cardVisible[feat.id]}
+                dimmed={anyHover && hoveredId !== feat.id}
+                highlighted={hoveredId === feat.id}
+                floating={sequenceComplete}
+                onHover={setHoveredId}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
