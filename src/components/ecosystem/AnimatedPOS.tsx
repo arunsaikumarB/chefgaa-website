@@ -1,7 +1,6 @@
 import { forwardRef } from "react";
 import { motion } from "framer-motion";
-
-const POS_IMAGE = "/ecosystem/pos-hero.png";
+import { POS_IMAGE } from "./features";
 
 type AnimatedPOSProps = {
   visible: boolean;
@@ -27,21 +26,19 @@ export const AnimatedPOS = forwardRef<HTMLDivElement, AnimatedPOSProps>(
             opacity: visible ? 1 : 0,
             scale: visible ? 1 : 0.75,
             filter: glowing
-              ? "drop-shadow(0 0 48px rgba(255,110,20,0.28))"
-              : "drop-shadow(0 12px 40px rgba(0,0,0,0.12))",
+              ? "drop-shadow(0 0 48px rgba(255,110,20,0.35))"
+              : "drop-shadow(0 16px 40px rgba(0,0,0,0.12))",
           }}
           transition={{ duration: 0.01 }}
         >
           <img
             src={POS_IMAGE}
-            alt="Chefgaa POS terminal with receipt printer, barcode scanner, and cash drawer"
+            alt="Chefgaa POS hardware — terminal, receipt printer, and barcode scanner"
             width={620}
             height={620}
             className="h-full w-full object-contain"
-            style={{ aspectRatio: "1 / 1" }}
+            style={{ background: "transparent" }}
             draggable={false}
-            loading="eager"
-            decoding="async"
           />
         </motion.div>
       </motion.div>

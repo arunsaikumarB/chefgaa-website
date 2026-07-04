@@ -41,9 +41,10 @@ export type EcosystemFeature = {
   y: number;
 };
 
-/** Composition canvas — fixed manual layout matching reference */
-export const CANVAS = { width: 1600, height: 1280 } as const;
-export const CENTER = { x: 800, y: 560 } as const;
+/** Expanded canvas — 80px+ clearance between all 320px cards */
+export const CANVAS = { width: 1900, height: 1420 } as const;
+export const CENTER = { x: 950, y: 640 } as const;
+export const POS_IMAGE = "/ecosystem/pos-hardware.png";
 
 export const FEATURES: EcosystemFeature[] = [
   {
@@ -53,8 +54,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Brain,
     iconAnimation: "brain-pulse",
     accent: "#8b5cf6",
-    x: 800,
-    y: 110,
+    x: 950,
+    y: 90,
   },
   {
     id: "marketing",
@@ -63,8 +64,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Megaphone,
     iconAnimation: "megaphone-wiggle",
     accent: "#ff6e14",
-    x: 280,
-    y: 210,
+    x: 220,
+    y: 220,
   },
   {
     id: "kitchen",
@@ -73,8 +74,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: ChefHat,
     iconAnimation: "steam",
     accent: "#ff6e14",
-    x: 1320,
-    y: 210,
+    x: 1680,
+    y: 220,
   },
   {
     id: "inventory",
@@ -83,8 +84,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Package,
     iconAnimation: "cube-rotate",
     accent: "#22c55e",
-    x: 200,
-    y: 430,
+    x: 180,
+    y: 500,
   },
   {
     id: "online-ordering",
@@ -93,8 +94,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: ShoppingCart,
     iconAnimation: "cart-slide",
     accent: "#0071e3",
-    x: 1400,
-    y: 430,
+    x: 1720,
+    y: 500,
   },
   {
     id: "crm",
@@ -103,8 +104,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Users,
     iconAnimation: "users-pulse",
     accent: "#8b5cf6",
-    x: 300,
-    y: 690,
+    x: 220,
+    y: 780,
   },
   {
     id: "loyalty",
@@ -113,8 +114,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Award,
     iconAnimation: "badge-shine",
     accent: "#ec4899",
-    x: 500,
-    y: 790,
+    x: 220,
+    y: 1020,
   },
   {
     id: "website",
@@ -123,8 +124,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Globe,
     iconAnimation: "globe-rotate",
     accent: "#0071e3",
-    x: 800,
-    y: 730,
+    x: 950,
+    y: 880,
   },
   {
     id: "reservations",
@@ -133,8 +134,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Calendar,
     iconAnimation: "calendar-flip",
     accent: "#ef4444",
-    x: 1100,
-    y: 790,
+    x: 1480,
+    y: 1020,
   },
   {
     id: "catering",
@@ -143,8 +144,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Truck,
     iconAnimation: "default",
     accent: "#ec4899",
-    x: 1300,
-    y: 690,
+    x: 1680,
+    y: 780,
   },
   {
     id: "analytics",
@@ -153,8 +154,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: BarChart3,
     iconAnimation: "bars-animate",
     accent: "#8b5cf6",
-    x: 800,
-    y: 920,
+    x: 950,
+    y: 1180,
   },
   {
     id: "mobile-app",
@@ -164,7 +165,7 @@ export const FEATURES: EcosystemFeature[] = [
     iconAnimation: "phone-float",
     accent: "#0071e3",
     x: 180,
-    y: 920,
+    y: 1260,
   },
   {
     id: "payments",
@@ -173,12 +174,11 @@ export const FEATURES: EcosystemFeature[] = [
     icon: CreditCard,
     iconAnimation: "card-flip",
     accent: "#eab308",
-    x: 1420,
-    y: 920,
+    x: 1720,
+    y: 1260,
   },
 ];
 
-/** Clockwise wiring + card reveal order */
 export const ANIMATION_ORDER = [
   "ai-insights",
   "kitchen",

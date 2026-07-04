@@ -4,6 +4,7 @@ import { useInView } from "react-intersection-observer";
 import { useReducedMotion } from "framer-motion";
 import { SectionBackground } from "./SectionBackground";
 import { AnimatedPOS } from "./AnimatedPOS";
+import { HardwareGroup } from "./HardwareGroup";
 import { GlowPlatform } from "./GlowPlatform";
 import { ConnectionLines } from "./ConnectionLines";
 import { FeatureCard } from "./FeatureCard";
@@ -21,6 +22,7 @@ const TABLET_MAX = 1279;
 function EcosystemCanvas({
   lineProgress,
   cardVisible,
+  hardwareVisible,
   platformVisible,
   posVisible,
   sequenceComplete,
@@ -34,6 +36,7 @@ function EcosystemCanvas({
 }: {
   lineProgress: Record<string, number>;
   cardVisible: Record<string, boolean>;
+  hardwareVisible: boolean;
   platformVisible: boolean;
   posVisible: boolean;
   sequenceComplete: boolean;
@@ -66,7 +69,7 @@ function EcosystemCanvas({
   return (
     <div
       ref={stageRef}
-      className="relative mx-auto flex w-full max-w-[1600px] items-center justify-center overflow-visible px-4"
+      className="relative mx-auto flex w-full max-w-[1900px] items-center justify-center overflow-visible px-4"
     >
       <div
         className="relative overflow-visible"
@@ -99,6 +102,7 @@ function EcosystemCanvas({
           className="absolute z-[20] -translate-x-1/2 -translate-y-1/2 opacity-0"
           style={{ left: CENTER.x, top: CENTER.y, width: 620, height: 620, perspective: 900 }}
         >
+          <HardwareGroup visible={hardwareVisible} />
           <AnimatedPOS visible={posVisible} glowing={posGlowing} floating={floating} />
         </div>
 
@@ -133,6 +137,7 @@ export default function EcosystemSection() {
   const [lineProgress, setLineProgress] = useState<Record<string, number>>({});
   const [cardVisible, setCardVisible] = useState<Record<string, boolean>>({});
   const [posVisible, setPosVisible] = useState(false);
+  const [hardwareVisible, setHardwareVisible] = useState(false);
   const [platformVisible, setPlatformVisible] = useState(false);
   const [sequenceComplete, setSequenceComplete] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
@@ -156,6 +161,7 @@ export default function EcosystemSection() {
     if (reduce) {
       hasAnimated.current = true;
       setPosVisible(true);
+      setHardwareVisible(true);
       setPlatformVisible(true);
       const lines: Record<string, number> = {};
       const cards: Record<string, boolean> = {};
@@ -183,7 +189,10 @@ export default function EcosystemSection() {
 
       tl.to({}, { duration: 0.2 });
 
-      tl.call(() => setPosVisible(true));
+      tl.call(() => {
+        setPosVisible(true);
+        setHardwareVisible(true);
+      });
       tl.fromTo(
         posRef.current,
         { opacity: 0, scale: 0.75, rotateX: 10 },
@@ -291,6 +300,7 @@ export default function EcosystemSection() {
           heroRef={posRef}
           lineProgress={lineProgress}
           cardVisible={cardVisible}
+          hardwareVisible={hardwareVisible}
           platformVisible={platformVisible}
           posVisible={posVisible}
           sequenceComplete={sequenceComplete}
@@ -308,6 +318,7 @@ export default function EcosystemSection() {
         <div className="flex flex-col items-center">
           <GlowPlatform visible={posVisible || !!reduce} breathing={sequenceComplete} />
           <div className="relative scale-[0.45]" style={{ width: 620, height: 620 }}>
+            <HardwareGroup visible={hardwareVisible || !!reduce} />
             <AnimatedPOS visible={posVisible || !!reduce} floating={sequenceComplete} />
           </div>
         </div>
