@@ -13,164 +13,37 @@ import {
   Smartphone,
   CreditCard,
 } from "lucide-react";
-import {
-  getPrimaryPosition,
-  getSecondaryPosition,
-  POS_POSITION,
-  type LayoutPoint,
-} from "./layout";
 
-export type IconAnimation =
-  | "megaphone-wiggle"
-  | "cube-rotate"
-  | "bars-animate"
-  | "globe-rotate"
-  | "calendar-flip"
-  | "steam"
-  | "users-pulse"
-  | "badge-shine"
-  | "phone-float"
-  | "card-pulse"
-  | "default";
-
-export type ModuleTier = "primary" | "secondary";
-
-export type EcosystemModule = {
+export type StoryModule = {
   id: string;
   title: string;
-  description: string;
+  line: string;
   icon: LucideIcon;
-  iconAnimation: IconAnimation;
-  tier: ModuleTier;
-  position: LayoutPoint;
+  x: number;
+  y: number;
+  tier: "primary" | "secondary";
   parentId?: string;
 };
 
-export const POS_CENTER = POS_POSITION;
+export const CANVAS = { width: 1600, height: 1000 } as const;
+export const POS = { x: 800, y: 500 } as const;
 
-/** Ring 1 — six core modules, always visible */
-export const PRIMARY_MODULES: EcosystemModule[] = [
-  {
-    id: "kitchen",
-    title: "Kitchen",
-    description: "Route tickets to stations instantly.",
-    icon: ChefHat,
-    iconAnimation: "steam",
-    tier: "primary",
-    position: getPrimaryPosition("kitchen"),
-  },
-  {
-    id: "crm",
-    title: "CRM",
-    description: "Know every guest and preference.",
-    icon: Users,
-    iconAnimation: "users-pulse",
-    tier: "primary",
-    position: getPrimaryPosition("crm"),
-  },
-  {
-    id: "online-ordering",
-    title: "Online Ordering",
-    description: "Commission-free orders from your site.",
-    icon: ShoppingCart,
-    iconAnimation: "default",
-    tier: "primary",
-    position: getPrimaryPosition("online-ordering"),
-  },
-  {
-    id: "website",
-    title: "Website",
-    description: "Branded site with ordering built in.",
-    icon: Globe,
-    iconAnimation: "globe-rotate",
-    tier: "primary",
-    position: getPrimaryPosition("website"),
-  },
-  {
-    id: "payments",
-    title: "Payments",
-    description: "Cards, wallets, and tap-to-pay.",
-    icon: CreditCard,
-    iconAnimation: "card-pulse",
-    tier: "primary",
-    position: getPrimaryPosition("payments"),
-  },
-  {
-    id: "analytics",
-    title: "Analytics",
-    description: "Live sales and performance insights.",
-    icon: BarChart3,
-    iconAnimation: "bars-animate",
-    tier: "primary",
-    position: getPrimaryPosition("analytics"),
-  },
+/** Fixed label positions — manually composed, no auto-layout */
+export const MODULES: StoryModule[] = [
+  { id: "kitchen", title: "Kitchen", line: "Tickets routed in real time.", icon: ChefHat, x: 800, y: 160, tier: "primary" },
+  { id: "crm", title: "CRM", line: "Every guest, remembered.", icon: Users, x: 460, y: 500, tier: "primary" },
+  { id: "online-ordering", title: "Online Ordering", line: "Orders flow straight in.", icon: ShoppingCart, x: 1140, y: 500, tier: "primary" },
+  { id: "website", title: "Website", line: "Your brand, online.", icon: Globe, x: 560, y: 780, tier: "primary" },
+  { id: "payments", title: "Payments", line: "Tap, swipe, done.", icon: CreditCard, x: 1040, y: 780, tier: "primary" },
+  { id: "analytics", title: "Analytics", line: "Insights as they happen.", icon: BarChart3, x: 800, y: 780, tier: "primary" },
+
+  { id: "inventory", title: "Inventory", line: "Stock tracked automatically.", icon: Package, x: 640, y: 280, tier: "secondary", parentId: "kitchen" },
+  { id: "marketing", title: "Marketing", line: "Campaigns that convert.", icon: Megaphone, x: 280, y: 620, tier: "secondary", parentId: "crm" },
+  { id: "loyalty", title: "Loyalty", line: "Reward your regulars.", icon: Award, x: 280, y: 780, tier: "secondary", parentId: "crm" },
+  { id: "reservations", title: "Reservations", line: "Tables booked seamlessly.", icon: Calendar, x: 1320, y: 620, tier: "secondary", parentId: "online-ordering" },
+  { id: "mobile-app", title: "Mobile App", line: "Your restaurant in every pocket.", icon: Smartphone, x: 1320, y: 300, tier: "secondary", parentId: "online-ordering" },
+  { id: "catering", title: "Catering", line: "Large orders, handled.", icon: Truck, x: 920, y: 920, tier: "secondary", parentId: "analytics" },
 ];
-
-/** Ring 2 — revealed on second scroll act */
-export const SECONDARY_MODULES: EcosystemModule[] = [
-  {
-    id: "inventory",
-    title: "Inventory",
-    description: "Track stock and cut waste.",
-    icon: Package,
-    iconAnimation: "cube-rotate",
-    tier: "secondary",
-    parentId: "crm",
-    position: getSecondaryPosition("inventory"),
-  },
-  {
-    id: "marketing",
-    title: "Marketing",
-    description: "Campaigns that bring guests back.",
-    icon: Megaphone,
-    iconAnimation: "megaphone-wiggle",
-    tier: "secondary",
-    parentId: "website",
-    position: getSecondaryPosition("marketing"),
-  },
-  {
-    id: "loyalty",
-    title: "Loyalty",
-    description: "Reward regulars with points.",
-    icon: Award,
-    iconAnimation: "badge-shine",
-    tier: "secondary",
-    parentId: "crm",
-    position: getSecondaryPosition("loyalty"),
-  },
-  {
-    id: "mobile-app",
-    title: "Mobile App",
-    description: "Your brand on every phone.",
-    icon: Smartphone,
-    iconAnimation: "phone-float",
-    tier: "secondary",
-    parentId: "online-ordering",
-    position: getSecondaryPosition("mobile-app"),
-  },
-  {
-    id: "reservations",
-    title: "Reservations",
-    description: "Smart booking, fewer no-shows.",
-    icon: Calendar,
-    iconAnimation: "calendar-flip",
-    tier: "secondary",
-    parentId: "online-ordering",
-    position: getSecondaryPosition("reservations"),
-  },
-  {
-    id: "catering",
-    title: "Catering",
-    description: "Quote and fulfill large orders.",
-    icon: Truck,
-    iconAnimation: "default",
-    tier: "secondary",
-    parentId: "analytics",
-    position: getSecondaryPosition("catering"),
-  },
-];
-
-export const ALL_MODULES = [...PRIMARY_MODULES, ...SECONDARY_MODULES];
 
 export const PRIMARY_ORDER = [
   "kitchen",
@@ -181,52 +54,33 @@ export const PRIMARY_ORDER = [
   "analytics",
 ] as const;
 
+/** Phase 3 reveal sequence — parent expands, then children */
+export const EXPANSION_ORDER = [
+  { parent: "kitchen", children: ["inventory"] },
+  { parent: "crm", children: ["marketing", "loyalty"] },
+  { parent: "online-ordering", children: ["reservations", "mobile-app"] },
+  { parent: "analytics", children: ["catering"] },
+] as const;
+
 export const SECONDARY_ORDER = [
   "inventory",
   "marketing",
   "loyalty",
-  "mobile-app",
   "reservations",
+  "mobile-app",
   "catering",
 ] as const;
 
-export const CHILD_MAP: Record<string, string> = {
-  crm: "loyalty",
-  website: "marketing",
-  "online-ordering": "mobile-app",
-  analytics: "catering",
-};
-
-/** CRM has two children in layout — loyalty + inventory */
-export const RELATED_MAP: Record<string, string[]> = {
-  crm: ["loyalty", "inventory"],
-  website: ["marketing"],
-  "online-ordering": ["mobile-app", "reservations"],
-  analytics: ["catering"],
-  inventory: ["crm"],
-  marketing: ["website"],
-  loyalty: ["crm"],
-  "mobile-app": ["online-ordering"],
-  reservations: ["online-ordering"],
-  catering: ["analytics"],
-};
-
-export const PARENT_MAP: Record<string, string> = Object.fromEntries(
-  SECONDARY_MODULES.map((m) => [m.id, m.parentId!])
-);
-
-export const NAV_DOTS = [
-  { id: "core", label: "POS and core products", progress: 0 },
-  { id: "expanded", label: "Full ecosystem", progress: 0.42 },
-  { id: "wired", label: "Connected ecosystem", progress: 0.64 },
-] as const;
+export function getModule(id: string): StoryModule | undefined {
+  return MODULES.find((m) => m.id === id);
+}
 
 export function buildCurvePath(
   sx: number,
   sy: number,
   ex: number,
   ey: number,
-  bend = 0.16
+  bend = 0.14
 ): string {
   const mx = (sx + ex) / 2;
   const my = (sy + ey) / 2;
@@ -234,51 +88,77 @@ export function buildCurvePath(
   const dy = ey - sy;
   const c1x = mx - dy * bend;
   const c1y = my + dx * bend;
-  const c2x = mx + dy * bend * 0.4;
-  const c2y = my - dx * bend * 0.4;
+  const c2x = mx + dy * bend * 0.35;
+  const c2y = my - dx * bend * 0.35;
   return `M ${sx} ${sy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${ex} ${ey}`;
 }
 
-export function getModule(id: string): EcosystemModule | undefined {
-  return ALL_MODULES.find((m) => m.id === id);
-}
-
-/** Cards appear first; wiring draws only after every card has animated in */
-export const SCROLL_PHASES = {
-  header: { start: 0, end: 0.05 },
-  pos: { start: 0.05, end: 0.15 },
-  platform: { start: 0.12, end: 0.18 },
-  primaryCards: { start: 0.18, end: 0.38 },
-  secondaryCards: { start: 0.42, end: 0.58 },
-  primaryLines: { start: 0.64, end: 0.8 },
-  secondaryLines: { start: 0.8, end: 0.95 },
+/**
+ * Scroll timeline across 220vh.
+ * Phase 1: POS only · Phase 2: primaries one-by-one · Phase 3: expansions · Phase 4: wiring
+ */
+export const TIMELINE = {
+  phase1: { start: 0, end: 0.1 },
+  primary: { start: 0.1, end: 0.52 },
+  expansion: { start: 0.54, end: 0.82 },
+  wiring: { start: 0.84, end: 0.98 },
 } as const;
 
-export function phaseProgress(
-  scroll: number,
-  phase: { start: number; end: number }
-): number {
+export function phaseT(scroll: number, phase: { start: number; end: number }): number {
   return Math.max(0, Math.min(1, (scroll - phase.start) / (phase.end - phase.start)));
 }
 
-export function itemProgress(
-  scroll: number,
-  phase: { start: number; end: number },
-  index: number,
-  total: number
-): number {
-  const local = phaseProgress(scroll, phase);
-  const slot = 1 / total;
-  const itemStart = index * slot;
-  return Math.max(0, Math.min(1, (local - itemStart) / slot));
+/** Which primary index is currently revealing (0–5), -1 if before/after */
+export function activePrimaryIndex(scroll: number): number {
+  const t = phaseT(scroll, TIMELINE.primary);
+  if (t <= 0) return -1;
+  if (t >= 1) return PRIMARY_ORDER.length;
+  const slot = 1 / PRIMARY_ORDER.length;
+  return Math.min(PRIMARY_ORDER.length - 1, Math.floor(t / slot));
 }
 
-export function isRelatedModule(hoverId: string | null, moduleId: string): boolean {
-  if (!hoverId) return false;
-  if (hoverId === moduleId) return true;
-  const related = RELATED_MAP[hoverId] ?? [];
-  if (related.includes(moduleId)) return true;
-  if (PARENT_MAP[moduleId] === hoverId) return true;
-  if (PARENT_MAP[hoverId] === moduleId) return true;
-  return false;
+export function primaryVisible(scroll: number, index: number): boolean {
+  const t = phaseT(scroll, TIMELINE.primary);
+  const slot = 1 / PRIMARY_ORDER.length;
+  const threshold = index * slot + slot * 0.55;
+  return t >= threshold;
+}
+
+export function primaryPulseActive(scroll: number, index: number): boolean {
+  const t = phaseT(scroll, TIMELINE.primary);
+  const slot = 1 / PRIMARY_ORDER.length;
+  const start = index * slot;
+  const end = index * slot + slot * 0.5;
+  return t >= start && t < end;
+}
+
+/** Flat secondary index for expansion timeline */
+export function secondaryVisible(scroll: number, secondaryIndex: number): boolean {
+  const t = phaseT(scroll, TIMELINE.expansion);
+  const slot = 1 / SECONDARY_ORDER.length;
+  const threshold = secondaryIndex * slot + slot * 0.6;
+  return t >= threshold;
+}
+
+export function secondaryPulseActive(scroll: number, secondaryIndex: number): boolean {
+  const t = phaseT(scroll, TIMELINE.expansion);
+  const slot = 1 / SECONDARY_ORDER.length;
+  const start = secondaryIndex * slot;
+  const end = secondaryIndex * slot + slot * 0.45;
+  return t >= start && t < end;
+}
+
+export function wiringProgress(scroll: number, lineIndex: number, total: number): number {
+  const t = phaseT(scroll, TIMELINE.wiring);
+  const slot = 1 / total;
+  const start = lineIndex * slot;
+  return Math.max(0, Math.min(1, (t - start) / slot));
+}
+
+export function currentPhase(scroll: number): "pos" | "primary" | "expansion" | "wiring" | "complete" {
+  if (scroll < TIMELINE.phase1.end) return "pos";
+  if (scroll < TIMELINE.primary.end) return "primary";
+  if (scroll < TIMELINE.expansion.end) return "expansion";
+  if (scroll < TIMELINE.wiring.end) return "wiring";
+  return "complete";
 }

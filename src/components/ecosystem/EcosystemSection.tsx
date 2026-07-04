@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   motion,
   useMotionValueEvent,
@@ -9,83 +9,36 @@ import { SectionBackground } from "./SectionBackground";
 import { AnimatedPOS } from "./AnimatedPOS";
 import { GlowPlatform } from "./GlowPlatform";
 import { ConnectionLines } from "./ConnectionLines";
-import { EcosystemFeatureCard } from "./FeatureCard";
-import { AnimatedParticles } from "./AnimatedParticles";
-import { COMPOSITION, POS_POSITION } from "./layout";
+import { ModuleLabel } from "./ModuleLabel";
+import { OrangePulse, PosPulse } from "./OrangePulse";
 import {
-  isRelatedModule,
-  NAV_DOTS,
-  PRIMARY_MODULES,
+  CANVAS,
+  MODULES,
+  POS,
   PRIMARY_ORDER,
-  SCROLL_PHASES,
-  SECONDARY_MODULES,
   SECONDARY_ORDER,
+  TIMELINE,
+  currentPhase,
   getModule,
-  itemProgress,
-  phaseProgress,
+  phaseT,
+  primaryPulseActive,
+  primaryVisible,
+  secondaryPulseActive,
+  secondaryVisible,
 } from "./features";
 
-const DESKTOP_MIN_WIDTH = 1280;
+const DESKTOP_MIN = 1280;
 
-function DotNav({
-  activeId,
-  onSelect,
-}: {
-  activeId: string;
-  onSelect: (progress: number) => void;
-}) {
-  return (
-    <nav
-      className="absolute right-5 top-1/2 z-[80] hidden -translate-y-1/2 md:block lg:right-8"
-      aria-label="Ecosystem story navigation"
-    >
-      <ul className="flex flex-col gap-3">
-        {NAV_DOTS.map((dot) => (
-          <li key={dot.id}>
-            <button
-              type="button"
-              onClick={() => onSelect(dot.progress)}
-              className="group flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-canvas/80"
-              aria-label={dot.label}
-              aria-current={activeId === dot.id ? "true" : undefined}
-            >
-              <span
-                className={`rounded-full transition-all duration-300 ${
-                  activeId === dot.id
-                    ? "h-2 w-2 bg-ember shadow-[0_0_8px_rgba(255,110,20,0.45)]"
-                    : "h-1.5 w-1.5 bg-hairline group-hover:bg-mid-gray"
-                }`}
-              />
-            </button>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  );
-}
-
-function EcosystemComposition({
-  progress,
+function StoryCanvas({
+  scroll,
   reduce,
   hoveredId,
   setHoveredId,
-  primaryCardProgress,
-  secondaryCardProgress,
-  primaryLineProgress,
-  secondaryLineProgress,
-  pulseId,
-  linesActive,
 }: {
-  progress: number;
+  scroll: number;
   reduce: boolean;
   hoveredId: string | null;
   setHoveredId: (id: string | null) => void;
-  primaryCardProgress: Record<string, number>;
-  secondaryCardProgress: Record<string, number>;
-  primaryLineProgress: Record<string, number>;
-  secondaryLineProgress: Record<string, number>;
-  pulseId: string | null;
-  linesActive: boolean;
 }) {
   const stageRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
@@ -96,19 +49,43 @@ function EcosystemComposition({
       if (!stage) return;
       const pw = stage.clientWidth;
       const ph = stage.clientHeight;
-      const isDesktop = window.innerWidth >= DESKTOP_MIN_WIDTH;
-      const fitScale = Math.min(pw / COMPOSITION.width, ph / COMPOSITION.height, 1);
-      // Desktop: never shrink cards — clip edges instead. Tablet: scale proportionally.
-      setScale(isDesktop ? 1 : fitScale);
+      const fit = Math.min(pw / CANVAS.width, ph / CANVAS.height, 1);
+      setScale(window.innerWidth >= DESKTOP_MIN ? 1 : fit);
     };
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  const posAssemble = phaseProgress(progress, SCROLL_PHASES.pos);
-  const platformVisible = phaseProgress(progress, SCROLL_PHASES.platform) > 0.05;
-  const anyHovered = hoveredId !== null;
+  const phase = currentPhase(scroll);
+  const posAssemble = reduce ? 1 : phaseT(scroll, TIMELINE.phase1);
+  const showGlow = reduce || scroll > 0.02;
+  const wiringOn = reduce || scroll >= TIMELINE.wiring.start;
+
+  const primaryLines = useMemo(() => {
+    const map: Record<string, number> = {};
+    const t = phaseT(scroll, TIMELINE.wiring);
+    const slot = 1 / (PRIMARY_ORDER.length + SECONDARY_ORDER.length);
+    PRIMARY_ORDER.forEach((id, i) => {
+      map[id] = Math.max(0, Math.min(1, (t - i * slot) / slot));
+    });
+    return map;
+  }, [scroll]);
+
+  const secondaryLines = useMemo(() => {
+    const map: Record<string, number> = {};
+    const t = phaseT(scroll, TIMELINE.wiring);
+    const slot = 1 / (PRIMARY_ORDER.length + SECONDARY_ORDER.length);
+    SECONDARY_ORDER.forEach((id, i) => {
+      const idx = PRIMARY_ORDER.length + i;
+      map[id] = Math.max(0, Math.min(1, (t - idx * slot) / slot));
+    });
+    return map;
+  }, [scroll]);
+
+  const anyHover = hoveredId !== null;
+  const primaries = MODULES.filter((m) => m.tier === "primary");
+  const secondaries = MODULES.filter((m) => m.tier === "secondary");
 
   return (
     <div
@@ -118,158 +95,107 @@ function EcosystemComposition({
       <div
         className="relative"
         style={{
-          width: COMPOSITION.width,
-          height: COMPOSITION.height,
+          width: CANVAS.width,
+          height: CANVAS.height,
           transform: scale < 1 ? `scale(${scale})` : undefined,
           transformOrigin: "center center",
-          willChange: scale < 1 ? "transform" : undefined,
         }}
       >
-        {/* z-10 — glow (behind POS) */}
+        {/* Glow — phase 1 */}
         <div
-          className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
-          style={{ left: POS_POSITION.x, top: POS_POSITION.y }}
+          className="absolute z-[10] -translate-x-1/2 -translate-y-1/2"
+          style={{ left: POS.x, top: POS.y }}
         >
-          <GlowPlatform visible={platformVisible || !!reduce} breathing={linesActive} />
+          <GlowPlatform visible={showGlow} breathing={phase === "complete" || phase === "wiring"} />
         </div>
 
-        {/* z-20 — SVG connections (behind cards, above glow) */}
-        <div className="absolute inset-0 z-20">
+        {/* Wiring — phase 4, behind everything */}
+        <div className="absolute inset-0 z-[15]">
           <ConnectionLines
-            primaryProgress={primaryLineProgress}
-            secondaryProgress={secondaryLineProgress}
-            highlightedId={hoveredId}
-            pulseId={pulseId}
-            showParticles={linesActive}
+            primaryProgress={primaryLines}
+            secondaryProgress={secondaryLines}
+            visible={wiringOn}
           />
         </div>
 
-        {/* z-30 — particles */}
-        {linesActive && (
-          <div className="absolute inset-0 z-30 pointer-events-none">
-            <AnimatedParticles active />
-          </div>
-        )}
-
-        {/* z-40 — POS */}
+        {/* POS — always hero */}
         <div
-          className="absolute z-40 -translate-x-1/2 -translate-y-1/2"
-          style={{ left: POS_POSITION.x, top: POS_POSITION.y }}
+          className="absolute z-[40] -translate-x-1/2 -translate-y-1/2"
+          style={{ left: POS.x, top: POS.y }}
         >
-          <AnimatedPOS assemble={reduce ? 1 : posAssemble} glowing={anyHovered} />
+          <AnimatedPOS assemble={posAssemble} glowing={anyHover} />
         </div>
 
-        {/* z-60 — primary cards */}
-        {PRIMARY_MODULES.map((mod) => {
-          const cardP = primaryCardProgress[mod.id] ?? 0;
-          const visible = reduce || cardP > 0.88;
+        {/* Orange pulses — phase 2 & 3 */}
+        {PRIMARY_ORDER.map((id, i) => {
+          const mod = getModule(id);
+          if (!mod) return null;
           return (
-            <div
-              key={mod.id}
-              className="absolute z-[60] -translate-x-1/2 -translate-y-1/2"
-              style={{ left: mod.position.x, top: mod.position.y }}
-            >
-              <EcosystemFeatureCard
-                module={mod}
-                visible={visible}
-                dimmed={anyHovered && !isRelatedModule(hoveredId, mod.id)}
-                highlighted={hoveredId === mod.id}
-                related={isRelatedModule(hoveredId, mod.id) && hoveredId !== mod.id}
-                onHover={setHoveredId}
-                layout="fixed"
-              />
-            </div>
+            <OrangePulse
+              key={`pulse-p-${id}`}
+              from={POS}
+              to={{ x: mod.x, y: mod.y }}
+              active={!reduce && primaryPulseActive(scroll, i)}
+            />
           );
         })}
+        {SECONDARY_ORDER.map((id, i) => {
+          const mod = getModule(id);
+          if (!mod?.parentId) return null;
+          const parent = getModule(mod.parentId);
+          if (!parent) return null;
+          return (
+            <OrangePulse
+              key={`pulse-s-${id}`}
+              from={{ x: parent.x, y: parent.y }}
+              to={{ x: mod.x, y: mod.y }}
+              active={!reduce && secondaryPulseActive(scroll, i)}
+            />
+          );
+        })}
+        {PRIMARY_ORDER.map((_, i) => (
+          <PosPulse
+            key={`pos-pulse-${i}`}
+            x={POS.x}
+            y={POS.y}
+            active={!reduce && primaryPulseActive(scroll, i)}
+          />
+        ))}
 
-        {/* z-60 — secondary cards */}
-        {SECONDARY_MODULES.map((mod) => {
-          const cardP = secondaryCardProgress[mod.id] ?? 0;
-          const visible = reduce || cardP > 0.88;
-          const parent = mod.parentId ? getModule(mod.parentId) : undefined;
-          return (
-            <div
-              key={mod.id}
-              className="absolute z-[60] -translate-x-1/2 -translate-y-1/2"
-              style={{ left: mod.position.x, top: mod.position.y }}
-            >
-              <EcosystemFeatureCard
-                module={mod}
-                visible={visible}
-                dimmed={anyHovered && !isRelatedModule(hoveredId, mod.id)}
-                highlighted={hoveredId === mod.id}
-                related={isRelatedModule(hoveredId, mod.id) && hoveredId !== mod.id}
-                emergeFrom={parent?.position}
-                onHover={setHoveredId}
-                layout="fixed"
-              />
-            </div>
-          );
-        })}
+        {/* Primary labels — phase 2 */}
+        {primaries.map((mod, i) => (
+          <div
+            key={mod.id}
+            className="absolute z-[50] -translate-x-1/2 -translate-y-1/2"
+            style={{ left: mod.x, top: mod.y }}
+          >
+            <ModuleLabel
+              module={mod}
+              visible={reduce || primaryVisible(scroll, i)}
+              highlighted={hoveredId === mod.id}
+              dimmed={anyHover && hoveredId !== mod.id}
+              onHover={setHoveredId}
+            />
+          </div>
+        ))}
+
+        {/* Secondary labels — phase 3 */}
+        {secondaries.map((mod, i) => (
+          <div
+            key={mod.id}
+            className="absolute z-[50] -translate-x-1/2 -translate-y-1/2"
+            style={{ left: mod.x, top: mod.y }}
+          >
+            <ModuleLabel
+              module={mod}
+              visible={reduce || secondaryVisible(scroll, i)}
+              highlighted={hoveredId === mod.id}
+              dimmed={anyHover && hoveredId !== mod.id}
+              onHover={setHoveredId}
+            />
+          </div>
+        ))}
       </div>
-    </div>
-  );
-}
-
-function MobileTimeline({
-  progress,
-  reduce,
-  hoveredId,
-  setHoveredId,
-}: {
-  progress: number;
-  reduce: boolean;
-  hoveredId: string | null;
-  setHoveredId: (id: string | null) => void;
-}) {
-  const posVisible = reduce || phaseProgress(progress, SCROLL_PHASES.pos) > 0.5;
-  const primaryVisible = (i: number) =>
-    reduce || itemProgress(progress, SCROLL_PHASES.primaryCards, i, PRIMARY_ORDER.length) > 0.88;
-  const secondaryVisible = (i: number) =>
-    reduce ||
-    itemProgress(progress, SCROLL_PHASES.secondaryCards, i, SECONDARY_ORDER.length) > 0.88;
-
-  return (
-    <div className="relative z-10 mx-auto flex max-w-[320px] flex-col items-center gap-6">
-      <motion.div
-        initial={false}
-        animate={{ opacity: posVisible ? 1 : 0, y: posVisible ? 0 : 24 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col items-center"
-      >
-        <GlowPlatform visible={posVisible} />
-        <AnimatedPOS assemble={posVisible ? 1 : 0} />
-      </motion.div>
-
-      <p className="text-[12px] font-medium uppercase tracking-[0.1em] text-mid-gray">
-        Core platform
-      </p>
-      {PRIMARY_MODULES.map((mod, i) => (
-        <EcosystemFeatureCard
-          key={mod.id}
-          module={mod}
-          visible={primaryVisible(i)}
-          dimmed={false}
-          highlighted={hoveredId === mod.id}
-          onHover={setHoveredId}
-          layout="stack"
-        />
-      ))}
-
-      <p className="mt-2 text-[12px] font-medium uppercase tracking-[0.1em] text-mid-gray">
-        Grows with you
-      </p>
-      {SECONDARY_MODULES.map((mod, i) => (
-        <EcosystemFeatureCard
-          key={mod.id}
-          module={mod}
-          visible={secondaryVisible(i)}
-          dimmed={false}
-          highlighted={hoveredId === mod.id}
-          onHover={setHoveredId}
-          layout="stack"
-        />
-      ))}
     </div>
   );
 }
@@ -283,101 +209,31 @@ export default function EcosystemSection() {
     offset: ["start start", "end end"],
   });
 
-  const [progress, setProgress] = useState(reduce ? 1 : 0);
+  const [scroll, setScroll] = useState(reduce ? 1 : 0);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [pulseId, setPulseId] = useState<string | null>(null);
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    if (!reduce) setProgress(v);
+    if (!reduce) setScroll(v);
   });
 
-  const headerOpacity = phaseProgress(progress, SCROLL_PHASES.header);
-  const linesActive = reduce || progress >= SCROLL_PHASES.primaryLines.start;
+  const headerOpacity = reduce ? 1 : Math.min(1, scroll / 0.06);
+  const phase = currentPhase(scroll);
+  const activeDot =
+    phase === "complete" || phase === "wiring"
+      ? "wiring"
+      : phase === "expansion"
+        ? "expansion"
+        : phase === "primary"
+          ? "primary"
+          : "pos";
 
-  const primaryCardProgress = useMemo(() => {
-    const map: Record<string, number> = {};
-    PRIMARY_ORDER.forEach((id, i) => {
-      map[id] = itemProgress(
-        progress,
-        SCROLL_PHASES.primaryCards,
-        i,
-        PRIMARY_ORDER.length
-      );
-    });
-    return map;
-  }, [progress]);
-
-  const secondaryCardProgress = useMemo(() => {
-    const map: Record<string, number> = {};
-    SECONDARY_ORDER.forEach((id, i) => {
-      map[id] = itemProgress(
-        progress,
-        SCROLL_PHASES.secondaryCards,
-        i,
-        SECONDARY_ORDER.length
-      );
-    });
-    return map;
-  }, [progress]);
-
-  const primaryLineProgress = useMemo(() => {
-    const map: Record<string, number> = {};
-    PRIMARY_ORDER.forEach((id, i) => {
-      map[id] = itemProgress(
-        progress,
-        SCROLL_PHASES.primaryLines,
-        i,
-        PRIMARY_ORDER.length
-      );
-    });
-    return map;
-  }, [progress]);
-
-  const secondaryLineProgress = useMemo(() => {
-    const map: Record<string, number> = {};
-    SECONDARY_ORDER.forEach((id, i) => {
-      map[id] = itemProgress(
-        progress,
-        SCROLL_PHASES.secondaryLines,
-        i,
-        SECONDARY_ORDER.length
-      );
-    });
-    return map;
-  }, [progress]);
-
-  const activeNavId =
-    progress >= SCROLL_PHASES.primaryLines.start
-      ? "wired"
-      : progress >= SCROLL_PHASES.secondaryCards.start
-        ? "expanded"
-        : "core";
-
-  const scrollToProgress = useCallback((target: number) => {
+  const scrollTo = useCallback((target: number) => {
     const el = sectionRef.current;
     if (!el) return;
     const top = el.getBoundingClientRect().top + window.scrollY;
     const scrollable = el.offsetHeight - window.innerHeight;
     window.scrollTo({ top: top + target * scrollable, behavior: "smooth" });
   }, []);
-
-  const anyHovered = hoveredId !== null;
-
-  useEffect(() => {
-    if (!linesActive || reduce || anyHovered) return;
-    const interval = setInterval(() => {
-      const pool = [...PRIMARY_ORDER, ...SECONDARY_ORDER];
-      const id = pool[Math.floor(Math.random() * pool.length)];
-      setPulseId(id);
-      setTimeout(() => setPulseId(null), 1100);
-    }, 4200);
-    return () => clearInterval(interval);
-  }, [linesActive, reduce, anyHovered]);
-
-  useEffect(() => {
-    if (hoveredId) setPulseId(hoveredId);
-    else if (!reduce) setPulseId(null);
-  }, [hoveredId, reduce]);
 
   return (
     <section
@@ -387,19 +243,20 @@ export default function EcosystemSection() {
       style={{ height: "220vh" }}
       aria-labelledby="ecosystem-heading"
     >
+      {/* Desktop / tablet cinematic story */}
       <div className="sticky top-0 hidden h-screen flex-col overflow-hidden md:flex">
         <SectionBackground />
 
         <motion.header
-          className="relative z-10 mx-auto max-w-[700px] shrink-0 px-6 pt-10 text-center md:pt-12"
-          style={{ opacity: reduce ? 1 : headerOpacity, willChange: "opacity" }}
+          className="relative z-[60] mx-auto max-w-[700px] shrink-0 px-6 pt-10 text-center"
+          style={{ opacity: headerOpacity }}
         >
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-ember md:text-[12px]">
+          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-ember">
             All-in-One Restaurant Operating System
           </p>
           <h2
             id="ecosystem-heading"
-            className="mt-3 font-sf-pro-display text-[30px] font-semibold leading-[1.08] tracking-[-0.2px] text-primary-ink md:text-[40px] lg:text-[48px]"
+            className="mt-3 font-sf-pro-display text-[32px] font-semibold leading-[1.08] tracking-[-0.2px] text-primary-ink md:text-[44px]"
           >
             The{" "}
             <span
@@ -413,63 +270,80 @@ export default function EcosystemSection() {
             </span>{" "}
             Ecosystem
           </h2>
-          <p className="mt-3 text-[16px] leading-[1.45] text-mid-gray md:text-[18px]">
-            Everything your restaurant needs.
-            <br />
-            Powered by one intelligent platform.
+          <p className="mt-3 text-[16px] leading-[1.5] text-mid-gray">
+            Everything your restaurant needs. Powered by one intelligent platform.
           </p>
         </motion.header>
 
-        <div className="relative z-10 min-h-0 flex-1">
-          <EcosystemComposition
-            progress={progress}
+        <div className="relative min-h-0 flex-1">
+          <StoryCanvas
+            scroll={scroll}
             reduce={!!reduce}
             hoveredId={hoveredId}
             setHoveredId={setHoveredId}
-            primaryCardProgress={primaryCardProgress}
-            secondaryCardProgress={secondaryCardProgress}
-            primaryLineProgress={primaryLineProgress}
-            secondaryLineProgress={secondaryLineProgress}
-            pulseId={pulseId}
-            linesActive={linesActive}
           />
         </div>
 
-        <DotNav activeId={activeNavId} onSelect={scrollToProgress} />
+        {/* Phase dots */}
+        <nav
+          className="absolute right-6 top-1/2 z-[60] hidden -translate-y-1/2 md:block"
+          aria-label="Story progress"
+        >
+          <ul className="flex flex-col gap-3">
+            {(
+              [
+                { id: "pos", label: "POS", at: 0 },
+                { id: "primary", label: "Core modules", at: TIMELINE.primary.start },
+                { id: "expansion", label: "Expansion", at: TIMELINE.expansion.start },
+                { id: "wiring", label: "Connected", at: TIMELINE.wiring.start },
+              ] as const
+            ).map((dot) => (
+              <li key={dot.id}>
+                <button
+                  type="button"
+                  onClick={() => scrollTo(dot.at)}
+                  aria-label={dot.label}
+                  className="flex h-7 w-7 items-center justify-center"
+                >
+                  <span
+                    className={`rounded-full transition-all ${
+                      activeDot === dot.id
+                        ? "h-2 w-2 bg-ember shadow-[0_0_8px_rgba(255,110,20,0.5)]"
+                        : "h-1.5 w-1.5 bg-hairline"
+                    }`}
+                  />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
 
-      {/* Mobile — vertical timeline, full-size cards */}
-      <div className="relative px-6 py-16 md:hidden">
+      {/* Mobile timeline */}
+      <div className="px-6 py-16 md:hidden">
         <SectionBackground />
         <header className="relative z-10 mx-auto max-w-[700px] text-center">
           <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-ember">
             All-in-One Restaurant Operating System
           </p>
-          <h2 className="mt-4 font-sf-pro-display text-[32px] font-semibold leading-[1.08] tracking-[-0.2px] text-primary-ink">
-            The{" "}
-            <span
-              className="bg-clip-text text-transparent"
-              style={{
-                backgroundImage:
-                  "linear-gradient(135deg, #b64400 0%, #ff6e14 45%, #d4540a 100%)",
-              }}
-            >
-              Chefgaa
-            </span>{" "}
-            Ecosystem
+          <h2 className="mt-4 font-sf-pro-display text-[32px] font-semibold text-primary-ink">
+            The Chefgaa Ecosystem
           </h2>
-          <p className="mt-4 text-[17px] leading-[1.45] text-mid-gray">
-            Everything your restaurant needs. Powered by one intelligent platform.
-          </p>
         </header>
 
-        <div className="relative z-10 mt-10">
-          <MobileTimeline
-            progress={progress}
-            reduce={!!reduce}
-            hoveredId={hoveredId}
-            setHoveredId={setHoveredId}
-          />
+        <div className="relative z-10 mx-auto mt-10 flex max-w-[280px] flex-col items-center gap-10">
+          <div className="flex flex-col items-center">
+            <GlowPlatform visible breathing />
+            <AnimatedPOS assemble={1} />
+          </div>
+
+          {MODULES.filter((m) => m.tier === "primary").map((mod) => (
+            <ModuleLabel key={mod.id} module={mod} visible highlighted={hoveredId === mod.id} onHover={setHoveredId} />
+          ))}
+
+          {MODULES.filter((m) => m.tier === "secondary").map((mod) => (
+            <ModuleLabel key={mod.id} module={mod} visible highlighted={hoveredId === mod.id} onHover={setHoveredId} />
+          ))}
         </div>
       </div>
     </section>
