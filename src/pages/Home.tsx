@@ -2,14 +2,67 @@ import { lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Section } from "../components/Section";
 import { SectionHeading } from "../components/SectionHeading";
-import { ModulesCarousel } from "../components/ModulesCarousel";
+import { FeatureCard } from "../components/FeatureCard";
+import type { PastelTint } from "../components/FeatureCard";
 import { CheckList } from "../components/CheckList";
 import { CTABand } from "../components/CTABand";
 import { Reveal } from "../components/Reveal";
 import { PrimaryButton, ArrowLink } from "../components/Buttons";
+import {
+  PosIcon,
+  OrderIcon,
+  MenuIcon,
+  MegaphoneIcon,
+  AnalyticsIcon,
+  PaymentIcon,
+} from "../components/Icons";
 
 const PosShowcase = lazy(() => import("../components/PosShowcase"));
 const EcosystemSection = lazy(() => import("../components/ecosystem/EcosystemSection"));
+
+const features: {
+  title: string;
+  body: string;
+  icon: React.ReactNode;
+  tint: PastelTint;
+}[] = [
+  {
+    title: "Smart POS System",
+    body: "A fast, intuitive point-of-sale built for the pace of a busy restaurant floor.",
+    icon: <PosIcon />,
+    tint: "sky",
+  },
+  {
+    title: "Online Ordering",
+    body: "Take orders directly from your own site for pickup and delivery — commission-free.",
+    icon: <OrderIcon />,
+    tint: "citrus",
+  },
+  {
+    title: "Menu Management",
+    body: "Update items, prices, and availability in real time across every channel.",
+    icon: <MenuIcon />,
+    tint: "starlight",
+  },
+  {
+    title: "Marketing & Promotions",
+    body: "Launch offers, loyalty rewards, and campaigns that bring guests back.",
+    icon: <MegaphoneIcon />,
+    tint: "blush",
+  },
+  {
+    title: "Real-Time Analytics",
+    body: "See sales, trends, and performance the moment they happen.",
+    icon: <AnalyticsIcon />,
+    tint: "silver",
+  },
+  {
+    title: "Multi-Payment Support",
+    body: "Accept cards, wallets, and contactless payments with a single flow.",
+    icon: <PaymentIcon />,
+    tint: "indigo",
+  },
+];
 
 const posBullets = [
   { title: "Easy-to-Use Interface", body: "Onboard staff in minutes, not weeks." },
@@ -51,11 +104,12 @@ export function Home() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
             <h1 className="font-sf-pro-display text-[40px] font-bold leading-[1.05] tracking-[-0.5px] text-primary-ink md:text-[72px] md:tracking-[-0.8px] lg:text-[96px] lg:leading-[1.04] lg:tracking-[-1px]">
-              All-in-One POS &amp; Online Ordering for Restaurants.
+              All-in-One POS &amp; Online Ordering
+              <br />
+              for Restaurants.
             </h1>
-            <p className="mt-6 max-w-[620px] text-[19px] leading-[1.4] text-mid-gray md:text-[21px]">
-              Streamline operations, boost sales, and enhance customer experience
-              with Chefgaa&apos;s powerful restaurant management solution.
+            <p className="mt-6 max-w-[620px] text-[19px] leading-[1.4] text-mid-gray md:max-w-none md:text-[21px] md:whitespace-nowrap">
+              Streamline operations, boost sales, and enhance customer experience with Chefgaa&apos;s powerful restaurant management solution.
             </p>
             <div className="mt-10 flex flex-col items-center gap-5 sm:flex-row">
               <PrimaryButton to="/contact">Request a Demo</PrimaryButton>
@@ -65,8 +119,25 @@ export function Home() {
         </div>
       </section>
 
-      {/* Module carousel */}
-      <ModulesCarousel />
+      {/* Feature grid */}
+      <Section bg="gray">
+        <SectionHeading
+          title="Everything your restaurant needs, in one place."
+          intro="Six powerful tools working together — so you can spend less time managing software and more time serving guests."
+        />
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map((f, i) => (
+            <FeatureCard
+              key={f.title}
+              title={f.title}
+              body={f.body}
+              icon={f.icon}
+              tint={f.tint}
+              delay={(i % 3) * 0.08}
+            />
+          ))}
+        </div>
+      </Section>
 
       {/* Chefgaa Ecosystem — premium interactive */}
       <Suspense fallback={null}>
@@ -77,7 +148,11 @@ export function Home() {
       <Section bg="gray">
         <SectionHeading
           title="Built for Speed & Efficiency"
-          intro="The Chefgaa POS keeps your front and back of house in perfect sync."
+          intro={
+            <span className="md:whitespace-nowrap">
+              The Chefgaa POS keeps your front and back of house in perfect sync.
+            </span>
+          }
         />
         <CheckList items={posBullets} columns={3} />
       </Section>
@@ -90,8 +165,12 @@ export function Home() {
       {/* Online ordering band */}
       <Section bg="white">
         <SectionHeading
-          title="Take Your Restaurant Online"
-          intro="Own your online ordering experience — from browsing the menu to the moment it arrives."
+          title={<span className="md:whitespace-nowrap">Take Your Restaurant Online</span>}
+          intro={
+            <span className="md:whitespace-nowrap">
+              Own your online ordering experience — from browsing the menu to the moment it arrives.
+            </span>
+          }
         />
         <CheckList items={orderingBullets} columns={3} />
       </Section>
@@ -120,7 +199,7 @@ export function Home() {
       {/* Integrations */}
       <Section bg="gray">
         <SectionHeading
-          title="Works with the tools you already use."
+          title={<span className="md:whitespace-nowrap">Works with the tools you already use.</span>}
           align="center"
         />
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-6">

@@ -1,42 +1,29 @@
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 
 type GlowPlatformProps = {
   visible: boolean;
-  breathing?: boolean;
 };
 
-export function GlowPlatform({ visible, breathing = false }: GlowPlatformProps) {
-  const reduce = useReducedMotion();
-
+export function GlowPlatform({ visible }: GlowPlatformProps) {
   return (
     <motion.div
-      className="pointer-events-none absolute left-1/2 top-[58%] -translate-x-1/2 -translate-y-1/2"
+      className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
       initial={{ scale: 0, opacity: 0 }}
       animate={visible ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-      transition={{ type: "spring", stiffness: 120, damping: 20, duration: 0.8 }}
+      transition={{ type: "spring", stiffness: 110, damping: 20, duration: 0.9 }}
       aria-hidden="true"
     >
-      <motion.div
-        className="h-[min(420px,30vw)] w-[min(420px,30vw)] rounded-full"
+      <div
+        className="h-[min(480px,34vw)] w-[min(480px,34vw)] min-h-[280px] min-w-[280px] rounded-full opacity-30"
         style={{
           background:
-            "radial-gradient(circle, rgba(255,110,20,0.16) 0%, rgba(0,113,227,0.06) 35%, transparent 68%)",
-          filter: "blur(32px)",
+            "radial-gradient(circle, rgba(255,110,20,0.18) 0%, rgba(0,113,227,0.07) 38%, transparent 70%)",
+          filter: "blur(36px)",
         }}
-        animate={
-          breathing && !reduce
-            ? { opacity: [0.22, 0.36, 0.22] }
-            : { opacity: 0.28 }
-        }
-        transition={
-          breathing && !reduce
-            ? { duration: 5, repeat: Infinity, ease: "easeInOut" }
-            : undefined
-        }
       />
       <div
-        className="absolute inset-[20%] rounded-full border border-ember/[0.08] bg-paper/30"
-        style={{ boxShadow: "0 12px 48px rgba(255,110,20,0.1)" }}
+        className="absolute inset-[18%] rounded-full border border-ember/[0.07] bg-paper/25 backdrop-blur-[2px]"
+        style={{ boxShadow: "0 16px 56px rgba(255,110,20,0.12)" }}
       />
     </motion.div>
   );

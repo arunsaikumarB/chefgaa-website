@@ -4,37 +4,32 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useInView } from "react-intersection-observer";
 import { useReducedMotion } from "framer-motion";
 import { SectionBackground } from "./SectionBackground";
-import { AnimatedPOS } from "./AnimatedPOS";
+import { CenterHub } from "./AnimatedPOS";
 import { GlowPlatform } from "./GlowPlatform";
 import { ConnectionLines } from "./ConnectionLines";
 import { FeatureCard } from "./FeatureCard";
 import { FloatingMetrics } from "./FloatingMetrics";
-import {
-  ANIMATION_ORDER,
-  ECOSYSTEM_FEATURES,
-  featuresByZone,
-  featuresInColumn,
-} from "./features";
+import { ANIMATION_ORDER, ECOSYSTEM_FEATURES, anchorClass } from "./features";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const HUB = { left: 50, top: 45 } as const;
 
 export default function EcosystemSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLDivElement>(null);
-  const posRef = useRef<HTMLDivElement>(null);
+  const hubRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const hasAnimated = useRef(false);
 
-  const [posVisible, setPosVisible] = useState(false);
+  const [hubActive, setHubActive] = useState(false);
   const [platformVisible, setPlatformVisible] = useState(false);
   const [lineProgress, setLineProgress] = useState<Record<string, number>>({});
   const [cardVisible, setCardVisible] = useState<Record<string, boolean>>({});
   const [sequenceComplete, setSequenceComplete] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [pulseId, setPulseId] = useState<string | null>(null);
-  const [posGlowing, setPosGlowing] = useState(false);
-  const [floating, setFloating] = useState(false);
+  const [hubGlowing, setHubGlowing] = useState(false);
 
   const { ref: inViewRef, inView } = useInView({ threshold: 0.4, triggerOnce: true });
 
@@ -51,9 +46,8 @@ export default function EcosystemSection() {
 
     if (reduce) {
       hasAnimated.current = true;
-      setPosVisible(true);
+      setHubActive(true);
       setPlatformVisible(true);
-      setFloating(true);
       const lines: Record<string, number> = {};
       const cards: Record<string, boolean> = {};
       ANIMATION_ORDER.forEach((id) => {
@@ -70,34 +64,23 @@ export default function EcosystemSection() {
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 60%",
-          once: true,
-        },
-        onComplete: () => {
-          setSequenceComplete(true);
-          setFloating(true);
-        },
+        scrollTrigger: { trigger: sectionRef.current, start: "top 60%", once: true },
+        onComplete: () => setSequenceComplete(true),
       });
 
       tl.fromTo(
         headerRef.current,
         { opacity: 0, y: 80 },
-        { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" },
-        0
+        { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" }
       );
-
       tl.to({}, { duration: 0.2 });
-
-      tl.call(() => setPosVisible(true));
+      tl.call(() => setHubActive(true));
       tl.fromTo(
-        posRef.current,
-        { opacity: 0, scale: 0.75, rotateX: 10 },
-        { opacity: 1, scale: 1, rotateX: 0, duration: 0.85, ease: "back.out(1.15)" },
+        hubRef.current,
+        { opacity: 0, scale: 0.75 },
+        { opacity: 1, scale: 1, duration: 0.7, ease: "back.out(1.2)" },
         "<"
       );
-
       tl.call(() => setPlatformVisible(true));
       tl.fromTo({}, {}, { duration: 0.35 });
 
@@ -107,40 +90,24 @@ export default function EcosystemSection() {
           p: 1,
           duration: 0.42,
           ease: "power2.inOut",
-          onUpdate: () => {
-            setLineProgress((prev) => ({ ...prev, [id]: obj.p }));
-          },
-          onComplete: () => {
-            setCardVisible((prev) => ({ ...prev, [id]: true }));
-          },
+          onUpdate: () => setLineProgress((prev) => ({ ...prev, [id]: obj.p })),
+          onComplete: () => setCardVisible((prev) => ({ ...prev, [id]: true })),
         });
       });
-
-      tl.to({}, { duration: 0.15 });
     }, sectionRef);
 
     return () => ctx.revert();
   }, [inView, reduce]);
 
   useEffect(() => {
-    if (!sequenceComplete || reduce) return;
-    const interval = setInterval(() => {
-      const id = ANIMATION_ORDER[Math.floor(Math.random() * ANIMATION_ORDER.length)];
-      setPulseId(id);
-      setTimeout(() => setPulseId(null), 1200);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [sequenceComplete, reduce]);
-
-  useEffect(() => {
     if (hoveredId) {
-      setPosGlowing(true);
+      setHubGlowing(true);
       setPulseId(hoveredId);
     } else {
-      setPosGlowing(false);
-      if (!reduce) setPulseId(null);
+      setHubGlowing(false);
+      setPulseId(null);
     }
-  }, [hoveredId, reduce]);
+  }, [hoveredId]);
 
   const anyHovered = hoveredId !== null;
 
@@ -148,15 +115,12 @@ export default function EcosystemSection() {
     <section
       ref={setRefs}
       id="ecosystem"
-      className="relative min-h-screen overflow-visible bg-paper py-16 md:py-20 lg:py-24"
+      className="relative min-h-screen w-full overflow-visible bg-paper py-16 md:py-20 lg:py-24"
       aria-labelledby="ecosystem-heading"
     >
       <SectionBackground />
 
-      <div
-        ref={headerRef}
-        className="relative z-10 mx-auto max-w-[720px] px-6 text-center opacity-0"
-      >
+      <div ref={headerRef} className="relative z-10 mx-auto max-w-[720px] px-6 text-center opacity-0">
         <span className="inline-flex items-center rounded-full border border-hairline/80 bg-paper px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-ember shadow-sm">
           All-in-One Restaurant Operating System
         </span>
@@ -176,113 +140,59 @@ export default function EcosystemSection() {
           </span>{" "}
           Ecosystem
         </h2>
-        <p className="mt-5 text-[19px] leading-[1.47] text-mid-gray md:text-[21px]">
-          Everything your restaurant needs.
-          <br />
-          Connected beautifully.
-          <br />
-          Powered by one intelligent platform.
+        <p className="mt-5 text-[19px] leading-[1.47] text-mid-gray md:text-[21px] md:whitespace-nowrap">
+          Everything your restaurant needs. Connected beautifully. Powered by one intelligent platform.
         </p>
       </div>
 
-      {/* Desktop — 3-column grid fills full width */}
-      <div
-        ref={canvasRef}
-        className="relative z-10 mx-auto mt-2 hidden w-full min-h-[88vh] px-6 md:block lg:px-12 xl:px-16"
-      >
+      {/* Full-width radial canvas */}
+      <div className="relative z-10 mx-auto mt-4 hidden h-[min(920px,92vh)] w-full max-w-[100vw] px-[clamp(16px,2vw,32px)] md:block">
         <ConnectionLines
           lineProgress={lineProgress}
           highlightedId={hoveredId}
           pulseId={pulseId}
-          showParticles={sequenceComplete}
         />
 
-        {/* Top — AI */}
-        <div className="absolute left-1/2 top-0 z-30 w-full max-w-[400px] -translate-x-1/2">
-          {featuresByZone("top").map((f) => (
-            <FeatureCard
-              key={f.id}
-              feature={f}
-              visible={!!cardVisible[f.id]}
-              dimmed={anyHovered && hoveredId !== f.id}
-              highlighted={hoveredId === f.id}
-              onHover={setHoveredId}
-              align="center"
-            />
-          ))}
+        <div
+          className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
+          style={{ left: `${HUB.left}%`, top: `${HUB.top}%` }}
+        >
+          <GlowPlatform visible={platformVisible} />
         </div>
 
-        {/* Main row — left | center | right */}
-        <div className="absolute inset-x-6 top-[11%] bottom-[16%] flex items-stretch justify-between gap-6 lg:inset-x-12 xl:inset-x-16">
-          <div className="flex w-[min(400px,22vw)] min-w-[300px] flex-col justify-between gap-5 py-4">
-            {featuresInColumn("left").map((f) => (
-              <FeatureCard
-                key={f.id}
-                feature={f}
-                visible={!!cardVisible[f.id]}
-                dimmed={anyHovered && hoveredId !== f.id}
-                highlighted={hoveredId === f.id}
-                onHover={setHoveredId}
-                align="left"
-              />
-            ))}
-          </div>
+        <div
+          ref={hubRef}
+          className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
+          style={{ left: `${HUB.left}%`, top: `${HUB.top}%` }}
+        >
+          <CenterHub active={hubActive} glowing={hubGlowing} />
+        </div>
 
+        {ECOSYSTEM_FEATURES.map((feature) => (
           <div
-            className="relative flex shrink-0 items-center justify-center self-center"
-            ref={posRef}
+            key={feature.id}
+            className={`absolute top-[var(--pos-top)] z-30 ${anchorClass(feature.anchor)}`}
+            style={
+              {
+                "--pos-left": `${feature.left}%`,
+                "--pos-right": `${100 - feature.left}%`,
+                "--pos-top": `${feature.top}%`,
+              } as React.CSSProperties
+            }
           >
-            <GlowPlatform visible={platformVisible} breathing={sequenceComplete} />
-            <AnimatedPOS
-              assemble={posVisible ? 1 : 0}
-              glowing={posGlowing}
-              floating={floating}
-            />
-          </div>
-
-          <div className="flex w-[min(400px,22vw)] min-w-[300px] flex-col justify-between gap-5 py-4">
-            {featuresInColumn("right").map((f) => (
-              <FeatureCard
-                key={f.id}
-                feature={f}
-                visible={!!cardVisible[f.id]}
-                dimmed={anyHovered && hoveredId !== f.id}
-                highlighted={hoveredId === f.id}
-                onHover={setHoveredId}
-                align="right"
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Bottom — Website + Analytics */}
-        <div className="absolute bottom-0 left-1/2 z-30 flex w-full max-w-[880px] -translate-x-1/2 justify-center gap-8 lg:gap-12">
-          {featuresByZone("bottom-left").map((f) => (
             <FeatureCard
-              key={f.id}
-              feature={f}
-              visible={!!cardVisible[f.id]}
-              dimmed={anyHovered && hoveredId !== f.id}
-              highlighted={hoveredId === f.id}
+              feature={feature}
+              visible={!!cardVisible[feature.id]}
+              dimmed={anyHovered && hoveredId !== feature.id}
+              highlighted={hoveredId === feature.id}
               onHover={setHoveredId}
             />
-          ))}
-          {featuresByZone("bottom-right").map((f) => (
-            <FeatureCard
-              key={f.id}
-              feature={f}
-              visible={!!cardVisible[f.id]}
-              dimmed={anyHovered && hoveredId !== f.id}
-              highlighted={hoveredId === f.id}
-              onHover={setHoveredId}
-            />
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
 
-      {/* Mobile timeline */}
-      <div className="relative z-10 mt-10 flex flex-col items-center gap-8 px-6 md:hidden">
-        <AnimatedPOS assemble={1} floating={sequenceComplete} />
+      <div className="relative z-10 mt-10 flex flex-col items-center gap-10 px-6 md:hidden">
+        <CenterHub active glowing={hubGlowing} />
         {ECOSYSTEM_FEATURES.map((feature) => (
           <FeatureCard
             key={feature.id}

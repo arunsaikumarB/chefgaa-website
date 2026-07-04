@@ -8,7 +8,6 @@ type FeatureCardProps = {
   highlighted: boolean;
   dimmed: boolean;
   onHover: (id: string | null) => void;
-  align?: "left" | "right" | "center";
 };
 
 function HoverIconAnimation({
@@ -24,25 +23,34 @@ function HoverIconAnimation({
   if (!active || reduce) return <>{children}</>;
 
   const variants: Record<IconAnimation, object> = {
-    "brain-pulse": { scale: [1, 1.1, 1] },
-    "megaphone-wiggle": { rotate: [-5, 5, 0] },
-    "cube-rotate": { rotate: [0, 12, 0] },
-    "globe-rotate": { rotate: [0, 10, -10, 0] },
-    "calendar-flip": { rotateX: [0, 15, 0] },
-    steam: { y: [0, -3, 0] },
-    "users-pulse": { scale: [1, 1.08, 1] },
-    "badge-shine": { scale: [1, 1.08, 1] },
-    "phone-float": { y: [0, -3, 0] },
-    "card-flip": { rotateY: [0, 12, 0] },
+    "brain-pulse": { scale: [1, 1.08, 1] },
+    "megaphone-wiggle": { rotate: [-4, 4, 0] },
+    "cube-rotate": { rotate: [0, 10, 0] },
+    "globe-rotate": { rotate: [0, 8, -8, 0] },
+    "calendar-flip": { rotateX: [0, 12, 0] },
+    steam: { y: [0, -2, 0] },
+    "users-pulse": { scale: [1, 1.06, 1] },
+    "badge-shine": { scale: [1, 1.06, 1] },
+    "phone-float": { y: [0, -2, 0] },
+    "card-flip": { rotateY: [0, 10, 0] },
     "bars-animate": { y: [0, -2, 0] },
-    "cart-slide": { x: [0, 3, 0] },
+    "cart-slide": { x: [0, 2, 0] },
     default: { scale: 1 },
   };
 
   return (
     <motion.div
-      animate={variants[animation] as { scale?: number | number[]; rotate?: number[]; rotateY?: number[]; rotateX?: number[]; y?: number[]; x?: number[] }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      animate={
+        variants[animation] as {
+          scale?: number | number[];
+          rotate?: number[];
+          rotateY?: number[];
+          rotateX?: number[];
+          y?: number[];
+          x?: number[];
+        }
+      }
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
     </motion.div>
@@ -50,7 +58,7 @@ function HoverIconAnimation({
 }
 
 export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
-  function FeatureCard({ feature, visible, highlighted, dimmed, onHover, align = "left" }, ref) {
+  function FeatureCard({ feature, visible, highlighted, dimmed, onHover }, ref) {
     const Icon = feature.icon;
 
     return (
@@ -60,25 +68,23 @@ export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
         role="article"
         aria-label={feature.title}
         tabIndex={0}
-        className={`pointer-events-auto w-full max-w-[400px] min-w-[320px] min-h-[132px] rounded-[28px] border border-black/[0.05] bg-paper px-7 py-6 ${
-          align === "right" ? "ml-auto" : align === "center" ? "mx-auto" : ""
-        }`}
+        className="pointer-events-auto w-[min(400px,36vw)] min-w-[300px] min-h-[150px] rounded-[30px] border border-black/[0.05] bg-paper p-8"
         style={{
           boxShadow: highlighted
-            ? "0 24px 56px rgba(0,0,0,0.11)"
+            ? "0 28px 60px rgba(0,0,0,0.12)"
             : "0 12px 40px rgba(0,0,0,0.06)",
-          willChange: "transform, opacity",
+          willChange: highlighted ? "transform, opacity" : "opacity",
         }}
         initial={false}
         animate={{
-          opacity: visible ? (dimmed ? 0.6 : 1) : 0,
-          scale: visible ? (highlighted ? 1.04 : 1) : 0.9,
-          y: visible ? (highlighted ? -10 : 0) : 20,
+          opacity: visible ? (dimmed ? 0.7 : 1) : 0,
+          scale: highlighted ? 1.04 : visible ? 1 : 0.88,
+          y: highlighted ? -8 : visible ? 0 : 24,
         }}
         transition={{
-          opacity: { duration: 0.35 },
-          scale: { type: "spring", stiffness: 400, damping: 28 },
-          y: { type: "spring", stiffness: 400, damping: 28 },
+          opacity: { duration: highlighted || dimmed ? 0.3 : 0.45 },
+          scale: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+          y: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
         }}
         onMouseEnter={() => onHover(feature.id)}
         onMouseLeave={() => onHover(null)}
@@ -88,17 +94,19 @@ export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
         <div className="flex items-start gap-5">
           <HoverIconAnimation animation={feature.iconAnimation} active={highlighted}>
             <div
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[16px]"
-              style={{ backgroundColor: `${feature.accent}15`, color: feature.accent }}
+              className="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-[14px]"
+              style={{ backgroundColor: `${feature.accent}18`, color: feature.accent }}
             >
-              <Icon size={26} strokeWidth={1.7} aria-hidden="true" />
+              <Icon size={28} strokeWidth={1.65} aria-hidden="true" />
             </div>
           </HoverIconAnimation>
-          <div className="min-w-0 flex-1 pt-1">
-            <h3 className="font-sf-pro-display text-[18px] font-semibold leading-snug text-[#111111]">
+          <div className="min-w-0 max-w-[85%] flex-1 pt-0.5">
+            <h3 className="font-sf-pro-display text-[24px] font-semibold leading-[1.2] text-[#111111]">
               {feature.title}
             </h3>
-            <p className="mt-2 text-[15px] leading-[1.5] text-mid-gray">{feature.description}</p>
+            <p className="mt-2.5 text-[16px] leading-[1.55] text-mid-gray">
+              {feature.description}
+            </p>
           </div>
         </div>
       </motion.article>
