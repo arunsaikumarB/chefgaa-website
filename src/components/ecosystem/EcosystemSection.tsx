@@ -1,44 +1,52 @@
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import {
-  motion,
-  useMotionValueEvent,
-  useReducedMotion,
-  useScroll,
-} from "framer-motion";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
+import gsap from "gsap";
+import { useInView } from "react-intersection-observer";
+import { useReducedMotion } from "framer-motion";
 import { SectionBackground } from "./SectionBackground";
 import { AnimatedPOS } from "./AnimatedPOS";
+import { HardwareGroup } from "./HardwareGroup";
 import { GlowPlatform } from "./GlowPlatform";
 import { ConnectionLines } from "./ConnectionLines";
-import { ModuleLabel } from "./ModuleLabel";
-import { OrangePulse, PosPulse } from "./OrangePulse";
+import { FeatureCard } from "./FeatureCard";
+import { AnimatedParticles } from "./AnimatedParticles";
+import { FloatingMetrics } from "./FloatingMetrics";
 import {
+  ANIMATION_ORDER,
   CANVAS,
-  MODULES,
-  POS,
-  PRIMARY_ORDER,
-  SECONDARY_ORDER,
-  TIMELINE,
-  currentPhase,
-  getModule,
-  phaseT,
-  primaryPulseActive,
-  primaryVisible,
-  secondaryPulseActive,
-  secondaryVisible,
+  CENTER,
+  FEATURES,
 } from "./features";
 
-const DESKTOP_MIN = 1280;
+const TABLET_MAX = 1279;
 
-function StoryCanvas({
-  scroll,
-  reduce,
+function EcosystemCanvas({
+  lineProgress,
+  cardVisible,
+  hardwareVisible,
+  platformVisible,
+  posVisible,
+  sequenceComplete,
   hoveredId,
   setHoveredId,
+  pulseId,
+  glowPulse,
+  posGlowing,
+  floating,
+  heroRef,
 }: {
-  scroll: number;
-  reduce: boolean;
+  lineProgress: Record<string, number>;
+  cardVisible: Record<string, boolean>;
+  hardwareVisible: boolean;
+  platformVisible: boolean;
+  posVisible: boolean;
+  sequenceComplete: boolean;
   hoveredId: string | null;
   setHoveredId: (id: string | null) => void;
+  pulseId: string | null;
+  glowPulse: boolean;
+  posGlowing: boolean;
+  floating: boolean;
+  heroRef: RefObject<HTMLDivElement>;
 }) {
   const stageRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
@@ -48,149 +56,68 @@ function StoryCanvas({
       const stage = stageRef.current;
       if (!stage) return;
       const pw = stage.clientWidth;
-      const ph = stage.clientHeight;
-      const fit = Math.min(pw / CANVAS.width, ph / CANVAS.height, 1);
-      setScale(window.innerWidth >= DESKTOP_MIN ? 1 : fit);
+      const fit = Math.min(pw / CANVAS.width, 1);
+      setScale(window.innerWidth <= TABLET_MAX ? fit : 1);
     };
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  const phase = currentPhase(scroll);
-  const posAssemble = reduce ? 1 : phaseT(scroll, TIMELINE.phase1);
-  const showGlow = reduce || scroll > 0.02;
-  const wiringOn = reduce || scroll >= TIMELINE.wiring.start;
-
-  const primaryLines = useMemo(() => {
-    const map: Record<string, number> = {};
-    const t = phaseT(scroll, TIMELINE.wiring);
-    const slot = 1 / (PRIMARY_ORDER.length + SECONDARY_ORDER.length);
-    PRIMARY_ORDER.forEach((id, i) => {
-      map[id] = Math.max(0, Math.min(1, (t - i * slot) / slot));
-    });
-    return map;
-  }, [scroll]);
-
-  const secondaryLines = useMemo(() => {
-    const map: Record<string, number> = {};
-    const t = phaseT(scroll, TIMELINE.wiring);
-    const slot = 1 / (PRIMARY_ORDER.length + SECONDARY_ORDER.length);
-    SECONDARY_ORDER.forEach((id, i) => {
-      const idx = PRIMARY_ORDER.length + i;
-      map[id] = Math.max(0, Math.min(1, (t - idx * slot) / slot));
-    });
-    return map;
-  }, [scroll]);
-
   const anyHover = hoveredId !== null;
-  const primaries = MODULES.filter((m) => m.tier === "primary");
-  const secondaries = MODULES.filter((m) => m.tier === "secondary");
 
   return (
     <div
       ref={stageRef}
-      className="relative flex h-full w-full items-center justify-center overflow-hidden"
+      className="relative mx-auto flex w-full max-w-[1600px] items-center justify-center overflow-visible px-4"
     >
       <div
-        className="relative"
+        className="relative overflow-visible"
         style={{
           width: CANVAS.width,
           height: CANVAS.height,
           transform: scale < 1 ? `scale(${scale})` : undefined,
-          transformOrigin: "center center",
+          transformOrigin: "top center",
         }}
       >
-        {/* Glow — phase 1 */}
-        <div
-          className="absolute z-[10] -translate-x-1/2 -translate-y-1/2"
-          style={{ left: POS.x, top: POS.y }}
-        >
-          <GlowPlatform visible={showGlow} breathing={phase === "complete" || phase === "wiring"} />
-        </div>
-
-        {/* Wiring — phase 4, behind everything */}
-        <div className="absolute inset-0 z-[15]">
+        <div className="absolute inset-0 z-[10]">
           <ConnectionLines
-            primaryProgress={primaryLines}
-            secondaryProgress={secondaryLines}
-            visible={wiringOn}
+            lineProgress={lineProgress}
+            highlightedId={hoveredId}
+            pulseId={pulseId}
+            showParticles={sequenceComplete}
+            glowPulse={glowPulse}
           />
         </div>
 
-        {/* POS — always hero */}
         <div
-          className="absolute z-[40] -translate-x-1/2 -translate-y-1/2"
-          style={{ left: POS.x, top: POS.y }}
+          className="absolute z-[15] -translate-x-1/2 -translate-y-1/2"
+          style={{ left: CENTER.x, top: CENTER.y }}
         >
-          <AnimatedPOS assemble={posAssemble} glowing={anyHover} />
+          <GlowPlatform visible={platformVisible} breathing={sequenceComplete} />
         </div>
 
-        {/* Orange pulses — phase 2 & 3 */}
-        {PRIMARY_ORDER.map((id, i) => {
-          const mod = getModule(id);
-          if (!mod) return null;
-          return (
-            <OrangePulse
-              key={`pulse-p-${id}`}
-              from={POS}
-              to={{ x: mod.x, y: mod.y }}
-              active={!reduce && primaryPulseActive(scroll, i)}
-            />
-          );
-        })}
-        {SECONDARY_ORDER.map((id, i) => {
-          const mod = getModule(id);
-          if (!mod?.parentId) return null;
-          const parent = getModule(mod.parentId);
-          if (!parent) return null;
-          return (
-            <OrangePulse
-              key={`pulse-s-${id}`}
-              from={{ x: parent.x, y: parent.y }}
-              to={{ x: mod.x, y: mod.y }}
-              active={!reduce && secondaryPulseActive(scroll, i)}
-            />
-          );
-        })}
-        {PRIMARY_ORDER.map((_, i) => (
-          <PosPulse
-            key={`pos-pulse-${i}`}
-            x={POS.x}
-            y={POS.y}
-            active={!reduce && primaryPulseActive(scroll, i)}
-          />
-        ))}
+        <div
+          ref={heroRef}
+          className="absolute z-[20] -translate-x-1/2 -translate-y-1/2 opacity-0"
+          style={{ left: CENTER.x, top: CENTER.y, width: 620, height: 620, perspective: 900 }}
+        >
+          <HardwareGroup visible={hardwareVisible} />
+          <AnimatedPOS visible={posVisible} glowing={posGlowing} floating={floating} />
+        </div>
 
-        {/* Primary labels — phase 2 */}
-        {primaries.map((mod, i) => (
+        {FEATURES.map((feat) => (
           <div
-            key={mod.id}
-            className="absolute z-[50] -translate-x-1/2 -translate-y-1/2"
-            style={{ left: mod.x, top: mod.y }}
+            key={feat.id}
+            className="absolute z-[30] -translate-x-1/2 -translate-y-1/2"
+            style={{ left: feat.x, top: feat.y }}
           >
-            <ModuleLabel
-              module={mod}
-              visible={reduce || primaryVisible(scroll, i)}
-              highlighted={hoveredId === mod.id}
-              dimmed={anyHover && hoveredId !== mod.id}
-              onHover={setHoveredId}
-            />
-          </div>
-        ))}
-
-        {/* Secondary labels — phase 3 */}
-        {secondaries.map((mod, i) => (
-          <div
-            key={mod.id}
-            className="absolute z-[50] -translate-x-1/2 -translate-y-1/2"
-            style={{ left: mod.x, top: mod.y }}
-          >
-            <ModuleLabel
-              module={mod}
-              visible={reduce || secondaryVisible(scroll, i)}
-              highlighted={hoveredId === mod.id}
-              dimmed={anyHover && hoveredId !== mod.id}
+            <FeatureCard
+              feature={feat}
+              visible={!!cardVisible[feat.id]}
+              dimmed={anyHover && hoveredId !== feat.id}
+              highlighted={hoveredId === feat.id}
+              floating={sequenceComplete}
               onHover={setHoveredId}
             />
           </div>
@@ -202,149 +129,221 @@ function StoryCanvas({
 
 export default function EcosystemSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const posRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
+  const hasAnimated = useRef(false);
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
-
-  const [scroll, setScroll] = useState(reduce ? 1 : 0);
+  const [lineProgress, setLineProgress] = useState<Record<string, number>>({});
+  const [cardVisible, setCardVisible] = useState<Record<string, boolean>>({});
+  const [posVisible, setPosVisible] = useState(false);
+  const [hardwareVisible, setHardwareVisible] = useState(false);
+  const [platformVisible, setPlatformVisible] = useState(false);
+  const [sequenceComplete, setSequenceComplete] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [pulseId, setPulseId] = useState<string | null>(null);
+  const [glowPulse, setGlowPulse] = useState(false);
+  const [posGlowing, setPosGlowing] = useState(false);
 
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
-    if (!reduce) setScroll(v);
-  });
+  const { ref: inViewRef, inView } = useInView({ threshold: 0.4, triggerOnce: true });
 
-  const headerOpacity = reduce ? 1 : Math.min(1, scroll / 0.06);
-  const phase = currentPhase(scroll);
-  const activeDot =
-    phase === "complete" || phase === "wiring"
-      ? "wiring"
-      : phase === "expansion"
-        ? "expansion"
-        : phase === "primary"
-          ? "primary"
-          : "pos";
+  const setRefs = useCallback(
+    (node: HTMLElement | null) => {
+      (sectionRef as React.MutableRefObject<HTMLElement | null>).current = node;
+      inViewRef(node);
+    },
+    [inViewRef]
+  );
 
-  const scrollTo = useCallback((target: number) => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const top = el.getBoundingClientRect().top + window.scrollY;
-    const scrollable = el.offsetHeight - window.innerHeight;
-    window.scrollTo({ top: top + target * scrollable, behavior: "smooth" });
-  }, []);
+  useEffect(() => {
+    if (!inView || hasAnimated.current) return;
+
+    if (reduce) {
+      hasAnimated.current = true;
+      setPosVisible(true);
+      setHardwareVisible(true);
+      setPlatformVisible(true);
+      const lines: Record<string, number> = {};
+      const cards: Record<string, boolean> = {};
+      ANIMATION_ORDER.forEach((id) => {
+        lines[id] = 1;
+        cards[id] = true;
+      });
+      setLineProgress(lines);
+      setCardVisible(cards);
+      setSequenceComplete(true);
+      return;
+    }
+
+    hasAnimated.current = true;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ onComplete: () => setSequenceComplete(true) });
+
+      tl.fromTo(
+        headerRef.current,
+        { opacity: 0, y: 80 },
+        { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" },
+        0
+      );
+
+      tl.to({}, { duration: 0.2 });
+
+      tl.call(() => {
+        setPosVisible(true);
+        setHardwareVisible(true);
+      });
+      tl.fromTo(
+        posRef.current,
+        { opacity: 0, scale: 0.75, rotateX: 10 },
+        { opacity: 1, scale: 1, rotateX: 0, duration: 0.8, ease: "back.out(1.2)" },
+        "<"
+      );
+
+      tl.call(() => setPlatformVisible(true));
+      tl.fromTo(
+        {},
+        {},
+        { duration: 0.45 }
+      );
+
+      ANIMATION_ORDER.forEach((id) => {
+        const lineObj = { p: 0 };
+        tl.to(lineObj, {
+          p: 1,
+          duration: 0.42,
+          ease: "power2.inOut",
+          onUpdate: () => {
+            setLineProgress((prev) => ({ ...prev, [id]: lineObj.p }));
+          },
+          onComplete: () => {
+            setCardVisible((prev) => ({ ...prev, [id]: true }));
+          },
+        });
+      });
+
+      tl.call(() => setGlowPulse(true));
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [inView, reduce]);
+
+  useEffect(() => {
+    if (!sequenceComplete || reduce) return;
+    const interval = setInterval(() => {
+      const idx = Math.floor(Math.random() * ANIMATION_ORDER.length);
+      setGlowPulse(true);
+      setPulseId(ANIMATION_ORDER[idx]);
+      setTimeout(() => {
+        setPulseId(null);
+        setGlowPulse(false);
+      }, 1200);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [sequenceComplete, reduce]);
+
+  useEffect(() => {
+    if (hoveredId) {
+      setPosGlowing(true);
+      setPulseId(hoveredId);
+    } else {
+      setPosGlowing(false);
+      setPulseId(null);
+    }
+  }, [hoveredId]);
 
   return (
     <section
-      ref={sectionRef}
+      ref={setRefs}
       id="ecosystem"
-      className="relative bg-paper"
-      style={{ height: "220vh" }}
+      className="relative min-h-screen overflow-visible bg-paper py-16 md:py-[100px] lg:py-[120px]"
       aria-labelledby="ecosystem-heading"
     >
-      {/* Desktop / tablet cinematic story */}
-      <div className="sticky top-0 hidden h-screen flex-col overflow-hidden md:flex">
-        <SectionBackground />
+      <SectionBackground />
+      <AnimatedParticles active={sequenceComplete} />
 
-        <motion.header
-          className="relative z-[60] mx-auto max-w-[700px] shrink-0 px-6 pt-10 text-center"
-          style={{ opacity: headerOpacity }}
+      <div
+        ref={headerRef}
+        className="relative z-10 mx-auto max-w-[720px] px-6 text-center opacity-0"
+      >
+        <span className="inline-flex items-center rounded-full border border-hairline/80 bg-paper px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-ember shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+          All-in-One Restaurant Operating System
+        </span>
+        <h2
+          id="ecosystem-heading"
+          className="mt-5 font-sf-pro-display text-[36px] font-semibold leading-[1.08] tracking-[-0.2px] text-[#111111] md:text-[48px] lg:text-[56px]"
         >
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-ember">
-            All-in-One Restaurant Operating System
-          </p>
-          <h2
-            id="ecosystem-heading"
-            className="mt-3 font-sf-pro-display text-[32px] font-semibold leading-[1.08] tracking-[-0.2px] text-primary-ink md:text-[44px]"
+          The{" "}
+          <span
+            className="bg-clip-text text-transparent"
+            style={{
+              backgroundImage:
+                "linear-gradient(135deg, #b64400 0%, #ff6e14 45%, #d4540a 100%)",
+            }}
           >
-            The{" "}
-            <span
-              className="bg-clip-text text-transparent"
-              style={{
-                backgroundImage:
-                  "linear-gradient(135deg, #b64400 0%, #ff6e14 45%, #d4540a 100%)",
-              }}
-            >
-              Chefgaa
-            </span>{" "}
-            Ecosystem
-          </h2>
-          <p className="mt-3 text-[16px] leading-[1.5] text-mid-gray">
-            Everything your restaurant needs. Powered by one intelligent platform.
-          </p>
-        </motion.header>
+            Chefgaa
+          </span>{" "}
+          Ecosystem
+        </h2>
+        <p className="mt-5 text-[17px] leading-[1.5] text-mid-gray md:text-[19px]">
+          Everything your restaurant needs.
+          <br />
+          Connected beautifully.
+          <br />
+          Powered by one intelligent platform.
+        </p>
+      </div>
 
-        <div className="relative min-h-0 flex-1">
-          <StoryCanvas
-            scroll={scroll}
-            reduce={!!reduce}
-            hoveredId={hoveredId}
-            setHoveredId={setHoveredId}
-          />
-        </div>
-
-        {/* Phase dots */}
-        <nav
-          className="absolute right-6 top-1/2 z-[60] hidden -translate-y-1/2 md:block"
-          aria-label="Story progress"
-        >
-          <ul className="flex flex-col gap-3">
-            {(
-              [
-                { id: "pos", label: "POS", at: 0 },
-                { id: "primary", label: "Core modules", at: TIMELINE.primary.start },
-                { id: "expansion", label: "Expansion", at: TIMELINE.expansion.start },
-                { id: "wiring", label: "Connected", at: TIMELINE.wiring.start },
-              ] as const
-            ).map((dot) => (
-              <li key={dot.id}>
-                <button
-                  type="button"
-                  onClick={() => scrollTo(dot.at)}
-                  aria-label={dot.label}
-                  className="flex h-7 w-7 items-center justify-center"
-                >
-                  <span
-                    className={`rounded-full transition-all ${
-                      activeDot === dot.id
-                        ? "h-2 w-2 bg-ember shadow-[0_0_8px_rgba(255,110,20,0.5)]"
-                        : "h-1.5 w-1.5 bg-hairline"
-                    }`}
-                  />
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
+      {/* Desktop / tablet */}
+      <div className="relative z-10 mt-6 hidden md:block md:mt-10">
+        <EcosystemCanvas
+          heroRef={posRef}
+          lineProgress={lineProgress}
+          cardVisible={cardVisible}
+          hardwareVisible={hardwareVisible}
+          platformVisible={platformVisible}
+          posVisible={posVisible}
+          sequenceComplete={sequenceComplete}
+          hoveredId={hoveredId}
+          setHoveredId={setHoveredId}
+          pulseId={pulseId}
+          glowPulse={glowPulse}
+          posGlowing={posGlowing}
+          floating={sequenceComplete}
+        />
       </div>
 
       {/* Mobile timeline */}
-      <div className="px-6 py-16 md:hidden">
-        <SectionBackground />
-        <header className="relative z-10 mx-auto max-w-[700px] text-center">
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-ember">
-            All-in-One Restaurant Operating System
-          </p>
-          <h2 className="mt-4 font-sf-pro-display text-[32px] font-semibold text-primary-ink">
-            The Chefgaa Ecosystem
-          </h2>
-        </header>
-
-        <div className="relative z-10 mx-auto mt-10 flex max-w-[280px] flex-col items-center gap-10">
-          <div className="flex flex-col items-center">
-            <GlowPlatform visible breathing />
-            <AnimatedPOS assemble={1} />
+      <div className="relative z-10 mt-10 flex flex-col items-center gap-8 px-6 md:hidden">
+        <div className="flex flex-col items-center">
+          <GlowPlatform visible={posVisible || !!reduce} breathing={sequenceComplete} />
+          <div className="relative scale-[0.45]" style={{ width: 620, height: 620 }}>
+            <HardwareGroup visible={hardwareVisible || !!reduce} />
+            <AnimatedPOS visible={posVisible || !!reduce} floating={sequenceComplete} />
           </div>
-
-          {MODULES.filter((m) => m.tier === "primary").map((mod) => (
-            <ModuleLabel key={mod.id} module={mod} visible highlighted={hoveredId === mod.id} onHover={setHoveredId} />
-          ))}
-
-          {MODULES.filter((m) => m.tier === "secondary").map((mod) => (
-            <ModuleLabel key={mod.id} module={mod} visible highlighted={hoveredId === mod.id} onHover={setHoveredId} />
-          ))}
         </div>
+        {FEATURES.map((feat, i) => (
+          <div
+            key={feat.id}
+            className="w-full max-w-[320px] opacity-0"
+            style={{
+              opacity: cardVisible[feat.id] || reduce ? 1 : 0,
+              transition: `opacity 0.5s ease ${i * 0.04}s`,
+            }}
+          >
+            <FeatureCard
+              feature={feat}
+              visible={!!cardVisible[feat.id] || !!reduce}
+              dimmed={false}
+              highlighted={hoveredId === feat.id}
+              onHover={setHoveredId}
+            />
+          </div>
+        ))}
+      </div>
+
+      <div className="relative z-10 px-6">
+        <FloatingMetrics active={sequenceComplete || !!reduce} />
       </div>
     </section>
   );

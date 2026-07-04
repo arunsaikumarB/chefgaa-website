@@ -1,19 +1,29 @@
+import { useEffect, useRef } from "react";
 import { useReducedMotion } from "framer-motion";
-import { CANVAS, POS, PRIMARY_ORDER, SECONDARY_ORDER, buildCurvePath, getModule } from "./features";
+import {
+  ANIMATION_ORDER,
+  CANVAS,
+  CENTER,
+  buildCurvePath,
+  getFeature,
+} from "./features";
 
 type ConnectionLinesProps = {
-  primaryProgress: Record<string, number>;
-  secondaryProgress: Record<string, number>;
-  visible: boolean;
+  lineProgress: Record<string, number>;
+  highlightedId: string | null;
+  pulseId: string | null;
+  showParticles: boolean;
+  glowPulse: boolean;
 };
 
 export function ConnectionLines({
-  primaryProgress,
-  secondaryProgress,
-  visible,
+  lineProgress,
+  highlightedId,
+  pulseId,
+  showParticles,
+  glowPulse,
 }: ConnectionLinesProps) {
   const reduce = useReducedMotion();
-  if (!visible || reduce) return null;
 
   return (
     <svg
@@ -23,59 +33,97 @@ export function ConnectionLines({
       viewBox={`0 0 ${CANVAS.width} ${CANVAS.height}`}
       aria-hidden="true"
     >
-      {PRIMARY_ORDER.map((id) => {
-        const mod = getModule(id);
-        if (!mod) return null;
-        const pathD = buildCurvePath(POS.x, POS.y, mod.x, mod.y);
-        const progress = primaryProgress[id] ?? 0;
-        return (
-          <WiringPath key={`p-${id}`} pathD={pathD} progress={progress} />
-        );
-      })}
+      <defs>
+        <filter id="eco-line-glow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="2" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
 
-      {SECONDARY_ORDER.map((id) => {
-        const mod = getModule(id);
-        if (!mod?.parentId) return null;
-        const parent = getModule(mod.parentId);
-        if (!parent) return null;
-        const pathD = buildCurvePath(parent.x, parent.y, mod.x, mod.y, 0.1);
-        const progress = secondaryProgress[id] ?? 0;
+      {ANIMATION_ORDER.map((id) => {
+        const feat = getFeature(id);
+        if (!feat) return null;
+        const pathD = buildCurvePath(CENTER.x, CENTER.y, feat.x, feat.y);
+        const progress = lineProgress[id] ?? 0;
+        const lit = highlightedId === id || pulseId === id || glowPulse;
         return (
-          <WiringPath key={`s-${id}`} pathD={pathD} progress={progress} subtle />
+          <g key={id} data-ecosystem-line={id}>
+            <path
+              d={pathD}
+              fill="none"
+              stroke="rgba(0,0,0,0.04)"
+              strokeWidth={1.5}
+              strokeLinecap="round"
+            />
+            <path
+              d={pathD}
+              fill="none"
+              stroke={feat.accent}
+              strokeOpacity={lit ? 0.55 : 0.28}
+              strokeWidth={lit ? 2.5 : 1.5}
+              strokeLinecap="round"
+              pathLength={1}
+              strokeDasharray={1}
+              strokeDashoffset={1 - progress}
+              filter={lit ? "url(#eco-line-glow)" : undefined}
+              style={{ willChange: "stroke-dashoffset" }}
+            />
+            {showParticles && progress >= 1 && !reduce && (
+              <ParticleOnPath pathD={pathD} id={id} color={feat.accent} />
+            )}
+          </g>
         );
       })}
     </svg>
   );
 }
 
-function WiringPath({
+function ParticleOnPath({
   pathD,
-  progress,
-  subtle = false,
+  id,
+  color,
 }: {
   pathD: string;
-  progress: number;
-  subtle?: boolean;
+  id: string;
+  color: string;
 }) {
+  const circleRef = useRef<SVGCircleElement>(null);
+  const pathRef = useRef<SVGPathElement>(null);
+  const rafRef = useRef(0);
+
+  useEffect(() => {
+    const pathEl = pathRef.current;
+    const circleEl = circleRef.current;
+    if (!pathEl || !circleEl) return;
+
+    let start: number | null = null;
+    const duration = 3200 + (id.charCodeAt(0) % 5) * 600;
+
+    const tick = (ts: number) => {
+      if (start === null) start = ts;
+      const t = ((ts - start) % duration) / duration;
+      const point = pathEl.getPointAtLength(t * pathEl.getTotalLength());
+      circleEl.setAttribute("cx", String(point.x));
+      circleEl.setAttribute("cy", String(point.y));
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [pathD, id]);
+
   return (
     <g>
-      <path
-        d={pathD}
-        fill="none"
-        stroke={subtle ? "rgba(200,200,210,0.35)" : "rgba(200,200,210,0.45)"}
-        strokeWidth={1}
-        strokeLinecap="round"
-      />
-      <path
-        d={pathD}
-        fill="none"
-        stroke="rgba(255,110,20,0.22)"
-        strokeWidth={subtle ? 0.75 : 1}
-        strokeLinecap="round"
-        pathLength={1}
-        strokeDasharray={1}
-        strokeDashoffset={1 - progress}
-        style={{ willChange: "stroke-dashoffset" }}
+      <path ref={pathRef} d={pathD} fill="none" stroke="none" />
+      <circle
+        ref={circleRef}
+        r="3"
+        fill={color}
+        opacity="0.65"
+        style={{ filter: `drop-shadow(0 0 3px ${color})` }}
       />
     </g>
   );

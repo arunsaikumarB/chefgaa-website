@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  Brain,
   Megaphone,
   ChefHat,
   Package,
@@ -14,65 +15,196 @@ import {
   CreditCard,
 } from "lucide-react";
 
-export type StoryModule = {
+export type IconAnimation =
+  | "brain-pulse"
+  | "megaphone-wiggle"
+  | "cube-rotate"
+  | "globe-rotate"
+  | "calendar-flip"
+  | "steam"
+  | "users-pulse"
+  | "badge-shine"
+  | "phone-float"
+  | "card-flip"
+  | "bars-animate"
+  | "cart-slide"
+  | "default";
+
+export type EcosystemFeature = {
   id: string;
   title: string;
-  line: string;
+  description: string;
   icon: LucideIcon;
+  iconAnimation: IconAnimation;
+  accent: string;
   x: number;
   y: number;
-  tier: "primary" | "secondary";
-  parentId?: string;
 };
 
-export const CANVAS = { width: 1600, height: 1000 } as const;
-export const POS = { x: 800, y: 500 } as const;
+/** Composition canvas — fixed manual layout matching reference */
+export const CANVAS = { width: 1600, height: 1280 } as const;
+export const CENTER = { x: 800, y: 560 } as const;
 
-/** Fixed label positions — manually composed, no auto-layout */
-export const MODULES: StoryModule[] = [
-  { id: "kitchen", title: "Kitchen", line: "Tickets routed in real time.", icon: ChefHat, x: 800, y: 160, tier: "primary" },
-  { id: "crm", title: "CRM", line: "Every guest, remembered.", icon: Users, x: 460, y: 500, tier: "primary" },
-  { id: "online-ordering", title: "Online Ordering", line: "Orders flow straight in.", icon: ShoppingCart, x: 1140, y: 500, tier: "primary" },
-  { id: "website", title: "Website", line: "Your brand, online.", icon: Globe, x: 560, y: 780, tier: "primary" },
-  { id: "payments", title: "Payments", line: "Tap, swipe, done.", icon: CreditCard, x: 1040, y: 780, tier: "primary" },
-  { id: "analytics", title: "Analytics", line: "Insights as they happen.", icon: BarChart3, x: 800, y: 780, tier: "primary" },
-
-  { id: "inventory", title: "Inventory", line: "Stock tracked automatically.", icon: Package, x: 640, y: 280, tier: "secondary", parentId: "kitchen" },
-  { id: "marketing", title: "Marketing", line: "Campaigns that convert.", icon: Megaphone, x: 280, y: 620, tier: "secondary", parentId: "crm" },
-  { id: "loyalty", title: "Loyalty", line: "Reward your regulars.", icon: Award, x: 280, y: 780, tier: "secondary", parentId: "crm" },
-  { id: "reservations", title: "Reservations", line: "Tables booked seamlessly.", icon: Calendar, x: 1320, y: 620, tier: "secondary", parentId: "online-ordering" },
-  { id: "mobile-app", title: "Mobile App", line: "Your restaurant in every pocket.", icon: Smartphone, x: 1320, y: 300, tier: "secondary", parentId: "online-ordering" },
-  { id: "catering", title: "Catering", line: "Large orders, handled.", icon: Truck, x: 920, y: 920, tier: "secondary", parentId: "analytics" },
+export const FEATURES: EcosystemFeature[] = [
+  {
+    id: "ai-insights",
+    title: "AI Insights",
+    description: "Smart recommendations that boost revenue and reduce waste.",
+    icon: Brain,
+    iconAnimation: "brain-pulse",
+    accent: "#8b5cf6",
+    x: 800,
+    y: 110,
+  },
+  {
+    id: "marketing",
+    title: "Marketing",
+    description: "Campaigns and offers that bring guests back again and again.",
+    icon: Megaphone,
+    iconAnimation: "megaphone-wiggle",
+    accent: "#ff6e14",
+    x: 280,
+    y: 210,
+  },
+  {
+    id: "kitchen",
+    title: "Kitchen Display",
+    description: "Route tickets to stations in real time with zero confusion.",
+    icon: ChefHat,
+    iconAnimation: "steam",
+    accent: "#ff6e14",
+    x: 1320,
+    y: 210,
+  },
+  {
+    id: "inventory",
+    title: "Inventory",
+    description: "Track stock levels and cut waste before it costs you.",
+    icon: Package,
+    iconAnimation: "cube-rotate",
+    accent: "#22c55e",
+    x: 200,
+    y: 430,
+  },
+  {
+    id: "online-ordering",
+    title: "Online Ordering",
+    description: "Commission-free orders flowing straight into your kitchen.",
+    icon: ShoppingCart,
+    iconAnimation: "cart-slide",
+    accent: "#0071e3",
+    x: 1400,
+    y: 430,
+  },
+  {
+    id: "crm",
+    title: "CRM",
+    description: "Know every guest, their preferences, and visit history.",
+    icon: Users,
+    iconAnimation: "users-pulse",
+    accent: "#8b5cf6",
+    x: 300,
+    y: 690,
+  },
+  {
+    id: "loyalty",
+    title: "Loyalty",
+    description: "Reward regulars with points, tiers, and exclusive perks.",
+    icon: Award,
+    iconAnimation: "badge-shine",
+    accent: "#ec4899",
+    x: 500,
+    y: 790,
+  },
+  {
+    id: "website",
+    title: "Website",
+    description: "A beautiful branded site with ordering built right in.",
+    icon: Globe,
+    iconAnimation: "globe-rotate",
+    accent: "#0071e3",
+    x: 800,
+    y: 730,
+  },
+  {
+    id: "reservations",
+    title: "Reservations",
+    description: "Smart table booking with no-show protection built in.",
+    icon: Calendar,
+    iconAnimation: "calendar-flip",
+    accent: "#ef4444",
+    x: 1100,
+    y: 790,
+  },
+  {
+    id: "catering",
+    title: "Catering",
+    description: "Quote, schedule, and deliver large-format orders easily.",
+    icon: Truck,
+    iconAnimation: "default",
+    accent: "#ec4899",
+    x: 1300,
+    y: 690,
+  },
+  {
+    id: "analytics",
+    title: "Analytics",
+    description: "Sales, labor, and performance insights the moment they happen.",
+    icon: BarChart3,
+    iconAnimation: "bars-animate",
+    accent: "#8b5cf6",
+    x: 800,
+    y: 920,
+  },
+  {
+    id: "mobile-app",
+    title: "Mobile App",
+    description: "Your restaurant in every guest's pocket, fully branded.",
+    icon: Smartphone,
+    iconAnimation: "phone-float",
+    accent: "#0071e3",
+    x: 180,
+    y: 920,
+  },
+  {
+    id: "payments",
+    title: "Payments",
+    description: "Cards, wallets, and contactless — all in one seamless flow.",
+    icon: CreditCard,
+    iconAnimation: "card-flip",
+    accent: "#eab308",
+    x: 1420,
+    y: 920,
+  },
 ];
 
-export const PRIMARY_ORDER = [
+/** Clockwise wiring + card reveal order */
+export const ANIMATION_ORDER = [
+  "ai-insights",
   "kitchen",
-  "crm",
   "online-ordering",
-  "website",
+  "reservations",
   "payments",
   "analytics",
-] as const;
-
-/** Phase 3 reveal sequence — parent expands, then children */
-export const EXPANSION_ORDER = [
-  { parent: "kitchen", children: ["inventory"] },
-  { parent: "crm", children: ["marketing", "loyalty"] },
-  { parent: "online-ordering", children: ["reservations", "mobile-app"] },
-  { parent: "analytics", children: ["catering"] },
-] as const;
-
-export const SECONDARY_ORDER = [
+  "website",
+  "crm",
   "inventory",
   "marketing",
   "loyalty",
-  "reservations",
   "mobile-app",
   "catering",
 ] as const;
 
-export function getModule(id: string): StoryModule | undefined {
-  return MODULES.find((m) => m.id === id);
+export const METRICS = [
+  { value: 20, suffix: "+", label: "Modules", icon: "modules" as const },
+  { value: 100, suffix: "%", label: "Unified Platform", icon: "unified" as const },
+  { value: 0, suffix: "", label: "Synchronization", text: "Real-time", icon: "sync" as const },
+  { value: 0, suffix: "", label: "Integrations", text: "Unlimited", icon: "infinity" as const },
+  { value: 0, suffix: "", label: "Ready", text: "Enterprise", icon: "enterprise" as const },
+] as const;
+
+export function getFeature(id: string): EcosystemFeature | undefined {
+  return FEATURES.find((f) => f.id === id);
 }
 
 export function buildCurvePath(
@@ -80,7 +212,7 @@ export function buildCurvePath(
   sy: number,
   ex: number,
   ey: number,
-  bend = 0.14
+  bend = 0.18
 ): string {
   const mx = (sx + ex) / 2;
   const my = (sy + ey) / 2;
@@ -88,77 +220,7 @@ export function buildCurvePath(
   const dy = ey - sy;
   const c1x = mx - dy * bend;
   const c1y = my + dx * bend;
-  const c2x = mx + dy * bend * 0.35;
-  const c2y = my - dx * bend * 0.35;
+  const c2x = mx + dy * bend * 0.42;
+  const c2y = my - dx * bend * 0.42;
   return `M ${sx} ${sy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${ex} ${ey}`;
-}
-
-/**
- * Scroll timeline across 220vh.
- * Phase 1: POS only · Phase 2: primaries one-by-one · Phase 3: expansions · Phase 4: wiring
- */
-export const TIMELINE = {
-  phase1: { start: 0, end: 0.1 },
-  primary: { start: 0.1, end: 0.52 },
-  expansion: { start: 0.54, end: 0.82 },
-  wiring: { start: 0.84, end: 0.98 },
-} as const;
-
-export function phaseT(scroll: number, phase: { start: number; end: number }): number {
-  return Math.max(0, Math.min(1, (scroll - phase.start) / (phase.end - phase.start)));
-}
-
-/** Which primary index is currently revealing (0–5), -1 if before/after */
-export function activePrimaryIndex(scroll: number): number {
-  const t = phaseT(scroll, TIMELINE.primary);
-  if (t <= 0) return -1;
-  if (t >= 1) return PRIMARY_ORDER.length;
-  const slot = 1 / PRIMARY_ORDER.length;
-  return Math.min(PRIMARY_ORDER.length - 1, Math.floor(t / slot));
-}
-
-export function primaryVisible(scroll: number, index: number): boolean {
-  const t = phaseT(scroll, TIMELINE.primary);
-  const slot = 1 / PRIMARY_ORDER.length;
-  const threshold = index * slot + slot * 0.55;
-  return t >= threshold;
-}
-
-export function primaryPulseActive(scroll: number, index: number): boolean {
-  const t = phaseT(scroll, TIMELINE.primary);
-  const slot = 1 / PRIMARY_ORDER.length;
-  const start = index * slot;
-  const end = index * slot + slot * 0.5;
-  return t >= start && t < end;
-}
-
-/** Flat secondary index for expansion timeline */
-export function secondaryVisible(scroll: number, secondaryIndex: number): boolean {
-  const t = phaseT(scroll, TIMELINE.expansion);
-  const slot = 1 / SECONDARY_ORDER.length;
-  const threshold = secondaryIndex * slot + slot * 0.6;
-  return t >= threshold;
-}
-
-export function secondaryPulseActive(scroll: number, secondaryIndex: number): boolean {
-  const t = phaseT(scroll, TIMELINE.expansion);
-  const slot = 1 / SECONDARY_ORDER.length;
-  const start = secondaryIndex * slot;
-  const end = secondaryIndex * slot + slot * 0.45;
-  return t >= start && t < end;
-}
-
-export function wiringProgress(scroll: number, lineIndex: number, total: number): number {
-  const t = phaseT(scroll, TIMELINE.wiring);
-  const slot = 1 / total;
-  const start = lineIndex * slot;
-  return Math.max(0, Math.min(1, (t - start) / slot));
-}
-
-export function currentPhase(scroll: number): "pos" | "primary" | "expansion" | "wiring" | "complete" {
-  if (scroll < TIMELINE.phase1.end) return "pos";
-  if (scroll < TIMELINE.primary.end) return "primary";
-  if (scroll < TIMELINE.expansion.end) return "expansion";
-  if (scroll < TIMELINE.wiring.end) return "wiring";
-  return "complete";
 }
