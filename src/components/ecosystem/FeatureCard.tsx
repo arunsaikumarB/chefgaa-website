@@ -8,6 +8,7 @@ type FeatureCardProps = {
   highlighted: boolean;
   dimmed: boolean;
   onHover: (id: string | null) => void;
+  align?: "left" | "right" | "center";
 };
 
 function HoverIconAnimation({
@@ -22,7 +23,7 @@ function HoverIconAnimation({
   const reduce = useReducedMotion();
   if (!active || reduce) return <>{children}</>;
 
-  const anim: Record<string, unknown> = {
+  const variants: Record<IconAnimation, object> = {
     "brain-pulse": { scale: [1, 1.1, 1] },
     "megaphone-wiggle": { rotate: [-5, 5, 0] },
     "cube-rotate": { rotate: [0, 12, 0] },
@@ -35,14 +36,13 @@ function HoverIconAnimation({
     "card-flip": { rotateY: [0, 12, 0] },
     "bars-animate": { y: [0, -2, 0] },
     "cart-slide": { x: [0, 3, 0] },
-    default: {},
+    default: { scale: 1 },
   };
 
   return (
     <motion.div
-      animate={(anim[animation] ?? { scale: 1 }) as { scale?: number[]; rotate?: number[]; rotateY?: number[]; rotateX?: number[]; y?: number[]; x?: number[] }}
+      animate={variants[animation] as { scale?: number | number[]; rotate?: number[]; rotateY?: number[]; rotateX?: number[]; y?: number[]; x?: number[] }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      style={{ willChange: "transform" }}
     >
       {children}
     </motion.div>
@@ -50,7 +50,7 @@ function HoverIconAnimation({
 }
 
 export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
-  function FeatureCard({ feature, visible, highlighted, dimmed, onHover }, ref) {
+  function FeatureCard({ feature, visible, highlighted, dimmed, onHover, align = "left" }, ref) {
     const Icon = feature.icon;
 
     return (
@@ -60,7 +60,9 @@ export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
         role="article"
         aria-label={feature.title}
         tabIndex={0}
-        className="pointer-events-auto w-[clamp(300px,17.5vw,380px)] min-h-[128px] shrink-0 rounded-[28px] border border-black/[0.05] bg-paper px-7 py-6"
+        className={`pointer-events-auto w-full max-w-[400px] min-w-[320px] min-h-[132px] rounded-[28px] border border-black/[0.05] bg-paper px-7 py-6 ${
+          align === "right" ? "ml-auto" : align === "center" ? "mx-auto" : ""
+        }`}
         style={{
           boxShadow: highlighted
             ? "0 24px 56px rgba(0,0,0,0.11)"
@@ -70,8 +72,8 @@ export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
         initial={false}
         animate={{
           opacity: visible ? (dimmed ? 0.6 : 1) : 0,
-          scale: visible ? (highlighted ? 1.04 : 1) : 0.88,
-          y: visible ? (highlighted ? -10 : 0) : 24,
+          scale: visible ? (highlighted ? 1.04 : 1) : 0.9,
+          y: visible ? (highlighted ? -10 : 0) : 20,
         }}
         transition={{
           opacity: { duration: 0.35 },
@@ -96,9 +98,7 @@ export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
             <h3 className="font-sf-pro-display text-[18px] font-semibold leading-snug text-[#111111]">
               {feature.title}
             </h3>
-            <p className="mt-2 text-[15px] leading-[1.5] text-mid-gray">
-              {feature.description}
-            </p>
+            <p className="mt-2 text-[15px] leading-[1.5] text-mid-gray">{feature.description}</p>
           </div>
         </div>
       </motion.article>

@@ -11,8 +11,9 @@ import { FeatureCard } from "./FeatureCard";
 import { FloatingMetrics } from "./FloatingMetrics";
 import {
   ANIMATION_ORDER,
-  CENTER,
   ECOSYSTEM_FEATURES,
+  featuresByZone,
+  featuresInColumn,
 } from "./features";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -184,10 +185,10 @@ export default function EcosystemSection() {
         </p>
       </div>
 
-      {/* Desktop — full viewport width, percent-positioned cards */}
+      {/* Desktop — 3-column grid fills full width */}
       <div
         ref={canvasRef}
-        className="relative z-10 mx-auto mt-4 hidden w-full min-h-[82vh] md:block lg:mt-6"
+        className="relative z-10 mx-auto mt-2 hidden w-full min-h-[88vh] px-6 md:block lg:px-12 xl:px-16"
       >
         <ConnectionLines
           lineProgress={lineProgress}
@@ -196,34 +197,87 @@ export default function EcosystemSection() {
           showParticles={sequenceComplete}
         />
 
-        <div
-          className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
-          style={{ left: `${CENTER.left}%`, top: `${CENTER.top}%` }}
-          ref={posRef}
-        >
-          <GlowPlatform visible={platformVisible} breathing={sequenceComplete} />
-          <AnimatedPOS
-            assemble={posVisible ? 1 : 0}
-            glowing={posGlowing}
-            floating={floating}
-          />
+        {/* Top — AI */}
+        <div className="absolute left-1/2 top-0 z-30 w-full max-w-[400px] -translate-x-1/2">
+          {featuresByZone("top").map((f) => (
+            <FeatureCard
+              key={f.id}
+              feature={f}
+              visible={!!cardVisible[f.id]}
+              dimmed={anyHovered && hoveredId !== f.id}
+              highlighted={hoveredId === f.id}
+              onHover={setHoveredId}
+              align="center"
+            />
+          ))}
         </div>
 
-        {ECOSYSTEM_FEATURES.map((feature) => (
+        {/* Main row — left | center | right */}
+        <div className="absolute inset-x-6 top-[11%] bottom-[16%] flex items-stretch justify-between gap-6 lg:inset-x-12 xl:inset-x-16">
+          <div className="flex w-[min(400px,22vw)] min-w-[300px] flex-col justify-between gap-5 py-4">
+            {featuresInColumn("left").map((f) => (
+              <FeatureCard
+                key={f.id}
+                feature={f}
+                visible={!!cardVisible[f.id]}
+                dimmed={anyHovered && hoveredId !== f.id}
+                highlighted={hoveredId === f.id}
+                onHover={setHoveredId}
+                align="left"
+              />
+            ))}
+          </div>
+
           <div
-            key={feature.id}
-            className="absolute z-30 -translate-x-1/2 -translate-y-1/2"
-            style={{ left: `${feature.left}%`, top: `${feature.top}%` }}
+            className="relative flex shrink-0 items-center justify-center self-center"
+            ref={posRef}
           >
-            <FeatureCard
-              feature={feature}
-              visible={!!cardVisible[feature.id]}
-              dimmed={anyHovered && hoveredId !== feature.id}
-              highlighted={hoveredId === feature.id}
-              onHover={setHoveredId}
+            <GlowPlatform visible={platformVisible} breathing={sequenceComplete} />
+            <AnimatedPOS
+              assemble={posVisible ? 1 : 0}
+              glowing={posGlowing}
+              floating={floating}
             />
           </div>
-        ))}
+
+          <div className="flex w-[min(400px,22vw)] min-w-[300px] flex-col justify-between gap-5 py-4">
+            {featuresInColumn("right").map((f) => (
+              <FeatureCard
+                key={f.id}
+                feature={f}
+                visible={!!cardVisible[f.id]}
+                dimmed={anyHovered && hoveredId !== f.id}
+                highlighted={hoveredId === f.id}
+                onHover={setHoveredId}
+                align="right"
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom — Website + Analytics */}
+        <div className="absolute bottom-0 left-1/2 z-30 flex w-full max-w-[880px] -translate-x-1/2 justify-center gap-8 lg:gap-12">
+          {featuresByZone("bottom-left").map((f) => (
+            <FeatureCard
+              key={f.id}
+              feature={f}
+              visible={!!cardVisible[f.id]}
+              dimmed={anyHovered && hoveredId !== f.id}
+              highlighted={hoveredId === f.id}
+              onHover={setHoveredId}
+            />
+          ))}
+          {featuresByZone("bottom-right").map((f) => (
+            <FeatureCard
+              key={f.id}
+              feature={f}
+              visible={!!cardVisible[f.id]}
+              dimmed={anyHovered && hoveredId !== f.id}
+              highlighted={hoveredId === f.id}
+              onHover={setHoveredId}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Mobile timeline */}
