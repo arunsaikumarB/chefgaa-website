@@ -2,67 +2,13 @@ import { lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Section } from "../components/Section";
 import { SectionHeading } from "../components/SectionHeading";
-import { FeatureCard } from "../components/FeatureCard";
-import type { PastelTint } from "../components/FeatureCard";
 import { CheckList } from "../components/CheckList";
 import { CTABand } from "../components/CTABand";
 import { Reveal } from "../components/Reveal";
 import { PrimaryButton, ArrowLink } from "../components/Buttons";
-import {
-  PosIcon,
-  OrderIcon,
-  MenuIcon,
-  MegaphoneIcon,
-  AnalyticsIcon,
-  PaymentIcon,
-} from "../components/Icons";
 
 const PosShowcase = lazy(() => import("../components/PosShowcase"));
 const EcosystemSection = lazy(() => import("../components/ecosystem/EcosystemSection"));
-
-const features: {
-  title: string;
-  body: string;
-  icon: React.ReactNode;
-  tint: PastelTint;
-}[] = [
-  {
-    title: "Smart POS System",
-    body: "A fast, intuitive point-of-sale built for the pace of a busy restaurant floor.",
-    icon: <PosIcon />,
-    tint: "sky",
-  },
-  {
-    title: "Online Ordering",
-    body: "Take orders directly from your own site for pickup and delivery — commission-free.",
-    icon: <OrderIcon />,
-    tint: "citrus",
-  },
-  {
-    title: "Menu Management",
-    body: "Update items, prices, and availability in real time across every channel.",
-    icon: <MenuIcon />,
-    tint: "starlight",
-  },
-  {
-    title: "Marketing & Promotions",
-    body: "Launch offers, loyalty rewards, and campaigns that bring guests back.",
-    icon: <MegaphoneIcon />,
-    tint: "blush",
-  },
-  {
-    title: "Real-Time Analytics",
-    body: "See sales, trends, and performance the moment they happen.",
-    icon: <AnalyticsIcon />,
-    tint: "silver",
-  },
-  {
-    title: "Multi-Payment Support",
-    body: "Accept cards, wallets, and contactless payments with a single flow.",
-    icon: <PaymentIcon />,
-    tint: "indigo",
-  },
-];
 
 const posBullets = [
   { title: "Easy-to-Use Interface", body: "Onboard staff in minutes, not weeks." },
@@ -118,27 +64,7 @@ export function Home() {
         </div>
       </section>
 
-      {/* Feature grid */}
-      <Section bg="gray">
-        <SectionHeading
-          title="Everything your restaurant needs, in one place."
-          intro="Six powerful tools working together — so you can spend less time managing software and more time serving guests."
-        />
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((f, i) => (
-            <FeatureCard
-              key={f.title}
-              title={f.title}
-              body={f.body}
-              icon={f.icon}
-              tint={f.tint}
-              delay={(i % 3) * 0.08}
-            />
-          ))}
-        </div>
-      </Section>
-
-      {/* Chefgaa Ecosystem — premium interactive */}
+      {/* Chefgaa Ecosystem — Apple-style horizontal storytelling */}
       <Suspense fallback={null}>
         <EcosystemSection />
       </Suspense>
