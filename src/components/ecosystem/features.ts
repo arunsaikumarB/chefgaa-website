@@ -226,73 +226,24 @@ export function getFeature(id: string): EcosystemFeature | undefined {
   return FEATURES.find((f) => f.id === id);
 }
 
-/** Hero tile + card footprint used for line anchoring */
-export const POS_BOUNDS = { width: 660, height: 372 } as const;
-export const CARD_BOUNDS = { width: 380, height: 150 } as const;
-
-export function getRectEdgePoint(
-  cx: number,
-  cy: number,
-  halfW: number,
-  halfH: number,
-  targetX: number,
-  targetY: number
-): { x: number; y: number } {
-  const dx = targetX - cx;
-  const dy = targetY - cy;
-  if (dx === 0 && dy === 0) return { x: cx, y: cy };
-
-  const angle = Math.atan2(dy, dx);
-  const cos = Math.cos(angle);
-  const sin = Math.sin(angle);
-  const absCos = Math.abs(cos) || 1e-6;
-  const absSin = Math.abs(sin) || 1e-6;
-  const t = Math.min(halfW / absCos, halfH / absSin);
-  return { x: cx + cos * t, y: cy + sin * t };
-}
-
-/** Full connection geometry: edge-anchored cubic Bezier + endpoints */
-export function buildConnection(ex: number, ey: number) {
-  const start = getRectEdgePoint(
-    CENTER.x,
-    CENTER.y,
-    POS_BOUNDS.width / 2,
-    POS_BOUNDS.height / 2,
-    ex,
-    ey
-  );
-  const end = getRectEdgePoint(
-    ex,
-    ey,
-    CARD_BOUNDS.width / 2,
-    CARD_BOUNDS.height / 2,
-    CENTER.x,
-    CENTER.y
-  );
-
-  const sx = start.x;
-  const sy = start.y;
-  const dx = end.x - sx;
-  const dy = end.y - sy;
+export function buildCurvePath(
+  sx: number,
+  sy: number,
+  ex: number,
+  ey: number,
+  bend = 0.22
+): string {
+  const dx = ex - sx;
+  const dy = ey - sy;
   const dist = Math.hypot(dx, dy) || 1;
+  const px = -dy / dist;
+  const py = dx / dist;
+  const bendAmt = dist * bend;
 
-  const outX = ex - CENTER.x;
-  const outY = ey - CENTER.y;
-  const outLen = Math.hypot(outX, outY) || 1;
-  const radialX = outX / outLen;
-  const radialY = outY / outLen;
-  const perpX = -radialY;
-  const perpY = radialX;
+  const c1x = sx + dx * 0.34 + px * bendAmt;
+  const c1y = sy + dy * 0.34 + py * bendAmt;
+  const c2x = sx + dx * 0.66 - px * bendAmt * 0.48;
+  const c2y = sy + dy * 0.66 - py * bendAmt * 0.48;
 
-  const bow = Math.min(dist * 0.28, 140);
-  const c1x = sx + dx * 0.38 + perpX * bow * 0.55 + radialX * bow * 0.15;
-  const c1y = sy + dy * 0.38 + perpY * bow * 0.55 + radialY * bow * 0.15;
-  const c2x = sx + dx * 0.72 + perpX * bow * 0.25;
-  const c2y = sy + dy * 0.72 + perpY * bow * 0.25;
-
-  return {
-    pathD: `M ${sx} ${sy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${end.x} ${end.y}`,
-    start,
-    end,
-  };
+  return `M ${sx} ${sy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${ex} ${ey}`;
 }
