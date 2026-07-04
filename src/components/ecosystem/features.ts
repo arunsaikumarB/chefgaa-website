@@ -243,3 +243,27 @@ export function buildCurvePath(
   const c2y = my - dx * bend * 0.42;
   return `M ${sx} ${sy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${ex} ${ey}`;
 }
+
+/** Curved connector from POS hub to a feature card, inset so arrows sit cleanly */
+export function buildConnectionPath(
+  sx: number,
+  sy: number,
+  ex: number,
+  ey: number,
+  startInset = 118,
+  endInset = 92,
+  bend = 0.18
+): string {
+  const dx = ex - sx;
+  const dy = ey - sy;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  return buildCurvePath(
+    sx + ux * startInset,
+    sy + uy * startInset,
+    ex - ux * endInset,
+    ey - uy * endInset,
+    bend
+  );
+}
