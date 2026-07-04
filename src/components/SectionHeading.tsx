@@ -5,6 +5,7 @@ type SectionHeadingProps = {
   intro?: ReactNode;
   align?: "left" | "center";
   className?: string;
+  titleClassName?: string;
 };
 
 /** Section heading (40–56px, weight 600) + optional 21px intro paragraph. */
@@ -13,12 +14,15 @@ export function SectionHeading({
   intro,
   align = "left",
   className = "",
+  titleClassName = "",
 }: SectionHeadingProps) {
   const alignClass = align === "center" ? "text-center mx-auto" : "text-left";
   const introAlign = align === "center" ? "mx-auto" : "";
   return (
     <div className={`${alignClass} mb-8 max-w-[720px] md:mb-12 ${className}`}>
-      <h2 className="font-sf-pro-display text-[32px] font-semibold leading-[1.1] tracking-[-0.01em] md:text-[40px] lg:text-[56px] lg:leading-[1.07] lg:tracking-[-0.2px]">
+      <h2
+        className={`font-sf-pro-display text-[32px] font-semibold leading-[1.1] tracking-[-0.01em] md:text-[40px] lg:text-[56px] lg:leading-[1.07] lg:tracking-[-0.2px] ${titleClassName}`}
+      >
         {title}
       </h2>
       {intro && (

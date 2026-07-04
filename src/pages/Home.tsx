@@ -92,6 +92,8 @@ export function Home() {
         <SectionHeading
           title="Take Your Restaurant Online"
           intro="Own your online ordering experience — from browsing the menu to the moment it arrives."
+          className="lg:max-w-none"
+          titleClassName="whitespace-normal lg:whitespace-nowrap lg:text-[48px] xl:text-[56px]"
         />
         <CheckList items={orderingBullets} columns={3} />
       </Section>
@@ -122,6 +124,8 @@ export function Home() {
         <SectionHeading
           title="Works with the tools you already use."
           align="center"
+          className="lg:max-w-none"
+          titleClassName="whitespace-normal lg:whitespace-nowrap lg:text-[48px] xl:text-[56px]"
         />
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-6">
           {integrations.map((name, i) => (

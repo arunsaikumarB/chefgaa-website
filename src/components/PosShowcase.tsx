@@ -198,6 +198,7 @@ type Step = {
   label: string;
   heading: string;
   body: string;
+  bodyClassName?: string;
   location: string;
   bg: string;
   Screen: () => ReactNode;
@@ -224,6 +225,7 @@ const STEPS: Step[] = [
     label: "03 — Insights",
     heading: "Know your business in real time",
     body: "Sales, orders, and average ticket, updating live behind the bar as you serve.",
+    bodyClassName: "text-balance",
     location: "Bar & bistro",
     bg: "/scenes/scene-bar.jpg",
     Screen: AnalyticsScreen,
@@ -232,6 +234,7 @@ const STEPS: Step[] = [
     label: "04 — Online",
     heading: "Online orders flow straight in",
     body: "Chefgaa, UberEats, and DoorDash orders all land in one clean queue at the pickup counter.",
+    bodyClassName: "text-balance",
     location: "Takeaway & pickup",
     bg: "/scenes/scene-takeaway.jpg",
     Screen: OrdersScreen,
@@ -245,7 +248,9 @@ function Caption({ step }: { step: Step }) {
       <h3 className="mt-2 font-sf-pro-display text-[28px] font-semibold leading-tight tracking-[-0.01em] text-primary-ink md:text-[32px] lg:text-[40px]">
         {step.heading}
       </h3>
-      <p className="mt-3 text-[17px] leading-[1.47] text-mid-gray">{step.body}</p>
+      <p className={`mt-3 text-[17px] leading-[1.47] text-mid-gray ${step.bodyClassName ?? ""}`}>
+        {step.body}
+      </p>
       <p className="mt-4 flex items-center gap-2 text-[13px] font-medium text-primary-ink">
         <span className="h-1.5 w-1.5 rounded-full bg-electric-blue" />
         {step.location}
