@@ -214,7 +214,7 @@ export default function EcosystemSection() {
       <AnimatedParticles active={active} />
 
       <div
-        className="relative z-10 mx-auto max-w-[720px] px-6 text-center"
+        className="relative z-10 mx-auto max-w-[920px] px-6 text-center"
         style={{
           opacity: headerP,
           transform: `translateY(${(1 - headerP) * 60}px)`,
@@ -240,12 +240,8 @@ export default function EcosystemSection() {
           </span>{" "}
           Ecosystem
         </h2>
-        <p className="mt-5 text-[17px] leading-[1.5] text-mid-gray md:text-[19px]">
-          Everything your restaurant needs.
-          <br />
-          Connected beautifully.
-          <br />
-          Powered by one intelligent platform.
+        <p className="mt-5 text-[16px] leading-[1.5] text-mid-gray md:whitespace-nowrap md:text-[18px]">
+          Everything your restaurant needs. Connected beautifully. Powered by one intelligent platform.
         </p>
       </div>
 
