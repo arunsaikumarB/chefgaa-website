@@ -216,8 +216,9 @@ export const PARENT_MAP: Record<string, string> = Object.fromEntries(
 );
 
 export const NAV_DOTS = [
-  { id: "core", label: "Core ecosystem", progress: 0 },
-  { id: "expanded", label: "Expanded ecosystem", progress: 0.65 },
+  { id: "core", label: "POS and core products", progress: 0 },
+  { id: "expanded", label: "Full ecosystem", progress: 0.42 },
+  { id: "wired", label: "Connected ecosystem", progress: 0.64 },
 ] as const;
 
 export function buildCurvePath(
@@ -242,12 +243,15 @@ export function getModule(id: string): EcosystemModule | undefined {
   return ALL_MODULES.find((m) => m.id === id);
 }
 
+/** Cards appear first; wiring draws only after every card has animated in */
 export const SCROLL_PHASES = {
-  header: { start: 0, end: 0.07 },
-  pos: { start: 0.07, end: 0.22 },
-  platform: { start: 0.2, end: 0.28 },
-  primary: { start: 0.28, end: 0.55 },
-  secondary: { start: 0.58, end: 0.95 },
+  header: { start: 0, end: 0.05 },
+  pos: { start: 0.05, end: 0.15 },
+  platform: { start: 0.12, end: 0.18 },
+  primaryCards: { start: 0.18, end: 0.38 },
+  secondaryCards: { start: 0.42, end: 0.58 },
+  primaryLines: { start: 0.64, end: 0.8 },
+  secondaryLines: { start: 0.8, end: 0.95 },
 } as const;
 
 export function phaseProgress(

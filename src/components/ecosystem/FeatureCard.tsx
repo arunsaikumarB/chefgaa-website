@@ -1,6 +1,7 @@
 import { forwardRef, type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import type { EcosystemModule, IconAnimation } from "./features";
+import { CARD_SIZES } from "./layout";
 import type { LayoutPoint } from "./layout";
 
 type EcosystemFeatureCardProps = {
@@ -99,13 +100,22 @@ export const EcosystemFeatureCard = forwardRef<HTMLDivElement, EcosystemFeatureC
   ) {
     const Icon = module.icon;
     const isPrimary = module.tier === "primary";
+    const dims = isPrimary ? CARD_SIZES.primary : CARD_SIZES.secondary;
 
     const sizeStyle =
       layout === "stack"
-        ? { width: "100%", maxWidth: 220, height: "auto", minHeight: 110 }
-        : isPrimary
-          ? { width: 220, height: 110, maxWidth: 220, maxHeight: 110 }
-          : { width: 180, height: 95, maxWidth: 180, maxHeight: 95 };
+        ? {
+            width: "100%",
+            maxWidth: dims.width,
+            height: dims.height,
+            minHeight: dims.height,
+          }
+        : {
+            width: dims.width,
+            height: dims.height,
+            minWidth: dims.width,
+            minHeight: dims.height,
+          };
 
     const emergeX = emergeFrom ? emergeFrom.x - module.position.x : 0;
     const emergeY = emergeFrom ? emergeFrom.y - module.position.y : 0;
@@ -117,26 +127,27 @@ export const EcosystemFeatureCard = forwardRef<HTMLDivElement, EcosystemFeatureC
         role="article"
         aria-label={module.title}
         tabIndex={0}
-        className={`flex shrink-0 flex-col justify-center overflow-hidden rounded-[24px] border border-hairline/50 bg-paper/95 px-[18px] py-3 backdrop-blur-md ${className}`}
+        className={`flex shrink-0 flex-col justify-center overflow-hidden rounded-[24px] border border-hairline/50 bg-paper/95 px-5 py-4 backdrop-blur-md ${className}`}
         style={{
           ...sizeStyle,
           boxShadow: highlighted
             ? "0 16px 40px rgba(255,110,20,0.14), 0 4px 16px rgba(0,0,0,0.05)"
             : "0 2px 16px rgba(0,0,0,0.04)",
           willChange: "transform, opacity",
+          zIndex: highlighted ? 70 : 60,
         }}
         initial={false}
         animate={{
-          opacity: visible ? (dimmed ? 0.5 : related ? 0.9 : isPrimary ? 1 : 0.92) : 0,
-          scale: visible ? (highlighted ? 1.03 : 1) : isPrimary ? 0.92 : 0.85,
+          opacity: visible ? (dimmed ? 0.5 : related ? 0.9 : isPrimary ? 1 : 0.94) : 0,
+          scale: visible ? (highlighted ? 1.03 : 1) : isPrimary ? 0.94 : 0.88,
           x: visible ? 0 : emergeX,
-          y: visible ? 0 : emergeY + 12,
+          y: visible ? 0 : emergeY + 16,
         }}
         transition={{
-          opacity: { duration: 0.35 },
-          scale: { type: "spring", stiffness: 280, damping: 24 },
-          x: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
-          y: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+          opacity: { duration: 0.4 },
+          scale: { type: "spring", stiffness: 260, damping: 24 },
+          x: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+          y: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
         }}
         onMouseEnter={() => onHover(module.id)}
         onMouseLeave={() => onHover(null)}
@@ -145,17 +156,17 @@ export const EcosystemFeatureCard = forwardRef<HTMLDivElement, EcosystemFeatureC
       >
         <IconMicroAnimation animation={module.iconAnimation} active={highlighted}>
           <div
-            className={`mb-1.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-[8px] ${
+            className={`mb-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] ${
               highlighted ? "bg-ember/10 text-ember" : "bg-canvas text-primary-ink"
             }`}
           >
-            <Icon size={14} strokeWidth={1.7} aria-hidden="true" />
+            <Icon size={18} strokeWidth={1.7} aria-hidden="true" />
           </div>
         </IconMicroAnimation>
-        <h3 className="truncate font-sf-pro-display text-[16px] font-semibold leading-tight text-primary-ink">
+        <h3 className="font-sf-pro-display text-[20px] font-semibold leading-tight text-primary-ink">
           {module.title}
         </h3>
-        <p className="mt-0.5 line-clamp-2 text-[12px] leading-[1.3] text-mid-gray">
+        <p className="mt-1 line-clamp-2 text-[15px] leading-[1.5] text-mid-gray">
           {module.description}
         </p>
       </motion.article>
