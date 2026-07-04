@@ -1,15 +1,16 @@
-import { forwardRef } from "react";
+import { forwardRef, type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import type { EcosystemFeature, IconAnimation } from "./features";
+import type { EcosystemModule, IconAnimation } from "./features";
 
 type EcosystemFeatureCardProps = {
-  feature: EcosystemFeature;
+  module: EcosystemModule;
   visible: boolean;
   dimmed: boolean;
   highlighted: boolean;
+  related?: boolean;
   floating?: boolean;
+  emergeFrom?: { x: number; y: number };
   onHover: (id: string | null) => void;
-  style?: React.CSSProperties;
   className?: string;
   layout?: "orbit" | "stack";
 };
@@ -17,79 +18,65 @@ type EcosystemFeatureCardProps = {
 function IconMicroAnimation({
   animation,
   children,
-  hovered,
+  active,
 }: {
   animation: IconAnimation;
-  children: React.ReactNode;
-  hovered: boolean;
+  children: ReactNode;
+  active: boolean;
 }) {
   const reduce = useReducedMotion();
-
   if (reduce) return <>{children}</>;
 
-  const animMap: Record<
+  const map: Record<
     IconAnimation,
     { animate: Record<string, number | number[]>; transition: object }
   > = {
-    "brain-pulse": {
-      animate: hovered ? { scale: [1, 1.12, 1] } : { scale: [1, 1.05, 1] },
-      transition: { duration: 1.2, repeat: Infinity },
-    },
     "megaphone-wiggle": {
-      animate: hovered ? { rotate: [-6, 6, -4, 0] } : { rotate: 0 },
-      transition: { duration: 0.5 },
+      animate: active ? { rotate: [-5, 5, -3, 0] } : {},
+      transition: { duration: 0.45 },
     },
     "cube-rotate": {
-      animate: hovered ? { rotateY: [0, 180, 360] } : { rotateY: 0 },
-      transition: { duration: 1.2, repeat: hovered ? Infinity : 0 },
+      animate: active ? { rotateY: [0, 180, 360] } : {},
+      transition: { duration: 1.1, repeat: active ? Infinity : 0, repeatDelay: 1 },
     },
     "bars-animate": {
-      animate: hovered ? { y: [0, -2, 0] } : { y: 0 },
-      transition: { duration: 0.6, repeat: hovered ? 2 : 0 },
+      animate: active ? { y: [0, -2, 0] } : {},
+      transition: { duration: 0.5, repeat: active ? 2 : 0 },
     },
     "globe-rotate": {
-      animate: hovered ? { rotate: [0, 15, -15, 0] } : { rotate: 0 },
-      transition: { duration: 1.5, repeat: hovered ? Infinity : 0 },
+      animate: active ? { rotate: [0, 12, -12, 0] } : {},
+      transition: { duration: 1.4, repeat: active ? Infinity : 0, repeatDelay: 0.5 },
     },
     "calendar-flip": {
-      animate: hovered ? { rotateX: [0, 20, 0] } : { rotateX: 0 },
-      transition: { duration: 0.6 },
+      animate: active ? { rotateX: [0, 18, 0] } : {},
+      transition: { duration: 0.55 },
     },
     steam: {
-      animate: hovered ? { y: [0, -3, 0], opacity: [1, 0.7, 1] } : { y: 0 },
-      transition: { duration: 1.5, repeat: hovered ? Infinity : 0 },
+      animate: active ? { y: [0, -2, 0], opacity: [1, 0.75, 1] } : {},
+      transition: { duration: 1.4, repeat: active ? Infinity : 0 },
     },
     "users-pulse": {
-      animate: hovered ? { scale: [1, 1.08, 1] } : { scale: 1 },
-      transition: { duration: 0.8, repeat: hovered ? 2 : 0 },
+      animate: active ? { scale: [1, 1.1, 1] } : {},
+      transition: { duration: 0.7, repeat: active ? 2 : 0 },
     },
     "badge-shine": {
-      animate: hovered ? { scale: [1, 1.1, 1], rotate: [0, 5, 0] } : { scale: 1 },
-      transition: { duration: 0.7 },
-    },
-    "cart-slide": {
-      animate: hovered ? { x: [0, 4, 0] } : { x: 0 },
-      transition: { duration: 0.5, repeat: hovered ? 2 : 0 },
+      animate: active ? { scale: [1, 1.08, 1] } : {},
+      transition: { duration: 0.6 },
     },
     "phone-float": {
-      animate: hovered ? { y: [0, -4, 0] } : { y: 0 },
-      transition: { duration: 1, repeat: hovered ? Infinity : 0 },
+      animate: active ? { y: [0, -3, 0] } : {},
+      transition: { duration: 1.2, repeat: active ? Infinity : 0 },
     },
-    "coin-flip": {
-      animate: hovered ? { rotateY: [0, 360] } : { rotateY: 0 },
-      transition: { duration: 0.8 },
+    "card-pulse": {
+      animate: active ? { scale: [1, 1.06, 1] } : {},
+      transition: { duration: 0.8, repeat: active ? 2 : 0 },
     },
     default: { animate: {}, transition: {} },
   };
 
-  const cfg = animMap[animation] ?? animMap.default;
-
+  const cfg = map[animation] ?? map.default;
   return (
-    <motion.div
-      animate={cfg.animate}
-      transition={cfg.transition}
-      style={{ willChange: "transform" }}
-    >
+    <motion.div animate={cfg.animate} transition={cfg.transition} style={{ willChange: "transform" }}>
       {children}
     </motion.div>
   );
@@ -98,71 +85,88 @@ function IconMicroAnimation({
 export const EcosystemFeatureCard = forwardRef<HTMLDivElement, EcosystemFeatureCardProps>(
   function EcosystemFeatureCard(
     {
-      feature,
+      module,
       visible,
       dimmed,
       highlighted,
+      related = false,
       floating = false,
+      emergeFrom,
       onHover,
-      style,
       className = "",
       layout = "orbit",
     },
     ref
   ) {
     const reduce = useReducedMotion();
-    const Icon = feature.icon;
+    const Icon = module.icon;
+    const isPrimary = module.tier === "primary";
 
-    const widthClass =
+    const sizeClass =
       layout === "stack"
-        ? "w-full max-w-[320px]"
-        : "w-[280px] lg:w-[320px]";
+        ? "h-auto w-full max-w-[220px]"
+        : isPrimary
+          ? "h-[110px] w-[220px]"
+          : "h-[95px] w-[180px]";
+
+    const emergeX = emergeFrom ? (emergeFrom.x - module.x) * 2.2 : 0;
+    const emergeY = emergeFrom ? (emergeFrom.y - module.y) * 2.2 : 0;
 
     return (
       <motion.article
         ref={ref}
-        data-ecosystem-card={feature.id}
+        data-ecosystem-card={module.id}
         role="article"
-        aria-label={feature.title}
+        aria-label={module.title}
         tabIndex={0}
-        className={`${widthClass} rounded-[28px] border border-hairline/60 bg-paper/80 p-6 backdrop-blur-md ${className}`}
+        className={`${sizeClass} flex flex-col justify-center rounded-[24px] border border-hairline/50 bg-paper/90 px-[18px] py-3 backdrop-blur-md ${className}`}
         style={{
-          ...style,
           boxShadow: highlighted
-            ? "0 20px 50px rgba(255,110,20,0.15), 0 8px 24px rgba(0,0,0,0.06)"
-            : "0 4px 24px rgba(0,0,0,0.05)",
+            ? "0 16px 40px rgba(255,110,20,0.14), 0 4px 16px rgba(0,0,0,0.05)"
+            : "0 2px 16px rgba(0,0,0,0.04)",
           willChange: "transform, opacity",
         }}
-        initial={{ opacity: 0, scale: 0.85, y: 20 }}
+        initial={false}
         animate={{
-          opacity: visible ? (dimmed ? 0.65 : 1) : 0,
-          scale: visible ? (highlighted ? 1.03 : 1) : 0.85,
-          y: visible ? (floating && !reduce ? [0, -2, 0] : 0) : 20,
+          opacity: visible ? (dimmed ? 0.5 : related ? 0.85 : isPrimary ? 1 : 0.88) : 0,
+          scale: visible ? (highlighted ? 1.03 : 1) : isPrimary ? 0.85 : 0.7,
+          x: visible ? (floating && !reduce ? [0, 0, 0] : 0) : emergeX,
+          y: visible
+            ? floating && !reduce
+              ? [0, -2, 0]
+              : 0
+            : emergeY + 16,
         }}
         transition={{
           opacity: { duration: 0.35 },
-          scale: { type: "spring", stiffness: 260, damping: 22 },
-          y: floating && !reduce ? { duration: 4, repeat: Infinity, ease: "easeInOut" } : { duration: 0.4 },
+          scale: { type: "spring", stiffness: 280, damping: 24 },
+          x: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+          y: floating && !reduce && visible
+            ? { duration: 4.5, repeat: Infinity, ease: "easeInOut" }
+            : { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
         }}
-        onMouseEnter={() => onHover(feature.id)}
+        onMouseEnter={() => onHover(module.id)}
         onMouseLeave={() => onHover(null)}
-        onFocus={() => onHover(feature.id)}
+        onFocus={() => onHover(module.id)}
         onBlur={() => onHover(null)}
       >
-        <IconMicroAnimation animation={feature.iconAnimation} hovered={highlighted}>
+        <IconMicroAnimation
+          animation={module.iconAnimation}
+          active={highlighted || (visible && floating)}
+        >
           <div
-            className={`mb-4 flex h-11 w-11 items-center justify-center rounded-[14px] transition-colors ${
+            className={`mb-2 flex h-7 w-7 items-center justify-center rounded-[8px] ${
               highlighted ? "bg-ember/10 text-ember" : "bg-canvas text-primary-ink"
             }`}
           >
-            <Icon size={22} strokeWidth={1.6} aria-hidden="true" />
+            <Icon size={15} strokeWidth={1.7} aria-hidden="true" />
           </div>
         </IconMicroAnimation>
-        <h3 className="font-sf-pro-display text-[19px] font-semibold leading-snug text-primary-ink md:text-[21px]">
-          {feature.title}
+        <h3 className="font-sf-pro-display text-[15px] font-semibold leading-tight text-primary-ink md:text-[18px]">
+          {module.title}
         </h3>
-        <p className="mt-2 line-clamp-2 text-[15px] leading-[1.47] text-mid-gray md:text-[17px]">
-          {feature.description}
+        <p className="mt-0.5 line-clamp-2 text-[12px] leading-[1.35] text-mid-gray md:text-[13px]">
+          {module.description}
         </p>
       </motion.article>
     );

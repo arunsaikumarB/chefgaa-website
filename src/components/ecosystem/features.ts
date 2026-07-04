@@ -1,6 +1,5 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  Brain,
   Megaphone,
   ChefHat,
   Package,
@@ -16,7 +15,6 @@ import {
 } from "lucide-react";
 
 export type IconAnimation =
-  | "brain-pulse"
   | "megaphone-wiggle"
   | "cube-rotate"
   | "bars-animate"
@@ -25,202 +23,227 @@ export type IconAnimation =
   | "steam"
   | "users-pulse"
   | "badge-shine"
-  | "cart-slide"
   | "phone-float"
-  | "coin-flip"
+  | "card-pulse"
   | "default";
 
-export type EcosystemFeature = {
+export type ModuleTier = "primary" | "secondary";
+
+export type EcosystemModule = {
   id: string;
   title: string;
   description: string;
   icon: LucideIcon;
   iconAnimation: IconAnimation;
-  /** Percent position within the ecosystem canvas (desktop) */
+  tier: ModuleTier;
   x: number;
   y: number;
-  navGroup: string;
+  parentId?: string;
 };
 
-/** Clockwise draw order for connection + card reveal */
-export const ANIMATION_ORDER: string[] = [
-  "ai",
-  "kitchen",
-  "online-ordering",
-  "reservations",
-  "payments",
-  "analytics",
-  "website",
-  "crm",
-  "inventory",
-  "marketing",
-  "loyalty",
-  "mobile-app",
-  "catering",
-];
+export const CENTER = { x: 50, y: 50 };
 
-export const ECOSYSTEM_FEATURES: EcosystemFeature[] = [
-  {
-    id: "ai",
-    title: "AI Insights",
-    description: "Predict demand, spot trends, and act on intelligent recommendations.",
-    icon: Brain,
-    iconAnimation: "brain-pulse",
-    x: 50,
-    y: 6,
-    navGroup: "insights",
-  },
-  {
-    id: "marketing",
-    title: "Marketing",
-    description: "Launch campaigns, promotions, and offers that bring guests back.",
-    icon: Megaphone,
-    iconAnimation: "megaphone-wiggle",
-    x: 16,
-    y: 14,
-    navGroup: "growth",
-  },
+/** Six core modules — first scroll act */
+export const PRIMARY_MODULES: EcosystemModule[] = [
   {
     id: "kitchen",
     title: "Kitchen",
-    description: "Route tickets to the right station with real-time kitchen display.",
+    description: "Route tickets to stations in real time.",
     icon: ChefHat,
     iconAnimation: "steam",
-    x: 84,
+    tier: "primary",
+    x: 50,
     y: 14,
-    navGroup: "kitchen",
-  },
-  {
-    id: "inventory",
-    title: "Inventory",
-    description: "Track stock levels automatically and reduce waste across locations.",
-    icon: Package,
-    iconAnimation: "cube-rotate",
-    x: 7,
-    y: 40,
-    navGroup: "operations",
-  },
-  {
-    id: "online-ordering",
-    title: "Online Ordering",
-    description: "Commission-free ordering from your website and branded mobile app.",
-    icon: ShoppingCart,
-    iconAnimation: "cart-slide",
-    x: 93,
-    y: 40,
-    navGroup: "orders",
   },
   {
     id: "crm",
     title: "CRM",
-    description: "Know every guest — preferences, visits, and lifetime value in one place.",
+    description: "Know every guest and their preferences.",
     icon: Users,
     iconAnimation: "users-pulse",
-    x: 14,
-    y: 68,
-    navGroup: "customers",
+    tier: "primary",
+    x: 17,
+    y: 44,
   },
   {
-    id: "loyalty",
-    title: "Loyalty",
-    description: "Reward regulars with points, tiers, and personalized offers.",
-    icon: Award,
-    iconAnimation: "badge-shine",
-    x: 28,
-    y: 80,
-    navGroup: "growth",
+    id: "online-ordering",
+    title: "Online Ordering",
+    description: "Commission-free orders from your site.",
+    icon: ShoppingCart,
+    iconAnimation: "default",
+    tier: "primary",
+    x: 83,
+    y: 44,
   },
   {
     id: "website",
     title: "Website",
-    description: "A beautiful, SEO-ready site with ordering built right in.",
+    description: "A branded site with ordering built in.",
     icon: Globe,
     iconAnimation: "globe-rotate",
-    x: 50,
-    y: 86,
-    navGroup: "more",
-  },
-  {
-    id: "reservations",
-    title: "Reservations",
-    description: "Fill every seat with smart booking, reminders, and no-show protection.",
-    icon: Calendar,
-    iconAnimation: "calendar-flip",
-    x: 72,
-    y: 80,
-    navGroup: "operations",
-  },
-  {
-    id: "catering",
-    title: "Catering",
-    description: "Quote, schedule, and deliver large-format orders effortlessly.",
-    icon: Truck,
-    iconAnimation: "default",
-    x: 86,
-    y: 68,
-    navGroup: "more",
-  },
-  {
-    id: "analytics",
-    title: "Analytics",
-    description: "See sales, labor, and performance the moment they happen.",
-    icon: BarChart3,
-    iconAnimation: "bars-animate",
-    x: 50,
-    y: 94,
-    navGroup: "insights",
-  },
-  {
-    id: "mobile-app",
-    title: "Mobile App",
-    description: "A branded app guests keep on their home screen for repeat orders.",
-    icon: Smartphone,
-    iconAnimation: "phone-float",
-    x: 5,
-    y: 56,
-    navGroup: "more",
+    tier: "primary",
+    x: 24,
+    y: 76,
   },
   {
     id: "payments",
     title: "Payments",
-    description: "Accept cards, wallets, and contactless with a single secure flow.",
+    description: "Cards, wallets, and contactless in one flow.",
     icon: CreditCard,
-    iconAnimation: "coin-flip",
-    x: 95,
-    y: 56,
-    navGroup: "more",
+    iconAnimation: "card-pulse",
+    tier: "primary",
+    x: 76,
+    y: 76,
+  },
+  {
+    id: "analytics",
+    title: "Analytics",
+    description: "Sales and performance the moment they happen.",
+    icon: BarChart3,
+    iconAnimation: "bars-animate",
+    tier: "primary",
+    x: 50,
+    y: 86,
   },
 ];
 
-export const NAV_ITEMS = [
-  { id: "pos", label: "POS" },
-  { id: "kitchen", label: "Kitchen" },
-  { id: "orders", label: "Orders" },
-  { id: "customers", label: "Customers" },
-  { id: "operations", label: "Operations" },
-  { id: "growth", label: "Growth" },
-  { id: "insights", label: "Insights" },
-  { id: "more", label: "More" },
+/** Organic growth — second scroll act */
+export const SECONDARY_MODULES: EcosystemModule[] = [
+  {
+    id: "loyalty",
+    title: "Loyalty",
+    description: "Reward regulars with points and tiers.",
+    icon: Award,
+    iconAnimation: "badge-shine",
+    tier: "secondary",
+    parentId: "crm",
+    x: 10,
+    y: 56,
+  },
+  {
+    id: "marketing",
+    title: "Marketing",
+    description: "Campaigns and offers that bring guests back.",
+    icon: Megaphone,
+    iconAnimation: "megaphone-wiggle",
+    tier: "secondary",
+    parentId: "website",
+    x: 14,
+    y: 90,
+  },
+  {
+    id: "mobile-app",
+    title: "Mobile App",
+    description: "A branded app on every guest's phone.",
+    icon: Smartphone,
+    iconAnimation: "phone-float",
+    tier: "secondary",
+    parentId: "online-ordering",
+    x: 90,
+    y: 56,
+  },
+  {
+    id: "inventory",
+    title: "Inventory",
+    description: "Track stock and reduce waste automatically.",
+    icon: Package,
+    iconAnimation: "cube-rotate",
+    tier: "secondary",
+    parentId: "kitchen",
+    x: 36,
+    y: 26,
+  },
+  {
+    id: "reservations",
+    title: "Reservations",
+    description: "Smart booking with no-show protection.",
+    icon: Calendar,
+    iconAnimation: "calendar-flip",
+    tier: "secondary",
+    parentId: "payments",
+    x: 86,
+    y: 64,
+  },
+  {
+    id: "catering",
+    title: "Catering",
+    description: "Quote and deliver large-format orders.",
+    icon: Truck,
+    iconAnimation: "default",
+    tier: "secondary",
+    parentId: "analytics",
+    x: 58,
+    y: 94,
+  },
+];
+
+export const ALL_MODULES = [...PRIMARY_MODULES, ...SECONDARY_MODULES];
+
+export const PRIMARY_ORDER = PRIMARY_MODULES.map((m) => m.id);
+
+export const SECONDARY_ORDER = SECONDARY_MODULES.map((m) => m.id);
+
+/** Parent → child for hover highlighting */
+export const CHILD_MAP: Record<string, string> = Object.fromEntries(
+  SECONDARY_MODULES.map((m) => [m.parentId!, m.id])
+);
+
+export const PARENT_MAP: Record<string, string> = Object.fromEntries(
+  SECONDARY_MODULES.map((m) => [m.id, m.parentId!])
+);
+
+export const NAV_DOTS = [
+  { id: "core", label: "Core ecosystem", progress: 0 },
+  { id: "expanded", label: "Expanded ecosystem", progress: 0.65 },
 ] as const;
 
-export const METRICS = [
-  { label: "Modules", value: 20, suffix: "+" },
-  { label: "Unified Platform", value: 100, suffix: "%" },
-  { label: "Synchronization", value: 0, suffix: "", text: "Real-time" },
-  { label: "Integrations", value: 0, suffix: "", text: "Unlimited" },
-  { label: "Ready", value: 0, suffix: "", text: "Enterprise" },
-] as const;
-
-/** Build a smooth cubic bezier from center to endpoint */
-export function buildCurvePath(cx: number, cy: number, ex: number, ey: number): string {
-  const mx = (cx + ex) / 2;
-  const my = (cy + ey) / 2;
-  const dx = ex - cx;
-  const dy = ey - cy;
-  const bend = 0.22;
+/** Smooth cubic bezier — no straight lines */
+export function buildCurvePath(
+  sx: number,
+  sy: number,
+  ex: number,
+  ey: number,
+  bend = 0.18
+): string {
+  const mx = (sx + ex) / 2;
+  const my = (sy + ey) / 2;
+  const dx = ex - sx;
+  const dy = ey - sy;
   const c1x = mx - dy * bend;
   const c1y = my + dx * bend;
-  const c2x = mx + dy * bend * 0.5;
-  const c2y = my - dx * bend * 0.5;
-  return `M ${cx} ${cy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${ex} ${ey}`;
+  const c2x = mx + dy * bend * 0.45;
+  const c2y = my - dx * bend * 0.45;
+  return `M ${sx} ${sy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${ex} ${ey}`;
+}
+
+export function getModule(id: string): EcosystemModule | undefined {
+  return ALL_MODULES.find((m) => m.id === id);
+}
+
+/** Scroll phase breakpoints (0–1 across 180vh) */
+export const SCROLL_PHASES = {
+  header: { start: 0, end: 0.07 },
+  pos: { start: 0.07, end: 0.22 },
+  platform: { start: 0.2, end: 0.28 },
+  primary: { start: 0.28, end: 0.55 },
+  secondary: { start: 0.58, end: 0.95 },
+} as const;
+
+export function phaseProgress(
+  scroll: number,
+  phase: { start: number; end: number }
+): number {
+  return Math.max(0, Math.min(1, (scroll - phase.start) / (phase.end - phase.start)));
+}
+
+export function itemProgress(
+  scroll: number,
+  phase: { start: number; end: number },
+  index: number,
+  total: number
+): number {
+  const local = phaseProgress(scroll, phase);
+  const slot = 1 / total;
+  const itemStart = index * slot;
+  return Math.max(0, Math.min(1, (local - itemStart) / slot));
 }
