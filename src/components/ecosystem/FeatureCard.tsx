@@ -101,31 +101,35 @@ export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
         role="article"
         aria-label={feature.title}
         tabIndex={0}
-        className="flex w-[320px] min-h-[110px] flex-col justify-center rounded-[28px] border border-black/[0.05] bg-paper px-7 py-7"
+        className="flex w-[360px] min-h-[132px] flex-col justify-center rounded-[28px] border border-black/[0.05] bg-paper px-8 py-7"
         style={{
           boxShadow: highlighted
-            ? "0 20px 48px rgba(0,0,0,0.1)"
+            ? "0 28px 60px rgba(0,0,0,0.12)"
             : "0 12px 40px rgba(0,0,0,0.06)",
+          zIndex: highlighted ? 40 : 1,
           willChange: "transform, opacity",
         }}
         initial={false}
         animate={{
-          opacity: visible ? (dimmed ? 0.65 : 1) : 0,
-          scale: visible ? (highlighted ? 1.03 : 1) : 0.85,
+          opacity: visible ? (dimmed ? 0.55 : 1) : 0,
+          scale: visible ? (highlighted ? 1.04 : 1) : 0.85,
           y: visible
             ? highlighted
-              ? -8
+              ? -10
               : floating && !reduce
                 ? [0, -2, 0]
                 : 0
-            : 20,
+            : 22,
         }}
         transition={{
-          opacity: { duration: 0.35 },
-          scale: { type: "spring", stiffness: 280, damping: 24 },
-          y: floating && !reduce && visible && !highlighted
-            ? { duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: feature.x % 2 }
-            : { type: "spring", stiffness: 300, damping: 26 },
+          opacity: { duration: 0.3, ease: "easeOut" },
+          scale: highlighted
+            ? { duration: 0.28, ease: [0.22, 1, 0.36, 1] }
+            : { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+          y:
+            floating && !reduce && visible && !highlighted
+              ? { duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: feature.x % 2 }
+              : { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
         }}
         onMouseEnter={() => onHover(feature.id)}
         onMouseLeave={() => onHover(null)}
@@ -134,16 +138,19 @@ export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
       >
         <IconMotion animation={feature.iconAnimation} active={highlighted || floating}>
           <div
-            className="mb-3 flex h-10 w-10 items-center justify-center rounded-[12px]"
-            style={{ backgroundColor: `${feature.accent}14`, color: feature.accent }}
+            className="mb-3.5 flex h-11 w-11 items-center justify-center rounded-[13px] transition-colors"
+            style={{
+              backgroundColor: highlighted ? `${feature.accent}22` : `${feature.accent}14`,
+              color: feature.accent,
+            }}
           >
-            <Icon size={20} strokeWidth={1.7} aria-hidden="true" />
+            <Icon size={22} strokeWidth={1.7} aria-hidden="true" />
           </div>
         </IconMotion>
-        <h3 className="font-sf-pro-display text-[17px] font-semibold leading-snug text-[#111111]">
+        <h3 className="font-sf-pro-display text-[19px] font-semibold leading-snug text-[#111111]">
           {feature.title}
         </h3>
-        <p className="mt-1.5 text-[14px] leading-[1.5] text-mid-gray">
+        <p className="mt-1.5 text-[15px] leading-[1.5] text-mid-gray">
           {feature.description}
         </p>
       </motion.article>

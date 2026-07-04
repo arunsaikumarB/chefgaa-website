@@ -111,8 +111,12 @@ function EcosystemCanvas({
           {FEATURES.map((feat) => (
             <div
               key={feat.id}
-              className="absolute z-[30] -translate-x-1/2 -translate-y-1/2"
-              style={{ left: feat.x, top: feat.y }}
+              className="absolute -translate-x-1/2 -translate-y-1/2"
+              style={{
+                left: feat.x,
+                top: feat.y,
+                zIndex: hoveredId === feat.id ? 40 : 30,
+              }}
             >
               <FeatureCard
                 feature={feat}

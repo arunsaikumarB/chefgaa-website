@@ -41,22 +41,16 @@ export type EcosystemFeature = {
   y: number;
 };
 
-/** Expanded canvas — 80px+ clearance between all 320px cards */
-export const CANVAS = { width: 1900, height: 1420 } as const;
-export const CENTER = { x: 950, y: 640 } as const;
+/** Balanced canvas — tighter horizontal spread, larger cards */
+export const CANVAS = { width: 1560, height: 1360 } as const;
+export const CENTER = { x: 780, y: 640 } as const;
 export const POS_IMAGE = "/ecosystem/pos-hardware.png";
 
+/**
+ * Symmetric ring around the POS (3 · 2 · 2 · 3 · 3 rows).
+ * Card box ≈ 360 × 150 → 130px+ clearance on every side.
+ */
 export const FEATURES: EcosystemFeature[] = [
-  {
-    id: "ai-insights",
-    title: "AI Insights",
-    description: "Smart recommendations that boost revenue and reduce waste.",
-    icon: Brain,
-    iconAnimation: "brain-pulse",
-    accent: "#8b5cf6",
-    x: 950,
-    y: 90,
-  },
   {
     id: "marketing",
     title: "Marketing",
@@ -64,8 +58,18 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Megaphone,
     iconAnimation: "megaphone-wiggle",
     accent: "#ff6e14",
-    x: 220,
-    y: 220,
+    x: 300,
+    y: 120,
+  },
+  {
+    id: "ai-insights",
+    title: "AI Insights",
+    description: "Smart recommendations that boost revenue and reduce waste.",
+    icon: Brain,
+    iconAnimation: "brain-pulse",
+    accent: "#8b5cf6",
+    x: 780,
+    y: 120,
   },
   {
     id: "kitchen",
@@ -74,8 +78,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: ChefHat,
     iconAnimation: "steam",
     accent: "#ff6e14",
-    x: 1680,
-    y: 220,
+    x: 1260,
+    y: 120,
   },
   {
     id: "inventory",
@@ -84,8 +88,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Package,
     iconAnimation: "cube-rotate",
     accent: "#22c55e",
-    x: 180,
-    y: 500,
+    x: 230,
+    y: 400,
   },
   {
     id: "online-ordering",
@@ -94,8 +98,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: ShoppingCart,
     iconAnimation: "cart-slide",
     accent: "#0071e3",
-    x: 1720,
-    y: 500,
+    x: 1330,
+    y: 400,
   },
   {
     id: "crm",
@@ -104,38 +108,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Users,
     iconAnimation: "users-pulse",
     accent: "#8b5cf6",
-    x: 220,
-    y: 780,
-  },
-  {
-    id: "loyalty",
-    title: "Loyalty",
-    description: "Reward regulars with points, tiers, and exclusive perks.",
-    icon: Award,
-    iconAnimation: "badge-shine",
-    accent: "#ec4899",
-    x: 220,
-    y: 1020,
-  },
-  {
-    id: "website",
-    title: "Website",
-    description: "A beautiful branded site with ordering built right in.",
-    icon: Globe,
-    iconAnimation: "globe-rotate",
-    accent: "#0071e3",
-    x: 950,
-    y: 880,
-  },
-  {
-    id: "reservations",
-    title: "Reservations",
-    description: "Smart table booking with no-show protection built in.",
-    icon: Calendar,
-    iconAnimation: "calendar-flip",
-    accent: "#ef4444",
-    x: 1480,
-    y: 1020,
+    x: 230,
+    y: 660,
   },
   {
     id: "catering",
@@ -144,18 +118,38 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Truck,
     iconAnimation: "default",
     accent: "#ec4899",
-    x: 1680,
-    y: 780,
+    x: 1330,
+    y: 660,
   },
   {
-    id: "analytics",
-    title: "Analytics",
-    description: "Sales, labor, and performance insights the moment they happen.",
-    icon: BarChart3,
-    iconAnimation: "bars-animate",
-    accent: "#8b5cf6",
-    x: 950,
-    y: 1180,
+    id: "loyalty",
+    title: "Loyalty",
+    description: "Reward regulars with points, tiers, and exclusive perks.",
+    icon: Award,
+    iconAnimation: "badge-shine",
+    accent: "#ec4899",
+    x: 300,
+    y: 920,
+  },
+  {
+    id: "website",
+    title: "Website",
+    description: "A beautiful branded site with ordering built right in.",
+    icon: Globe,
+    iconAnimation: "globe-rotate",
+    accent: "#0071e3",
+    x: 780,
+    y: 920,
+  },
+  {
+    id: "reservations",
+    title: "Reservations",
+    description: "Smart table booking with no-show protection built in.",
+    icon: Calendar,
+    iconAnimation: "calendar-flip",
+    accent: "#ef4444",
+    x: 1260,
+    y: 920,
   },
   {
     id: "mobile-app",
@@ -164,8 +158,18 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Smartphone,
     iconAnimation: "phone-float",
     accent: "#0071e3",
-    x: 180,
-    y: 1260,
+    x: 300,
+    y: 1200,
+  },
+  {
+    id: "analytics",
+    title: "Analytics",
+    description: "Sales, labor, and performance insights the moment they happen.",
+    icon: BarChart3,
+    iconAnimation: "bars-animate",
+    accent: "#8b5cf6",
+    x: 780,
+    y: 1200,
   },
   {
     id: "payments",
@@ -174,8 +178,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: CreditCard,
     iconAnimation: "card-flip",
     accent: "#eab308",
-    x: 1720,
-    y: 1260,
+    x: 1260,
+    y: 1200,
   },
 ];
 
