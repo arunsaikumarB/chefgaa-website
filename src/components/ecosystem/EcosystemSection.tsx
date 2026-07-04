@@ -140,8 +140,16 @@ export default function EcosystemSection() {
   const [pulseId, setPulseId] = useState<string | null>(null);
   const [glowPulse, setGlowPulse] = useState(false);
 
+  // Latch the highest progress reached so the reveal only plays once (on the
+  // way down) and stays locked when scrolling back up. Resets on refresh.
+  const maxProgress = useRef(reduce ? 1 : 0);
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    if (!reduce) setProgress(Math.round(v * 250) / 250);
+    if (reduce) return;
+    const rounded = Math.round(v * 250) / 250;
+    if (rounded > maxProgress.current) {
+      maxProgress.current = rounded;
+      setProgress(rounded);
+    }
   });
 
   const headerP = reduce
