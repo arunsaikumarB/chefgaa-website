@@ -85,3 +85,15 @@ button {
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
+.hero-section {
+  width: 100%;
+  aspect-ratio: 2048 / 964;
+  min-height: 964px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 3.5rem; /* clear fixed nav (h-14) */
+}

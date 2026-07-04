@@ -42,7 +42,7 @@ export function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-paper pt-[108px] pb-16 md:pt-[164px] md:pb-[120px]">
+      <section className="hero-section bg-paper">
         <div className="mx-auto w-full max-w-[1200px] px-6 md:px-10">
           <motion.div
             className="flex flex-col items-center text-center"
