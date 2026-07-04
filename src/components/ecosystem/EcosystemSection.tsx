@@ -4,16 +4,15 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useInView } from "react-intersection-observer";
 import { useReducedMotion } from "framer-motion";
 import { SectionBackground } from "./SectionBackground";
-import { CenterHub } from "./AnimatedPOS";
+import { AnimatedPOS } from "./AnimatedPOS";
 import { GlowPlatform } from "./GlowPlatform";
 import { ConnectionLines } from "./ConnectionLines";
 import { FeatureCard } from "./FeatureCard";
 import { FloatingMetrics } from "./FloatingMetrics";
 import {
   ANIMATION_ORDER,
+  CENTER,
   ECOSYSTEM_FEATURES,
-  HUB_POSITION,
-  anchorTransform,
 } from "./features";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -21,18 +20,20 @@ gsap.registerPlugin(ScrollTrigger);
 export default function EcosystemSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const hubRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const posRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const hasAnimated = useRef(false);
 
-  const [hubActive, setHubActive] = useState(false);
+  const [posVisible, setPosVisible] = useState(false);
   const [platformVisible, setPlatformVisible] = useState(false);
   const [lineProgress, setLineProgress] = useState<Record<string, number>>({});
   const [cardVisible, setCardVisible] = useState<Record<string, boolean>>({});
   const [sequenceComplete, setSequenceComplete] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [pulseId, setPulseId] = useState<string | null>(null);
-  const [hubGlowing, setHubGlowing] = useState(false);
+  const [posGlowing, setPosGlowing] = useState(false);
+  const [floating, setFloating] = useState(false);
 
   const { ref: inViewRef, inView } = useInView({ threshold: 0.4, triggerOnce: true });
 
@@ -49,8 +50,9 @@ export default function EcosystemSection() {
 
     if (reduce) {
       hasAnimated.current = true;
-      setHubActive(true);
+      setPosVisible(true);
       setPlatformVisible(true);
+      setFloating(true);
       const lines: Record<string, number> = {};
       const cards: Record<string, boolean> = {};
       ANIMATION_ORDER.forEach((id) => {
@@ -67,8 +69,15 @@ export default function EcosystemSection() {
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: sectionRef.current, start: "top 60%", once: true },
-        onComplete: () => setSequenceComplete(true),
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 60%",
+          once: true,
+        },
+        onComplete: () => {
+          setSequenceComplete(true);
+          setFloating(true);
+        },
       });
 
       tl.fromTo(
@@ -77,16 +86,19 @@ export default function EcosystemSection() {
         { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" },
         0
       );
+
       tl.to({}, { duration: 0.2 });
-      tl.call(() => setHubActive(true));
+
+      tl.call(() => setPosVisible(true));
       tl.fromTo(
-        hubRef.current,
-        { opacity: 0, scale: 0.75 },
-        { opacity: 1, scale: 1, duration: 0.85, ease: "back.out(1.15)" },
+        posRef.current,
+        { opacity: 0, scale: 0.75, rotateX: 10 },
+        { opacity: 1, scale: 1, rotateX: 0, duration: 0.85, ease: "back.out(1.15)" },
         "<"
       );
+
       tl.call(() => setPlatformVisible(true));
-      tl.to({}, { duration: 0.35 });
+      tl.fromTo({}, {}, { duration: 0.35 });
 
       ANIMATION_ORDER.forEach((id) => {
         const obj = { p: 0 };
@@ -94,10 +106,15 @@ export default function EcosystemSection() {
           p: 1,
           duration: 0.42,
           ease: "power2.inOut",
-          onUpdate: () => setLineProgress((prev) => ({ ...prev, [id]: obj.p })),
-          onComplete: () => setCardVisible((prev) => ({ ...prev, [id]: true })),
+          onUpdate: () => {
+            setLineProgress((prev) => ({ ...prev, [id]: obj.p }));
+          },
+          onComplete: () => {
+            setCardVisible((prev) => ({ ...prev, [id]: true }));
+          },
         });
       });
+
       tl.to({}, { duration: 0.15 });
     }, sectionRef);
 
@@ -105,14 +122,24 @@ export default function EcosystemSection() {
   }, [inView, reduce]);
 
   useEffect(() => {
+    if (!sequenceComplete || reduce) return;
+    const interval = setInterval(() => {
+      const id = ANIMATION_ORDER[Math.floor(Math.random() * ANIMATION_ORDER.length)];
+      setPulseId(id);
+      setTimeout(() => setPulseId(null), 1200);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [sequenceComplete, reduce]);
+
+  useEffect(() => {
     if (hoveredId) {
-      setHubGlowing(true);
+      setPosGlowing(true);
       setPulseId(hoveredId);
     } else {
-      setHubGlowing(false);
-      setPulseId(null);
+      setPosGlowing(false);
+      if (!reduce) setPulseId(null);
     }
-  }, [hoveredId]);
+  }, [hoveredId, reduce]);
 
   const anyHovered = hoveredId !== null;
 
@@ -120,7 +147,7 @@ export default function EcosystemSection() {
     <section
       ref={setRefs}
       id="ecosystem"
-      className="relative min-h-screen w-full overflow-visible bg-paper py-16 md:py-20 lg:py-24"
+      className="relative min-h-screen overflow-visible bg-paper py-16 md:py-20 lg:py-24"
       aria-labelledby="ecosystem-heading"
     >
       <SectionBackground />
@@ -157,37 +184,36 @@ export default function EcosystemSection() {
         </p>
       </div>
 
-      {/* Full-width radial canvas */}
-      <div className="relative z-10 mx-auto mt-4 hidden h-[min(1040px,95vh)] w-full max-w-[100vw] px-0 md:block">
+      {/* Desktop — full viewport width, percent-positioned cards */}
+      <div
+        ref={canvasRef}
+        className="relative z-10 mx-auto mt-4 hidden w-full min-h-[82vh] md:block lg:mt-6"
+      >
         <ConnectionLines
           lineProgress={lineProgress}
           highlightedId={hoveredId}
           pulseId={pulseId}
-          showParticles={!!hoveredId}
+          showParticles={sequenceComplete}
         />
 
         <div
-          className="absolute z-20"
-          style={{
-            left: `${HUB_POSITION.left}%`,
-            top: `${HUB_POSITION.top}%`,
-            transform: "translate(-50%, -50%)",
-          }}
-          ref={hubRef}
+          className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
+          style={{ left: `${CENTER.left}%`, top: `${CENTER.top}%` }}
+          ref={posRef}
         >
           <GlowPlatform visible={platformVisible} breathing={sequenceComplete} />
-          <CenterHub active={hubActive} glowing={hubGlowing} />
+          <AnimatedPOS
+            assemble={posVisible ? 1 : 0}
+            glowing={posGlowing}
+            floating={floating}
+          />
         </div>
 
         {ECOSYSTEM_FEATURES.map((feature) => (
           <div
             key={feature.id}
-            className="absolute z-30"
-            style={{
-              left: `${feature.left}%`,
-              top: `${feature.top}%`,
-              transform: anchorTransform(feature.anchor),
-            }}
+            className="absolute z-30 -translate-x-1/2 -translate-y-1/2"
+            style={{ left: `${feature.left}%`, top: `${feature.top}%` }}
           >
             <FeatureCard
               feature={feature}
@@ -200,18 +226,15 @@ export default function EcosystemSection() {
         ))}
       </div>
 
-      {/* Mobile */}
-      <div className="relative z-10 mt-10 flex flex-col items-center gap-10 px-6 md:hidden">
-        <div className="relative flex h-32 w-32 items-center justify-center">
-          <GlowPlatform visible breathing={sequenceComplete} />
-          <CenterHub active glowing={hubGlowing} />
-        </div>
+      {/* Mobile timeline */}
+      <div className="relative z-10 mt-10 flex flex-col items-center gap-8 px-6 md:hidden">
+        <AnimatedPOS assemble={1} floating={sequenceComplete} />
         {ECOSYSTEM_FEATURES.map((feature) => (
           <FeatureCard
             key={feature.id}
             feature={feature}
             visible
-            dimmed={anyHovered && hoveredId !== feature.id}
+            dimmed={false}
             highlighted={hoveredId === feature.id}
             onHover={setHoveredId}
           />

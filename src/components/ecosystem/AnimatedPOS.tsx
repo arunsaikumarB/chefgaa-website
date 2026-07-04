@@ -1,29 +1,42 @@
 import { forwardRef } from "react";
 import { motion } from "framer-motion";
+import { HardwareGroup } from "./HardwareGroup";
 
-type CenterHubProps = {
-  active: boolean;
+type AnimatedPOSProps = {
+  assemble: number;
   glowing?: boolean;
+  floating?: boolean;
 };
 
-/** Glow platform + hub origin only — no placeholder image */
-export const CenterHub = forwardRef<HTMLDivElement, CenterHubProps>(
-  function CenterHub({ active, glowing = false }, ref) {
+/** Center hub — no image. Hardware only. Drop your POS image here later. */
+export const AnimatedPOS = forwardRef<HTMLDivElement, AnimatedPOSProps>(
+  function AnimatedPOS({ assemble, glowing = false, floating = false }, ref) {
     return (
-      <div ref={ref} className="relative h-8 w-8" aria-hidden="true">
+      <div ref={ref} className="relative h-[200px] w-[280px]">
+        <HardwareGroup visible={assemble > 0.5} />
+
         <motion.div
-          className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember/70"
-          initial={{ opacity: 0, scale: 0 }}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
           animate={{
-            opacity: active ? 1 : 0,
-            scale: active ? 1 : 0,
-            boxShadow: glowing
-              ? "0 0 48px rgba(255,110,20,0.55), 0 0 80px rgba(255,110,20,0.2)"
-              : "0 0 20px rgba(255,110,20,0.35)",
+            opacity: assemble,
+            scale: 0.8 + assemble * 0.2,
+            y: floating ? [0, -3, 0] : 0,
           }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          style={{ willChange: "transform, box-shadow" }}
-        />
+          transition={{
+            y: floating ? { duration: 8, repeat: Infinity, ease: "easeInOut" } : { duration: 0.3 },
+          }}
+          style={{ willChange: "transform" }}
+        >
+          <motion.div
+            className="h-2 w-2 rounded-full bg-ember/60"
+            animate={{
+              boxShadow: glowing
+                ? "0 0 48px rgba(255,110,20,0.45)"
+                : "0 0 16px rgba(255,110,20,0.2)",
+            }}
+            aria-hidden="true"
+          />
+        </motion.div>
       </div>
     );
   }
