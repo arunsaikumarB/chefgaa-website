@@ -9,8 +9,8 @@ type AnimatedPOSProps = {
 };
 
 /**
- * Center hero — the rendered Chefgaa hardware, background removed, floating
- * directly on the section with a soft shadow and hover glow.
+ * Center hero — the rendered Chefgaa hardware on a dark showcase tile. The
+ * image's black backdrop blends into the tile for a clean, premium anchor.
  */
 export const AnimatedPOS = forwardRef<HTMLDivElement, AnimatedPOSProps>(
   function AnimatedPOS({ visible, glowing = false, floating = false }, ref) {
@@ -24,20 +24,25 @@ export const AnimatedPOS = forwardRef<HTMLDivElement, AnimatedPOSProps>(
           floating ? { duration: 8, repeat: Infinity, ease: "easeInOut" } : undefined
         }
       >
-        <motion.img
-          src={POS_IMAGE}
-          alt="Chefgaa POS terminal with receipt printer, cash drawer, and barcode scanner"
-          draggable={false}
-          style={{ width: 660, height: "auto" }}
+        <motion.div
+          className="relative overflow-hidden rounded-[30px] ring-1 ring-white/[0.06]"
+          style={{ width: 660, height: 372, backgroundColor: "#050506" }}
           animate={{
             opacity: visible ? 1 : 0,
             scale: visible ? 1 : 0.82,
-            filter: glowing
-              ? "drop-shadow(0 26px 40px rgba(0,0,0,0.28)) drop-shadow(0 0 46px rgba(255,110,20,0.35))"
-              : "drop-shadow(0 22px 34px rgba(0,0,0,0.20))",
+            boxShadow: glowing
+              ? "0 40px 90px rgba(0,0,0,0.30), 0 0 90px rgba(255,110,20,0.28)"
+              : "0 34px 80px rgba(0,0,0,0.26)",
           }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-        />
+        >
+          <img
+            src={POS_IMAGE}
+            alt="Chefgaa POS terminal with receipt printer, cash drawer, and barcode scanner"
+            className="h-full w-full object-cover"
+            draggable={false}
+          />
+        </motion.div>
       </motion.div>
     );
   }
