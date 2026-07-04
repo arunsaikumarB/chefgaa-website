@@ -155,7 +155,7 @@ export default function EcosystemSection() {
 
       <div
         ref={headerRef}
-        className="relative z-10 mx-auto max-w-[720px] px-6 text-center opacity-0 lg:max-w-none"
+        className="relative z-10 mx-auto w-full max-w-none px-6 text-center opacity-0"
       >
         <span className="inline-flex items-center rounded-full border border-hairline/80 bg-paper px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-ember shadow-sm">
           All-in-One Restaurant Operating System
@@ -176,7 +176,7 @@ export default function EcosystemSection() {
           </span>{" "}
           Ecosystem
         </h2>
-        <p className="mt-5 whitespace-normal text-[19px] leading-[1.47] text-mid-gray md:text-[21px] lg:whitespace-nowrap">
+        <p className="mt-5 text-[17px] leading-[1.47] text-mid-gray sm:text-[18px] md:whitespace-nowrap md:text-[19px] xl:text-[21px]">
           Everything your restaurant needs. Connected beautifully. Powered by one intelligent platform.
         </p>
       </div>
