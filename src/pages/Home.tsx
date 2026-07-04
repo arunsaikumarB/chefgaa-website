@@ -50,12 +50,14 @@ export function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <h1 className="font-sf-pro-display text-[40px] font-bold leading-[1.05] tracking-[-0.5px] text-primary-ink md:text-[72px] md:tracking-[-0.8px] lg:text-[96px] lg:leading-[1.04] lg:tracking-[-1px]">
-              All-in-One POS &amp; Online Ordering for Restaurants.
+            <h1 className="font-sf-pro-display text-[40px] font-bold leading-[1.05] tracking-[-0.5px] text-primary-ink md:text-[64px] md:tracking-[-0.8px] lg:text-[80px] lg:leading-[1.05] lg:tracking-[-1px] xl:text-[96px] xl:leading-[1.04]">
+              <span className="block lg:inline">
+                All-in-One POS &amp; Online Ordering
+              </span>{" "}
+              <span className="block lg:inline">for Restaurants.</span>
             </h1>
-            <p className="mt-6 max-w-[620px] text-[19px] leading-[1.4] text-mid-gray md:text-[21px]">
-              Streamline operations, boost sales, and enhance customer experience
-              with Chefgaa&apos;s powerful restaurant management solution.
+            <p className="mt-6 max-w-[720px] text-balance text-[19px] leading-[1.47] text-mid-gray md:text-[21px]">
+              Streamline operations, boost sales, and enhance customer experience with Chefgaa&apos;s powerful restaurant management solution.
             </p>
             <div className="mt-10 flex flex-col items-center gap-5 sm:flex-row">
               <PrimaryButton to="/contact">Request a Demo</PrimaryButton>
