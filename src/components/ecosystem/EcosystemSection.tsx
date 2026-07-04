@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useInView } from "react-intersection-observer";
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
 import { SectionBackground } from "./SectionBackground";
 import { AnimatedPOS } from "./AnimatedPOS";
 import { GlowPlatform } from "./GlowPlatform";
@@ -12,9 +12,7 @@ import { FloatingMetrics } from "./FloatingMetrics";
 import {
   ANIMATION_ORDER,
   CENTER,
-  COMPOSITION,
   ECOSYSTEM_FEATURES,
-  toPercent,
 } from "./features";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -186,11 +184,10 @@ export default function EcosystemSection() {
         </p>
       </div>
 
-      {/* Desktop / tablet — full-width radial ecosystem */}
+      {/* Desktop — full viewport width, percent-positioned cards */}
       <div
         ref={canvasRef}
-        className="relative z-10 mx-auto mt-6 hidden w-full max-w-[2200px] px-3 md:block lg:mt-8 lg:px-6"
-        style={{ aspectRatio: `${COMPOSITION.width} / ${COMPOSITION.height}` }}
+        className="relative z-10 mx-auto mt-4 hidden w-full min-h-[82vh] md:block lg:mt-6"
       >
         <ConnectionLines
           lineProgress={lineProgress}
@@ -201,7 +198,7 @@ export default function EcosystemSection() {
 
         <div
           className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
-          style={toPercent(CENTER.x, CENTER.y)}
+          style={{ left: `${CENTER.left}%`, top: `${CENTER.top}%` }}
           ref={posRef}
         >
           <GlowPlatform visible={platformVisible} breathing={sequenceComplete} />
@@ -212,32 +209,19 @@ export default function EcosystemSection() {
           />
         </div>
 
-        {ECOSYSTEM_FEATURES.map((feature, i) => (
+        {ECOSYSTEM_FEATURES.map((feature) => (
           <div
             key={feature.id}
             className="absolute z-30 -translate-x-1/2 -translate-y-1/2"
-            style={toPercent(feature.x, feature.y)}
+            style={{ left: `${feature.left}%`, top: `${feature.top}%` }}
           >
-            <motion.div
-              animate={
-                sequenceComplete && !reduce
-                  ? { y: [0, i % 2 === 0 ? -2 : 2, 0] }
-                  : { y: 0 }
-              }
-              transition={
-                sequenceComplete && !reduce
-                  ? { duration: 5 + (i % 3), repeat: Infinity, ease: "easeInOut" }
-                  : undefined
-              }
-            >
-              <FeatureCard
-                feature={feature}
-                visible={!!cardVisible[feature.id]}
-                dimmed={anyHovered && hoveredId !== feature.id}
-                highlighted={hoveredId === feature.id}
-                onHover={setHoveredId}
-              />
-            </motion.div>
+            <FeatureCard
+              feature={feature}
+              visible={!!cardVisible[feature.id]}
+              dimmed={anyHovered && hoveredId !== feature.id}
+              highlighted={hoveredId === feature.id}
+              onHover={setHoveredId}
+            />
           </div>
         ))}
       </div>

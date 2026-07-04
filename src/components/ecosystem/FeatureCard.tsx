@@ -22,25 +22,26 @@ function HoverIconAnimation({
   const reduce = useReducedMotion();
   if (!active || reduce) return <>{children}</>;
 
-  const cfg: Record<IconAnimation, object> = {
-    "brain-pulse": { scale: [1, 1.12, 1], transition: { duration: 0.5 } },
-    "megaphone-wiggle": { rotate: [-6, 6, -3, 0], transition: { duration: 0.45 } },
-    "cube-rotate": { rotateY: [0, 180, 360], transition: { duration: 0.9 } },
-    "globe-rotate": { rotate: [0, 14, -14, 0], transition: { duration: 0.8 } },
-    "calendar-flip": { rotateX: [0, 20, 0], transition: { duration: 0.5 } },
-    steam: { y: [0, -3, 0], transition: { duration: 0.6, repeat: 1 } },
-    "users-pulse": { scale: [1, 1.1, 1], transition: { duration: 0.5 } },
-    "badge-shine": { scale: [1, 1.1, 1], transition: { duration: 0.45 } },
-    "phone-float": { y: [0, -4, 0], transition: { duration: 0.6 } },
-    "card-flip": { rotateY: [0, 18, 0], transition: { duration: 0.5 } },
-    "bars-animate": { y: [0, -2, 0], transition: { duration: 0.4, repeat: 2 } },
-    "cart-slide": { x: [0, 4, 0], transition: { duration: 0.45 } },
+  const anim: Record<string, unknown> = {
+    "brain-pulse": { scale: [1, 1.1, 1] },
+    "megaphone-wiggle": { rotate: [-5, 5, 0] },
+    "cube-rotate": { rotate: [0, 12, 0] },
+    "globe-rotate": { rotate: [0, 10, -10, 0] },
+    "calendar-flip": { rotateX: [0, 15, 0] },
+    steam: { y: [0, -3, 0] },
+    "users-pulse": { scale: [1, 1.08, 1] },
+    "badge-shine": { scale: [1, 1.08, 1] },
+    "phone-float": { y: [0, -3, 0] },
+    "card-flip": { rotateY: [0, 12, 0] },
+    "bars-animate": { y: [0, -2, 0] },
+    "cart-slide": { x: [0, 3, 0] },
     default: {},
   };
 
   return (
     <motion.div
-      animate={cfg[animation] as { scale?: number[]; rotate?: number[]; rotateY?: number[]; rotateX?: number[]; y?: number[]; x?: number[]; transition?: object }}
+      animate={(anim[animation] ?? { scale: 1 }) as { scale?: number[]; rotate?: number[]; rotateY?: number[]; rotateX?: number[]; y?: number[]; x?: number[] }}
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       style={{ willChange: "transform" }}
     >
       {children}
@@ -59,43 +60,43 @@ export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
         role="article"
         aria-label={feature.title}
         tabIndex={0}
-        className="pointer-events-auto w-[340px] min-h-[120px] shrink-0 rounded-[28px] border border-black/[0.05] bg-paper px-7 py-6"
+        className="pointer-events-auto w-[clamp(300px,17.5vw,380px)] min-h-[128px] shrink-0 rounded-[28px] border border-black/[0.05] bg-paper px-7 py-6"
         style={{
           boxShadow: highlighted
-            ? "0 20px 48px rgba(0,0,0,0.1)"
+            ? "0 24px 56px rgba(0,0,0,0.11)"
             : "0 12px 40px rgba(0,0,0,0.06)",
           willChange: "transform, opacity",
         }}
         initial={false}
         animate={{
-          opacity: visible ? (dimmed ? 0.65 : 1) : 0,
-          scale: visible ? (highlighted ? 1.03 : 1) : 0.85,
-          y: visible ? (highlighted ? -8 : 0) : 20,
+          opacity: visible ? (dimmed ? 0.6 : 1) : 0,
+          scale: visible ? (highlighted ? 1.04 : 1) : 0.88,
+          y: visible ? (highlighted ? -10 : 0) : 24,
         }}
         transition={{
-          opacity: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
-          scale: { type: "spring", stiffness: 300, damping: 26 },
-          y: { type: "spring", stiffness: 300, damping: 26 },
+          opacity: { duration: 0.35 },
+          scale: { type: "spring", stiffness: 400, damping: 28 },
+          y: { type: "spring", stiffness: 400, damping: 28 },
         }}
         onMouseEnter={() => onHover(feature.id)}
         onMouseLeave={() => onHover(null)}
         onFocus={() => onHover(feature.id)}
         onBlur={() => onHover(null)}
       >
-        <div className="flex items-start gap-4">
+        <div className="flex items-start gap-5">
           <HoverIconAnimation animation={feature.iconAnimation} active={highlighted}>
             <div
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px]"
-              style={{ backgroundColor: `${feature.accent}18`, color: feature.accent }}
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[16px]"
+              style={{ backgroundColor: `${feature.accent}15`, color: feature.accent }}
             >
-              <Icon size={24} strokeWidth={1.75} aria-hidden="true" />
+              <Icon size={26} strokeWidth={1.7} aria-hidden="true" />
             </div>
           </HoverIconAnimation>
-          <div className="min-w-0 flex-1 pt-0.5">
-            <h3 className="font-sf-pro-display text-[17px] font-semibold leading-snug text-[#111111]">
+          <div className="min-w-0 flex-1 pt-1">
+            <h3 className="font-sf-pro-display text-[18px] font-semibold leading-snug text-[#111111]">
               {feature.title}
             </h3>
-            <p className="mt-1.5 text-[15px] leading-[1.5] text-mid-gray">
+            <p className="mt-2 text-[15px] leading-[1.5] text-mid-gray">
               {feature.description}
             </p>
           </div>

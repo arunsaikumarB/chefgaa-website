@@ -2,10 +2,11 @@ import { useEffect, useRef } from "react";
 import { useReducedMotion } from "framer-motion";
 import {
   ANIMATION_ORDER,
-  CENTER,
-  COMPOSITION,
+  SVG_CENTER,
+  SVG_VIEWBOX,
   buildCurvePath,
   getFeature,
+  toSvgCoords,
 } from "./features";
 
 type ConnectionLinesProps = {
@@ -26,13 +27,13 @@ export function ConnectionLines({
   return (
     <svg
       className="pointer-events-none absolute inset-0 h-full w-full"
-      viewBox={`0 0 ${COMPOSITION.width} ${COMPOSITION.height}`}
-      preserveAspectRatio="xMidYMid meet"
+      viewBox={`0 0 ${SVG_VIEWBOX.width} ${SVG_VIEWBOX.height}`}
+      preserveAspectRatio="none"
       aria-hidden="true"
     >
       <defs>
-        <filter id="eco-line-glow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="3" result="blur" />
+        <filter id="eco-glow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="2.5" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
             <feMergeNode in="SourceGraphic" />
@@ -43,31 +44,25 @@ export function ConnectionLines({
       {ANIMATION_ORDER.map((id) => {
         const feat = getFeature(id);
         if (!feat) return null;
-        const pathD = buildCurvePath(CENTER.x, CENTER.y, feat.x, feat.y);
+        const end = toSvgCoords(feat.left, feat.top);
+        const pathD = buildCurvePath(SVG_CENTER.x, SVG_CENTER.y, end.x, end.y);
         const progress = lineProgress[id] ?? 0;
         const lit = highlightedId === id || pulseId === id;
 
         return (
-          <g key={id} data-ecosystem-line={id}>
-            <path
-              d={pathD}
-              fill="none"
-              stroke="rgba(0,0,0,0.06)"
-              strokeWidth={1.5}
-              strokeLinecap="round"
-            />
+          <g key={id}>
+            <path d={pathD} fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth={1.2} strokeLinecap="round" />
             <path
               d={pathD}
               fill="none"
               stroke={feat.accent}
-              strokeWidth={lit ? 2.5 : 1.5}
-              strokeOpacity={lit ? 0.55 : 0.28}
+              strokeWidth={lit ? 2 : 1.2}
+              strokeOpacity={lit ? 0.5 : 0.25}
               strokeLinecap="round"
               pathLength={1}
               strokeDasharray={1}
               strokeDashoffset={1 - progress}
-              filter={lit ? "url(#eco-line-glow)" : undefined}
-              style={{ willChange: "stroke-dashoffset" }}
+              filter={lit ? "url(#eco-glow)" : undefined}
             />
             {showParticles && progress >= 1 && !reduce && (
               <PathParticle pathD={pathD} color={feat.accent} id={id} />
@@ -88,10 +83,8 @@ function PathParticle({ pathD, color, id }: { pathD: string; color: string; id: 
     const path = pathRef.current;
     const circle = circleRef.current;
     if (!path || !circle) return;
-
     let start: number | null = null;
-    const duration = 2800 + (id.charCodeAt(0) % 5) * 400;
-
+    const duration = 3000 + (id.charCodeAt(0) % 4) * 500;
     const tick = (ts: number) => {
       if (start === null) start = ts;
       const t = ((ts - start) % duration) / duration;
@@ -100,7 +93,6 @@ function PathParticle({ pathD, color, id }: { pathD: string; color: string; id: 
       circle.setAttribute("cy", String(pt.y));
       raf.current = requestAnimationFrame(tick);
     };
-
     raf.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf.current);
   }, [pathD, id]);
@@ -108,13 +100,7 @@ function PathParticle({ pathD, color, id }: { pathD: string; color: string; id: 
   return (
     <g>
       <path ref={pathRef} d={pathD} fill="none" stroke="none" />
-      <circle
-        ref={circleRef}
-        r={3.5}
-        fill={color}
-        opacity={0.75}
-        style={{ filter: `drop-shadow(0 0 3px ${color})` }}
-      />
+      <circle ref={circleRef} r={3} fill={color} opacity={0.7} />
     </g>
   );
 }

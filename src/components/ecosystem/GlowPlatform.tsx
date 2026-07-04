@@ -17,7 +17,7 @@ export function GlowPlatform({ visible, breathing = false }: GlowPlatformProps) 
       aria-hidden="true"
     >
       <motion.div
-        className="h-[min(520px,36vw)] w-[min(520px,36vw)] rounded-full"
+        className="h-[min(420px,30vw)] w-[min(420px,30vw)] rounded-full"
         style={{
           background:
             "radial-gradient(circle, rgba(255,110,20,0.16) 0%, rgba(0,113,227,0.06) 35%, transparent 68%)",
