@@ -41,14 +41,14 @@ export type EcosystemFeature = {
   y: number;
 };
 
-/** Balanced canvas — tighter horizontal spread, larger cards */
-export const CANVAS = { width: 1560, height: 1360 } as const;
-export const CENTER = { x: 780, y: 640 } as const;
+/** Wide canvas — cards spread edge-to-edge, scaled by width to fill the section */
+export const CANVAS = { width: 1720, height: 1240 } as const;
+export const CENTER = { x: 860, y: 560 } as const;
 export const POS_IMAGE = "/ecosystem/pos-hardware.png";
 
 /**
- * Symmetric ring around the POS (3 · 2 · 2 · 3 · 3 rows).
- * Card box ≈ 360 × 150 → 130px+ clearance on every side.
+ * Five columns of balance: 5 left · 3 center · 5 right around the POS.
+ * Card box ≈ 380 × 156 → outer columns sit at the section edges.
  */
 export const FEATURES: EcosystemFeature[] = [
   {
@@ -58,8 +58,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Megaphone,
     iconAnimation: "megaphone-wiggle",
     accent: "#ff6e14",
-    x: 300,
-    y: 120,
+    x: 230,
+    y: 110,
   },
   {
     id: "ai-insights",
@@ -68,8 +68,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Brain,
     iconAnimation: "brain-pulse",
     accent: "#8b5cf6",
-    x: 780,
-    y: 120,
+    x: 860,
+    y: 110,
   },
   {
     id: "kitchen",
@@ -78,8 +78,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: ChefHat,
     iconAnimation: "steam",
     accent: "#ff6e14",
-    x: 1260,
-    y: 120,
+    x: 1490,
+    y: 110,
   },
   {
     id: "inventory",
@@ -89,7 +89,7 @@ export const FEATURES: EcosystemFeature[] = [
     iconAnimation: "cube-rotate",
     accent: "#22c55e",
     x: 230,
-    y: 400,
+    y: 360,
   },
   {
     id: "online-ordering",
@@ -98,8 +98,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: ShoppingCart,
     iconAnimation: "cart-slide",
     accent: "#0071e3",
-    x: 1330,
-    y: 400,
+    x: 1490,
+    y: 360,
   },
   {
     id: "crm",
@@ -109,7 +109,7 @@ export const FEATURES: EcosystemFeature[] = [
     iconAnimation: "users-pulse",
     accent: "#8b5cf6",
     x: 230,
-    y: 660,
+    y: 610,
   },
   {
     id: "catering",
@@ -118,8 +118,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Truck,
     iconAnimation: "default",
     accent: "#ec4899",
-    x: 1330,
-    y: 660,
+    x: 1490,
+    y: 610,
   },
   {
     id: "loyalty",
@@ -128,8 +128,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Award,
     iconAnimation: "badge-shine",
     accent: "#ec4899",
-    x: 300,
-    y: 920,
+    x: 230,
+    y: 860,
   },
   {
     id: "website",
@@ -138,8 +138,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Globe,
     iconAnimation: "globe-rotate",
     accent: "#0071e3",
-    x: 780,
-    y: 920,
+    x: 860,
+    y: 870,
   },
   {
     id: "reservations",
@@ -148,8 +148,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Calendar,
     iconAnimation: "calendar-flip",
     accent: "#ef4444",
-    x: 1260,
-    y: 920,
+    x: 1490,
+    y: 860,
   },
   {
     id: "mobile-app",
@@ -158,8 +158,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: Smartphone,
     iconAnimation: "phone-float",
     accent: "#0071e3",
-    x: 300,
-    y: 1200,
+    x: 230,
+    y: 1110,
   },
   {
     id: "analytics",
@@ -168,8 +168,8 @@ export const FEATURES: EcosystemFeature[] = [
     icon: BarChart3,
     iconAnimation: "bars-animate",
     accent: "#8b5cf6",
-    x: 780,
-    y: 1200,
+    x: 860,
+    y: 1120,
   },
   {
     id: "payments",
@@ -178,26 +178,41 @@ export const FEATURES: EcosystemFeature[] = [
     icon: CreditCard,
     iconAnimation: "card-flip",
     accent: "#eab308",
-    x: 1260,
-    y: 1200,
+    x: 1490,
+    y: 1110,
   },
 ];
 
+/** Clockwise wiring + reveal order */
 export const ANIMATION_ORDER = [
   "ai-insights",
   "kitchen",
   "online-ordering",
+  "catering",
   "reservations",
   "payments",
   "analytics",
   "website",
+  "mobile-app",
+  "loyalty",
   "crm",
   "inventory",
   "marketing",
-  "loyalty",
-  "mobile-app",
-  "catering",
 ] as const;
+
+/** Scroll-scrub helper — 0..1 slice for the item at `index` within a phase */
+export function itemProgress(
+  progress: number,
+  start: number,
+  end: number,
+  index: number,
+  total: number
+): number {
+  const span = end - start;
+  const slot = span / total;
+  const s = start + index * slot;
+  return Math.max(0, Math.min(1, (progress - s) / slot));
+}
 
 export const METRICS = [
   { value: 20, suffix: "+", label: "Modules", icon: "modules" as const },

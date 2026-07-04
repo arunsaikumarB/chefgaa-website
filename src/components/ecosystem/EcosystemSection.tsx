@@ -1,65 +1,63 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
-import gsap from "gsap";
-import { useInView } from "react-intersection-observer";
-import { useReducedMotion } from "framer-motion";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+} from "framer-motion";
 import { SectionBackground } from "./SectionBackground";
 import { AnimatedPOS } from "./AnimatedPOS";
-import { HardwareGroup } from "./HardwareGroup";
 import { GlowPlatform } from "./GlowPlatform";
 import { ConnectionLines } from "./ConnectionLines";
 import { FeatureCard } from "./FeatureCard";
 import { AnimatedParticles } from "./AnimatedParticles";
 import { FloatingMetrics } from "./FloatingMetrics";
-import {
-  ANIMATION_ORDER,
-  CANVAS,
-  CENTER,
-  FEATURES,
-} from "./features";
+import { ANIMATION_ORDER, CANVAS, CENTER, FEATURES, itemProgress } from "./features";
+
+/** Reveal timeline across the section's scroll pass (0..1) */
+const PHASE = {
+  header: [0, 0.12] as const,
+  pos: [0.08, 0.24] as const,
+  wiring: [0.26, 0.92] as const,
+};
+
+function clamp01(v: number) {
+  return Math.max(0, Math.min(1, v));
+}
 
 function EcosystemCanvas({
   lineProgress,
   cardVisible,
-  hardwareVisible,
   platformVisible,
   posVisible,
-  sequenceComplete,
+  active,
   hoveredId,
   setHoveredId,
   pulseId,
   glowPulse,
   posGlowing,
   floating,
-  heroRef,
 }: {
   lineProgress: Record<string, number>;
   cardVisible: Record<string, boolean>;
-  hardwareVisible: boolean;
   platformVisible: boolean;
   posVisible: boolean;
-  sequenceComplete: boolean;
+  active: boolean;
   hoveredId: string | null;
   setHoveredId: (id: string | null) => void;
   pulseId: string | null;
   glowPulse: boolean;
   posGlowing: boolean;
   floating: boolean;
-  heroRef: RefObject<HTMLDivElement>;
 }) {
   const stageRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(0.5);
+  const [scale, setScale] = useState(0.6);
 
   useLayoutEffect(() => {
     const update = () => {
       const stage = stageRef.current;
       if (!stage) return;
-      const availW = stage.clientWidth;
-      // Fit the whole 1900px composition to the available width, and cap
-      // by viewport height so it never runs off-screen. Always scale (never
-      // rely on the untransformed layout box), so cards stay evenly placed.
-      const byWidth = availW / CANVAS.width;
-      const byHeight = (window.innerHeight * 0.82) / CANVAS.height;
-      setScale(Math.min(byWidth, byHeight, 1));
+      // Width-driven so the composition always fills the section.
+      setScale(Math.min(stage.clientWidth / CANVAS.width, 1));
     };
     update();
     window.addEventListener("resize", update);
@@ -72,22 +70,17 @@ function EcosystemCanvas({
 
   return (
     <div ref={stageRef} className="relative mx-auto flex w-full justify-center px-4">
-      {/* Wrapper reserves the SCALED size so layout stays centered with no overflow */}
       <div style={{ width: scaledW, height: scaledH }} className="relative">
         <div
           className="absolute left-0 top-0 origin-top-left"
-          style={{
-            width: CANVAS.width,
-            height: CANVAS.height,
-            transform: `scale(${scale})`,
-          }}
+          style={{ width: CANVAS.width, height: CANVAS.height, transform: `scale(${scale})` }}
         >
           <div className="absolute inset-0 z-[10]">
             <ConnectionLines
               lineProgress={lineProgress}
               highlightedId={hoveredId}
               pulseId={pulseId}
-              showParticles={sequenceComplete}
+              showParticles={active}
               glowPulse={glowPulse}
             />
           </div>
@@ -96,15 +89,13 @@ function EcosystemCanvas({
             className="absolute z-[15] -translate-x-1/2 -translate-y-1/2"
             style={{ left: CENTER.x, top: CENTER.y }}
           >
-            <GlowPlatform visible={platformVisible} breathing={sequenceComplete} />
+            <GlowPlatform visible={platformVisible} breathing={active} />
           </div>
 
           <div
-            ref={heroRef}
-            className="absolute z-[20] -translate-x-1/2 -translate-y-1/2 opacity-0"
-            style={{ left: CENTER.x, top: CENTER.y, width: 620, height: 620, perspective: 900 }}
+            className="absolute z-[20] -translate-x-1/2 -translate-y-1/2"
+            style={{ left: CENTER.x, top: CENTER.y, width: 620, height: 620 }}
           >
-            <HardwareGroup visible={hardwareVisible} />
             <AnimatedPOS visible={posVisible} glowing={posGlowing} floating={floating} />
           </div>
 
@@ -123,7 +114,6 @@ function EcosystemCanvas({
                 visible={!!cardVisible[feat.id]}
                 dimmed={anyHover && hoveredId !== feat.id}
                 highlighted={hoveredId === feat.id}
-                floating={sequenceComplete}
                 onHover={setHoveredId}
               />
             </div>
@@ -136,107 +126,54 @@ function EcosystemCanvas({
 
 export default function EcosystemSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
-  const posRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
-  const hasAnimated = useRef(false);
 
-  const [lineProgress, setLineProgress] = useState<Record<string, number>>({});
-  const [cardVisible, setCardVisible] = useState<Record<string, boolean>>({});
-  const [posVisible, setPosVisible] = useState(false);
-  const [hardwareVisible, setHardwareVisible] = useState(false);
-  const [platformVisible, setPlatformVisible] = useState(false);
-  const [sequenceComplete, setSequenceComplete] = useState(false);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start 0.85", "end 0.85"],
+  });
+
+  const [progress, setProgress] = useState(reduce ? 1 : 0);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [pulseId, setPulseId] = useState<string | null>(null);
   const [glowPulse, setGlowPulse] = useState(false);
-  const [posGlowing, setPosGlowing] = useState(false);
 
-  const { ref: inViewRef, inView } = useInView({ threshold: 0.4, triggerOnce: true });
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    if (!reduce) setProgress(Math.round(v * 250) / 250);
+  });
 
-  const setRefs = useCallback(
-    (node: HTMLElement | null) => {
-      (sectionRef as React.MutableRefObject<HTMLElement | null>).current = node;
-      inViewRef(node);
-    },
-    [inViewRef]
-  );
+  const headerP = reduce
+    ? 1
+    : clamp01((progress - PHASE.header[0]) / (PHASE.header[1] - PHASE.header[0]));
+  const posP = reduce
+    ? 1
+    : clamp01((progress - PHASE.pos[0]) / (PHASE.pos[1] - PHASE.pos[0]));
+  const posVisible = reduce || posP > 0.05;
+  const platformVisible = reduce || posP > 0.3;
+  const active = reduce || progress > 0.55;
+  const metricsActive = reduce || progress > 0.85;
 
+  const lineProgress = useMemo(() => {
+    const map: Record<string, number> = {};
+    ANIMATION_ORDER.forEach((id, i) => {
+      map[id] = reduce
+        ? 1
+        : itemProgress(progress, PHASE.wiring[0], PHASE.wiring[1], i, ANIMATION_ORDER.length);
+    });
+    return map;
+  }, [progress, reduce]);
+
+  const cardVisible = useMemo(() => {
+    const map: Record<string, boolean> = {};
+    ANIMATION_ORDER.forEach((id) => {
+      map[id] = reduce || (lineProgress[id] ?? 0) > 0.82;
+    });
+    return map;
+  }, [lineProgress, reduce]);
+
+  // Idle: subtle line pulse once revealed
   useEffect(() => {
-    if (!inView || hasAnimated.current) return;
-
-    if (reduce) {
-      hasAnimated.current = true;
-      setPosVisible(true);
-      setHardwareVisible(true);
-      setPlatformVisible(true);
-      const lines: Record<string, number> = {};
-      const cards: Record<string, boolean> = {};
-      ANIMATION_ORDER.forEach((id) => {
-        lines[id] = 1;
-        cards[id] = true;
-      });
-      setLineProgress(lines);
-      setCardVisible(cards);
-      setSequenceComplete(true);
-      return;
-    }
-
-    hasAnimated.current = true;
-
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ onComplete: () => setSequenceComplete(true) });
-
-      tl.fromTo(
-        headerRef.current,
-        { opacity: 0, y: 80 },
-        { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" },
-        0
-      );
-
-      tl.to({}, { duration: 0.2 });
-
-      tl.call(() => {
-        setPosVisible(true);
-        setHardwareVisible(true);
-      });
-      tl.fromTo(
-        posRef.current,
-        { opacity: 0, scale: 0.75, rotateX: 10 },
-        { opacity: 1, scale: 1, rotateX: 0, duration: 0.8, ease: "back.out(1.2)" },
-        "<"
-      );
-
-      tl.call(() => setPlatformVisible(true));
-      tl.fromTo(
-        {},
-        {},
-        { duration: 0.45 }
-      );
-
-      ANIMATION_ORDER.forEach((id) => {
-        const lineObj = { p: 0 };
-        tl.to(lineObj, {
-          p: 1,
-          duration: 0.42,
-          ease: "power2.inOut",
-          onUpdate: () => {
-            setLineProgress((prev) => ({ ...prev, [id]: lineObj.p }));
-          },
-          onComplete: () => {
-            setCardVisible((prev) => ({ ...prev, [id]: true }));
-          },
-        });
-      });
-
-      tl.call(() => setGlowPulse(true));
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [inView, reduce]);
-
-  useEffect(() => {
-    if (!sequenceComplete || reduce) return;
+    if (!active || reduce || hoveredId) return;
     const interval = setInterval(() => {
       const idx = Math.floor(Math.random() * ANIMATION_ORDER.length);
       setGlowPulse(true);
@@ -247,31 +184,32 @@ export default function EcosystemSection() {
       }, 1200);
     }, 5000);
     return () => clearInterval(interval);
-  }, [sequenceComplete, reduce]);
+  }, [active, reduce, hoveredId]);
 
+  // Hover: pulse from POS to the hovered module
   useEffect(() => {
-    if (hoveredId) {
-      setPosGlowing(true);
-      setPulseId(hoveredId);
-    } else {
-      setPosGlowing(false);
-      setPulseId(null);
-    }
+    if (hoveredId) setPulseId(hoveredId);
   }, [hoveredId]);
+
+  const posGlowing = hoveredId !== null;
 
   return (
     <section
-      ref={setRefs}
+      ref={sectionRef}
       id="ecosystem"
-      className="relative min-h-screen overflow-visible bg-paper py-16 md:py-[100px] lg:py-[120px]"
+      className="relative overflow-visible bg-paper py-16 md:py-[100px] lg:py-[120px]"
       aria-labelledby="ecosystem-heading"
     >
       <SectionBackground />
-      <AnimatedParticles active={sequenceComplete} />
+      <AnimatedParticles active={active} />
 
       <div
-        ref={headerRef}
-        className="relative z-10 mx-auto max-w-[720px] px-6 text-center opacity-0"
+        className="relative z-10 mx-auto max-w-[720px] px-6 text-center"
+        style={{
+          opacity: headerP,
+          transform: `translateY(${(1 - headerP) * 60}px)`,
+          willChange: "opacity, transform",
+        }}
       >
         <span className="inline-flex items-center rounded-full border border-hairline/80 bg-paper px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-ember shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
           All-in-One Restaurant Operating System
@@ -301,46 +239,36 @@ export default function EcosystemSection() {
         </p>
       </div>
 
-      {/* Desktop / tablet */}
-      <div className="relative z-10 mt-6 hidden md:block md:mt-10">
+      {/* Desktop / tablet — scroll-driven ecosystem */}
+      <div className="relative z-10 mt-8 hidden md:block md:mt-12">
         <EcosystemCanvas
-          heroRef={posRef}
           lineProgress={lineProgress}
           cardVisible={cardVisible}
-          hardwareVisible={hardwareVisible}
           platformVisible={platformVisible}
           posVisible={posVisible}
-          sequenceComplete={sequenceComplete}
+          active={active}
           hoveredId={hoveredId}
           setHoveredId={setHoveredId}
           pulseId={pulseId}
           glowPulse={glowPulse}
           posGlowing={posGlowing}
-          floating={sequenceComplete}
+          floating={active}
         />
       </div>
 
       {/* Mobile timeline */}
       <div className="relative z-10 mt-10 flex flex-col items-center gap-8 px-6 md:hidden">
         <div className="flex flex-col items-center">
-          <GlowPlatform visible={posVisible || !!reduce} breathing={sequenceComplete} />
+          <GlowPlatform visible breathing={active} />
           <div className="relative scale-[0.45]" style={{ width: 620, height: 620 }}>
-            <HardwareGroup visible={hardwareVisible || !!reduce} />
-            <AnimatedPOS visible={posVisible || !!reduce} floating={sequenceComplete} />
+            <AnimatedPOS visible floating={active} />
           </div>
         </div>
-        {FEATURES.map((feat, i) => (
-          <div
-            key={feat.id}
-            className="w-full max-w-[320px] opacity-0"
-            style={{
-              opacity: cardVisible[feat.id] || reduce ? 1 : 0,
-              transition: `opacity 0.5s ease ${i * 0.04}s`,
-            }}
-          >
+        {FEATURES.map((feat) => (
+          <div key={feat.id} className="w-full max-w-[360px]">
             <FeatureCard
               feature={feat}
-              visible={!!cardVisible[feat.id] || !!reduce}
+              visible
               dimmed={false}
               highlighted={hoveredId === feat.id}
               onHover={setHoveredId}
@@ -350,7 +278,7 @@ export default function EcosystemSection() {
       </div>
 
       <div className="relative z-10 px-6">
-        <FloatingMetrics active={sequenceComplete || !!reduce} />
+        <FloatingMetrics active={metricsActive} />
       </div>
     </section>
   );

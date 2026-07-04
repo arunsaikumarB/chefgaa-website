@@ -7,7 +7,6 @@ type FeatureCardProps = {
   visible: boolean;
   dimmed: boolean;
   highlighted: boolean;
-  floating?: boolean;
   onHover: (id: string | null) => void;
 };
 
@@ -87,11 +86,7 @@ function IconMotion({
 }
 
 export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
-  function FeatureCard(
-    { feature, visible, dimmed, highlighted, floating = false, onHover },
-    ref
-  ) {
-    const reduce = useReducedMotion();
+  function FeatureCard({ feature, visible, dimmed, highlighted, onHover }, ref) {
     const Icon = feature.icon;
 
     return (
@@ -101,56 +96,46 @@ export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
         role="article"
         aria-label={feature.title}
         tabIndex={0}
-        className="flex w-[360px] min-h-[132px] flex-col justify-center rounded-[28px] border border-black/[0.05] bg-paper px-8 py-7"
+        className="flex w-[380px] min-h-[156px] flex-col justify-center rounded-[28px] border border-black/[0.05] bg-paper px-9 py-8"
         style={{
           boxShadow: highlighted
-            ? "0 28px 60px rgba(0,0,0,0.12)"
+            ? "0 30px 64px rgba(0,0,0,0.13)"
             : "0 12px 40px rgba(0,0,0,0.06)",
           zIndex: highlighted ? 40 : 1,
           willChange: "transform, opacity",
         }}
         initial={false}
         animate={{
-          opacity: visible ? (dimmed ? 0.55 : 1) : 0,
+          opacity: visible ? (dimmed ? 0.5 : 1) : 0,
           scale: visible ? (highlighted ? 1.04 : 1) : 0.85,
-          y: visible
-            ? highlighted
-              ? -10
-              : floating && !reduce
-                ? [0, -2, 0]
-                : 0
-            : 22,
+          y: visible ? (highlighted ? -10 : 0) : 22,
         }}
         transition={{
           opacity: { duration: 0.3, ease: "easeOut" },
-          scale: highlighted
-            ? { duration: 0.28, ease: [0.22, 1, 0.36, 1] }
-            : { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
-          y:
-            floating && !reduce && visible && !highlighted
-              ? { duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: feature.x % 2 }
-              : { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
+          scale: { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
+          y: { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
         }}
         onMouseEnter={() => onHover(feature.id)}
         onMouseLeave={() => onHover(null)}
         onFocus={() => onHover(feature.id)}
         onBlur={() => onHover(null)}
       >
-        <IconMotion animation={feature.iconAnimation} active={highlighted || floating}>
+        {/* Icon animates on hover only */}
+        <IconMotion animation={feature.iconAnimation} active={highlighted}>
           <div
-            className="mb-3.5 flex h-11 w-11 items-center justify-center rounded-[13px] transition-colors"
+            className="mb-4 flex h-12 w-12 items-center justify-center rounded-[14px] transition-colors"
             style={{
               backgroundColor: highlighted ? `${feature.accent}22` : `${feature.accent}14`,
               color: feature.accent,
             }}
           >
-            <Icon size={22} strokeWidth={1.7} aria-hidden="true" />
+            <Icon size={24} strokeWidth={1.7} aria-hidden="true" />
           </div>
         </IconMotion>
-        <h3 className="font-sf-pro-display text-[19px] font-semibold leading-snug text-[#111111]">
+        <h3 className="font-sf-pro-display text-[20px] font-semibold leading-snug text-[#111111]">
           {feature.title}
         </h3>
-        <p className="mt-1.5 text-[15px] leading-[1.5] text-mid-gray">
+        <p className="mt-2 text-[15px] leading-[1.55] text-mid-gray">
           {feature.description}
         </p>
       </motion.article>
