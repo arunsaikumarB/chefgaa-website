@@ -9,11 +9,14 @@ import { GlowPlatform } from "./GlowPlatform";
 import { ConnectionLines } from "./ConnectionLines";
 import { FeatureCard } from "./FeatureCard";
 import { FloatingMetrics } from "./FloatingMetrics";
-import { ANIMATION_ORDER, ECOSYSTEM_FEATURES, anchorClass } from "./features";
+import {
+  ANIMATION_ORDER,
+  ECOSYSTEM_FEATURES,
+  HUB_POSITION,
+  anchorTransform,
+} from "./features";
 
 gsap.registerPlugin(ScrollTrigger);
-
-const HUB = { left: 50, top: 45 } as const;
 
 export default function EcosystemSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -71,18 +74,19 @@ export default function EcosystemSection() {
       tl.fromTo(
         headerRef.current,
         { opacity: 0, y: 80 },
-        { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" }
+        { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" },
+        0
       );
       tl.to({}, { duration: 0.2 });
       tl.call(() => setHubActive(true));
       tl.fromTo(
         hubRef.current,
         { opacity: 0, scale: 0.75 },
-        { opacity: 1, scale: 1, duration: 0.7, ease: "back.out(1.2)" },
+        { opacity: 1, scale: 1, duration: 0.85, ease: "back.out(1.15)" },
         "<"
       );
       tl.call(() => setPlatformVisible(true));
-      tl.fromTo({}, {}, { duration: 0.35 });
+      tl.to({}, { duration: 0.35 });
 
       ANIMATION_ORDER.forEach((id) => {
         const obj = { p: 0 };
@@ -94,6 +98,7 @@ export default function EcosystemSection() {
           onComplete: () => setCardVisible((prev) => ({ ...prev, [id]: true })),
         });
       });
+      tl.to({}, { duration: 0.15 });
     }, sectionRef);
 
     return () => ctx.revert();
@@ -120,7 +125,10 @@ export default function EcosystemSection() {
     >
       <SectionBackground />
 
-      <div ref={headerRef} className="relative z-10 mx-auto max-w-[720px] px-6 text-center opacity-0">
+      <div
+        ref={headerRef}
+        className="relative z-10 mx-auto max-w-[720px] px-6 text-center opacity-0"
+      >
         <span className="inline-flex items-center rounded-full border border-hairline/80 bg-paper px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-ember shadow-sm">
           All-in-One Restaurant Operating System
         </span>
@@ -140,45 +148,46 @@ export default function EcosystemSection() {
           </span>{" "}
           Ecosystem
         </h2>
-        <p className="mt-5 text-[19px] leading-[1.47] text-mid-gray md:text-[21px] md:whitespace-nowrap">
-          Everything your restaurant needs. Connected beautifully. Powered by one intelligent platform.
+        <p className="mt-5 text-[19px] leading-[1.47] text-mid-gray md:text-[21px]">
+          Everything your restaurant needs.
+          <br />
+          Connected beautifully.
+          <br />
+          Powered by one intelligent platform.
         </p>
       </div>
 
       {/* Full-width radial canvas */}
-      <div className="relative z-10 mx-auto mt-4 hidden h-[min(920px,92vh)] w-full max-w-[100vw] px-[clamp(16px,2vw,32px)] md:block">
+      <div className="relative z-10 mx-auto mt-4 hidden h-[min(1040px,95vh)] w-full max-w-[100vw] px-0 md:block">
         <ConnectionLines
           lineProgress={lineProgress}
           highlightedId={hoveredId}
           pulseId={pulseId}
+          showParticles={!!hoveredId}
         />
 
         <div
-          className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
-          style={{ left: `${HUB.left}%`, top: `${HUB.top}%` }}
-        >
-          <GlowPlatform visible={platformVisible} />
-        </div>
-
-        <div
+          className="absolute z-20"
+          style={{
+            left: `${HUB_POSITION.left}%`,
+            top: `${HUB_POSITION.top}%`,
+            transform: "translate(-50%, -50%)",
+          }}
           ref={hubRef}
-          className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
-          style={{ left: `${HUB.left}%`, top: `${HUB.top}%` }}
         >
+          <GlowPlatform visible={platformVisible} breathing={sequenceComplete} />
           <CenterHub active={hubActive} glowing={hubGlowing} />
         </div>
 
         {ECOSYSTEM_FEATURES.map((feature) => (
           <div
             key={feature.id}
-            className={`absolute top-[var(--pos-top)] z-30 ${anchorClass(feature.anchor)}`}
-            style={
-              {
-                "--pos-left": `${feature.left}%`,
-                "--pos-right": `${100 - feature.left}%`,
-                "--pos-top": `${feature.top}%`,
-              } as React.CSSProperties
-            }
+            className="absolute z-30"
+            style={{
+              left: `${feature.left}%`,
+              top: `${feature.top}%`,
+              transform: anchorTransform(feature.anchor),
+            }}
           >
             <FeatureCard
               feature={feature}
@@ -191,14 +200,18 @@ export default function EcosystemSection() {
         ))}
       </div>
 
+      {/* Mobile */}
       <div className="relative z-10 mt-10 flex flex-col items-center gap-10 px-6 md:hidden">
-        <CenterHub active glowing={hubGlowing} />
+        <div className="relative flex h-32 w-32 items-center justify-center">
+          <GlowPlatform visible breathing={sequenceComplete} />
+          <CenterHub active glowing={hubGlowing} />
+        </div>
         {ECOSYSTEM_FEATURES.map((feature) => (
           <FeatureCard
             key={feature.id}
             feature={feature}
             visible
-            dimmed={false}
+            dimmed={anyHovered && hoveredId !== feature.id}
             highlighted={hoveredId === feature.id}
             onHover={setHoveredId}
           />

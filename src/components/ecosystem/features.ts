@@ -30,7 +30,7 @@ export type IconAnimation =
   | "cart-slide"
   | "default";
 
-export type CardAnchor = "left" | "right" | "center";
+export type CardAnchor = "left" | "center" | "right";
 
 export type EcosystemFeature = {
   id: string;
@@ -43,10 +43,14 @@ export type EcosystemFeature = {
   left: number;
   top: number;
   anchor: CardAnchor;
+  /** SVG line endpoint (viewBox coords) */
+  svg: { x: number; y: number };
 };
 
-export const SVG_VIEWBOX = { width: 2400, height: 1200 } as const;
-export const SVG_CENTER = { x: 1200, y: 540 } as const;
+/** Percent-based viewBox — matches card % layout for responsive curves */
+export const SVG_VIEWBOX = { width: 100, height: 100 } as const;
+export const SVG_CENTER = { x: 50, y: 46 } as const;
+export const HUB_POSITION = { left: 50, top: 46 } as const;
 
 const mk = (
   id: string,
@@ -57,7 +61,8 @@ const mk = (
   accent: string,
   left: number,
   top: number,
-  anchor: CardAnchor
+  anchor: CardAnchor,
+  svg: { x: number; y: number }
 ): EcosystemFeature => ({
   id,
   title,
@@ -68,23 +73,24 @@ const mk = (
   left,
   top,
   anchor,
+  svg,
 });
 
-/** Balanced radial layout — ~8% from edges, equal breathing room */
+/** Balanced radial layout — ~8% / ~92% wings, ≥32px gaps, no overlap */
 export const ECOSYSTEM_FEATURES: EcosystemFeature[] = [
-  mk("ai-insights", "AI Insights", "AI-powered insights and smart recommendations.", Brain, "brain-pulse", "#8b5cf6", 50, 4, "center"),
-  mk("marketing", "Marketing", "Run campaigns, promotions and grow your brand.", Megaphone, "megaphone-wiggle", "#f97316", 8, 13, "left"),
-  mk("kitchen", "Kitchen Display", "Real-time orders, seamless kitchen flow.", ChefHat, "steam", "#f97316", 92, 13, "right"),
-  mk("inventory", "Inventory", "Track stock, manage suppliers, reduce waste.", Package, "cube-rotate", "#22c55e", 7, 29, "left"),
-  mk("online-ordering", "Online Ordering", "Accept orders online, increase revenue.", ShoppingCart, "cart-slide", "#3b82f6", 93, 29, "right"),
-  mk("crm", "CRM", "Know your customers, build lasting relationships.", Users, "users-pulse", "#8b5cf6", 9, 45, "left"),
-  mk("catering", "Catering", "Manage catering, events and bulk orders.", Truck, "default", "#ec4899", 91, 45, "right"),
-  mk("loyalty", "Loyalty", "Reward customers, boost repeat visits.", Award, "badge-shine", "#ec4899", 12, 59, "left"),
-  mk("reservations", "Reservations", "Manage bookings, tables and waitlists.", Calendar, "calendar-flip", "#ef4444", 88, 59, "right"),
-  mk("mobile-app", "Mobile App", "Manage on the go, anytime, anywhere.", Smartphone, "phone-float", "#3b82f6", 7, 73, "left"),
-  mk("website", "Website", "Beautiful restaurant website in minutes.", Globe, "globe-rotate", "#3b82f6", 50, 77, "center"),
-  mk("payments", "Payments", "Multiple payment options, fast and secure.", CreditCard, "card-flip", "#f97316", 93, 73, "right"),
-  mk("analytics", "Analytics", "Real-time reports, smarter decisions.", BarChart3, "bars-animate", "#8b5cf6", 50, 91, "center"),
+  mk("ai-insights", "AI Insights", "AI-powered insights and smart recommendations.", Brain, "brain-pulse", "#8b5cf6", 50, 6, "center", { x: 50, y: 6 }),
+  mk("marketing", "Marketing", "Run campaigns, promotions and grow your brand.", Megaphone, "megaphone-wiggle", "#f97316", 8, 17, "left", { x: 22, y: 17 }),
+  mk("kitchen", "Kitchen Display", "Real-time orders, seamless kitchen flow.", ChefHat, "steam", "#f97316", 92, 17, "right", { x: 78, y: 17 }),
+  mk("inventory", "Inventory", "Track stock, manage suppliers, reduce waste.", Package, "cube-rotate", "#22c55e", 8, 31, "left", { x: 22, y: 31 }),
+  mk("online-ordering", "Online Ordering", "Accept orders online, increase revenue.", ShoppingCart, "cart-slide", "#3b82f6", 92, 31, "right", { x: 78, y: 31 }),
+  mk("crm", "CRM", "Know your customers, build lasting relationships.", Users, "users-pulse", "#8b5cf6", 9, 45, "left", { x: 23, y: 45 }),
+  mk("catering", "Catering", "Manage catering, events and bulk orders.", Truck, "default", "#ec4899", 91, 45, "right", { x: 77, y: 45 }),
+  mk("loyalty", "Loyalty", "Reward customers, boost repeat visits.", Award, "badge-shine", "#ec4899", 11, 59, "left", { x: 24, y: 59 }),
+  mk("reservations", "Reservations", "Manage bookings, tables and waitlists.", Calendar, "calendar-flip", "#ef4444", 89, 59, "right", { x: 76, y: 59 }),
+  mk("mobile-app", "Mobile App", "Manage on the go, anytime, anywhere.", Smartphone, "phone-float", "#3b82f6", 8, 73, "left", { x: 22, y: 73 }),
+  mk("website", "Website", "Beautiful restaurant website in minutes.", Globe, "globe-rotate", "#3b82f6", 50, 73, "center", { x: 50, y: 73 }),
+  mk("payments", "Payments", "Multiple payment options, fast and secure.", CreditCard, "card-flip", "#f97316", 92, 73, "right", { x: 78, y: 73 }),
+  mk("analytics", "Analytics", "Real-time reports, smarter decisions.", BarChart3, "bars-animate", "#8b5cf6", 50, 90, "center", { x: 50, y: 90 }),
 ];
 
 export const ANIMATION_ORDER = [
@@ -110,47 +116,24 @@ export const METRICS = [
   { text: "Unlimited", label: "Integrations" },
 ] as const;
 
-export function toSvgPoint(left: number, top: number) {
-  return {
-    x: (left / 100) * SVG_VIEWBOX.width,
-    y: (top / 100) * SVG_VIEWBOX.height,
-  };
-}
-
-/** Card edge facing the hub — keeps Bézier endpoints aligned with visible cards */
-const CARD_HALF_W = 210;
-const CARD_HALF_H = 78;
-const HUB_TOP_PCT = (SVG_CENTER.y / SVG_VIEWBOX.height) * 100;
-
-export function getConnectionPoint(feature: EcosystemFeature) {
-  const pt = toSvgPoint(feature.left, feature.top);
-
-  if (feature.anchor === "left") {
-    return { x: pt.x + CARD_HALF_W, y: pt.y };
-  }
-  if (feature.anchor === "right") {
-    return { x: pt.x - CARD_HALF_W, y: pt.y };
-  }
-  if (feature.top < HUB_TOP_PCT) {
-    return { x: pt.x, y: pt.y + CARD_HALF_H };
-  }
-  return { x: pt.x, y: pt.y - CARD_HALF_H };
-}
-
-export function buildCurvePath(sx: number, sy: number, ex: number, ey: number, bend = 0.17): string {
+export function buildCurvePath(sx: number, sy: number, ex: number, ey: number, bend = 0.18): string {
   const mx = (sx + ex) / 2;
   const my = (sy + ey) / 2;
   const dx = ex - sx;
   const dy = ey - sy;
-  return `M ${sx} ${sy} C ${mx - dy * bend} ${my + dx * bend}, ${mx + dy * bend * 0.38} ${my - dx * bend * 0.38}, ${ex} ${ey}`;
+  const c1x = mx - dy * bend;
+  const c1y = my + dx * bend;
+  const c2x = mx + dy * bend * 0.38;
+  const c2y = my - dx * bend * 0.38;
+  return `M ${sx} ${sy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${ex} ${ey}`;
 }
 
 export function getFeature(id: string): EcosystemFeature | undefined {
   return ECOSYSTEM_FEATURES.find((f) => f.id === id);
 }
 
-export function anchorClass(anchor: CardAnchor): string {
-  if (anchor === "left") return "left-[var(--pos-left)] -translate-y-1/2";
-  if (anchor === "right") return "right-[var(--pos-right)] left-auto -translate-y-1/2";
-  return "left-[var(--pos-left)] -translate-x-1/2 -translate-y-1/2";
+export function anchorTransform(anchor: CardAnchor): string {
+  if (anchor === "left") return "translateY(-50%)";
+  if (anchor === "right") return "translate(-100%, -50%)";
+  return "translate(-50%, -50%)";
 }

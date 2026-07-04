@@ -104,12 +104,11 @@ export function Home() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
             <h1 className="font-sf-pro-display text-[40px] font-bold leading-[1.05] tracking-[-0.5px] text-primary-ink md:text-[72px] md:tracking-[-0.8px] lg:text-[96px] lg:leading-[1.04] lg:tracking-[-1px]">
-              All-in-One POS &amp; Online Ordering
-              <br />
-              for Restaurants.
+              All-in-One POS &amp; Online Ordering for Restaurants.
             </h1>
-            <p className="mt-6 max-w-[620px] text-[19px] leading-[1.4] text-mid-gray md:max-w-none md:text-[21px] md:whitespace-nowrap">
-              Streamline operations, boost sales, and enhance customer experience with Chefgaa&apos;s powerful restaurant management solution.
+            <p className="mt-6 max-w-[620px] text-[19px] leading-[1.4] text-mid-gray md:text-[21px]">
+              Streamline operations, boost sales, and enhance customer experience
+              with Chefgaa&apos;s powerful restaurant management solution.
             </p>
             <div className="mt-10 flex flex-col items-center gap-5 sm:flex-row">
               <PrimaryButton to="/contact">Request a Demo</PrimaryButton>
@@ -148,11 +147,7 @@ export function Home() {
       <Section bg="gray">
         <SectionHeading
           title="Built for Speed & Efficiency"
-          intro={
-            <span className="md:whitespace-nowrap">
-              The Chefgaa POS keeps your front and back of house in perfect sync.
-            </span>
-          }
+          intro="The Chefgaa POS keeps your front and back of house in perfect sync."
         />
         <CheckList items={posBullets} columns={3} />
       </Section>
@@ -165,12 +160,8 @@ export function Home() {
       {/* Online ordering band */}
       <Section bg="white">
         <SectionHeading
-          title={<span className="md:whitespace-nowrap">Take Your Restaurant Online</span>}
-          intro={
-            <span className="md:whitespace-nowrap">
-              Own your online ordering experience — from browsing the menu to the moment it arrives.
-            </span>
-          }
+          title="Take Your Restaurant Online"
+          intro="Own your online ordering experience — from browsing the menu to the moment it arrives."
         />
         <CheckList items={orderingBullets} columns={3} />
       </Section>
@@ -199,7 +190,7 @@ export function Home() {
       {/* Integrations */}
       <Section bg="gray">
         <SectionHeading
-          title={<span className="md:whitespace-nowrap">Works with the tools you already use.</span>}
+          title="Works with the tools you already use."
           align="center"
         />
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-6">

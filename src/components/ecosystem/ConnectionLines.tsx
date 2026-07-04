@@ -1,24 +1,19 @@
 import { useEffect, useRef } from "react";
 import { useReducedMotion } from "framer-motion";
-import {
-  ANIMATION_ORDER,
-  SVG_CENTER,
-  SVG_VIEWBOX,
-  buildCurvePath,
-  getConnectionPoint,
-  getFeature,
-} from "./features";
+import { ANIMATION_ORDER, SVG_CENTER, SVG_VIEWBOX, buildCurvePath, getFeature } from "./features";
 
 type ConnectionLinesProps = {
   lineProgress: Record<string, number>;
   highlightedId: string | null;
   pulseId: string | null;
+  showParticles: boolean;
 };
 
 export function ConnectionLines({
   lineProgress,
   highlightedId,
   pulseId,
+  showParticles,
 }: ConnectionLinesProps) {
   const reduce = useReducedMotion();
 
@@ -30,7 +25,7 @@ export function ConnectionLines({
       aria-hidden="true"
     >
       <defs>
-        <filter id="eco-glow" x="-20%" y="-20%" width="140%" height="140%">
+        <filter id="eco-glow" x="-25%" y="-25%" width="150%" height="150%">
           <feGaussianBlur stdDeviation="3" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
@@ -42,36 +37,34 @@ export function ConnectionLines({
       {ANIMATION_ORDER.map((id) => {
         const feat = getFeature(id);
         if (!feat) return null;
-        const end = getConnectionPoint(feat);
-        const pathD = buildCurvePath(SVG_CENTER.x, SVG_CENTER.y, end.x, end.y);
+        const pathD = buildCurvePath(SVG_CENTER.x, SVG_CENTER.y, feat.svg.x, feat.svg.y);
         const progress = lineProgress[id] ?? 0;
-        const lit = highlightedId === id;
-        const pulsing = pulseId === id;
+        const lit = highlightedId === id || pulseId === id;
 
         return (
           <g key={id}>
             <path
               d={pathD}
               fill="none"
-              stroke="rgba(0,0,0,0.05)"
+              stroke="rgba(0,0,0,0.04)"
               strokeWidth={1.5}
               strokeLinecap="round"
             />
             <path
               d={pathD}
               fill="none"
-              stroke={lit || pulsing ? "#ff6e14" : feat.accent}
-              strokeWidth={lit || pulsing ? 2.5 : 1.5}
-              strokeOpacity={lit || pulsing ? 0.65 : 0.28}
+              stroke={feat.accent}
+              strokeWidth={lit ? 2.5 : 1.75}
+              strokeOpacity={lit ? 0.55 : 0.3}
               strokeLinecap="round"
               pathLength={1}
               strokeDasharray={1}
               strokeDashoffset={1 - progress}
-              filter={lit || pulsing ? "url(#eco-glow)" : undefined}
-              style={{ willChange: "stroke-dashoffset, stroke-opacity" }}
+              filter={lit ? "url(#eco-glow)" : undefined}
+              style={{ willChange: lit ? "stroke-dashoffset" : undefined }}
             />
-            {pulsing && progress >= 1 && !reduce && (
-              <HoverPulse key={`pulse-${id}`} pathD={pathD} color="#ff6e14" />
+            {showParticles && progress >= 1 && !reduce && lit && (
+              <PathParticle pathD={pathD} id={id} />
             )}
           </g>
         );
@@ -80,7 +73,7 @@ export function ConnectionLines({
   );
 }
 
-function HoverPulse({ pathD, color }: { pathD: string; color: string }) {
+function PathParticle({ pathD, id }: { pathD: string; id: string }) {
   const circleRef = useRef<SVGCircleElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
   const raf = useRef(0);
@@ -89,30 +82,24 @@ function HoverPulse({ pathD, color }: { pathD: string; color: string }) {
     const path = pathRef.current;
     const circle = circleRef.current;
     if (!path || !circle) return;
-
     let start: number | null = null;
-    const duration = 620;
-    const length = path.getTotalLength();
-
+    const duration = 900;
     const tick = (ts: number) => {
       if (start === null) start = ts;
-      const p = Math.min((ts - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
-      const pt = path.getPointAtLength(eased * length);
+      const t = Math.min((ts - start) / duration, 1);
+      const pt = path.getPointAtLength(t * path.getTotalLength());
       circle.setAttribute("cx", String(pt.x));
       circle.setAttribute("cy", String(pt.y));
-      circle.setAttribute("opacity", String(p < 0.92 ? 0.95 : 1 - (p - 0.92) / 0.08));
-      if (p < 1) raf.current = requestAnimationFrame(tick);
+      if (t < 1) raf.current = requestAnimationFrame(tick);
     };
-
     raf.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf.current);
-  }, [pathD]);
+  }, [pathD, id]);
 
   return (
     <g>
       <path ref={pathRef} d={pathD} fill="none" stroke="none" />
-      <circle ref={circleRef} r={7} fill={color} filter="url(#eco-glow)" />
+      <circle ref={circleRef} r={4} fill="#ff6e14" opacity={0.9} />
     </g>
   );
 }
