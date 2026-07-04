@@ -15,9 +15,9 @@ import { ANIMATION_ORDER, CANVAS, CENTER, FEATURES, itemProgress } from "./featu
 
 /** Reveal timeline across the section's scroll pass (0..1) */
 const PHASE = {
-  header: [0, 0.12] as const,
-  pos: [0.08, 0.24] as const,
-  wiring: [0.26, 0.92] as const,
+  header: [0, 0.1] as const,
+  pos: [0.06, 0.2] as const,
+  wiring: [0.22, 0.85] as const,
 };
 
 function clamp01(v: number) {
@@ -130,7 +130,9 @@ export default function EcosystemSection() {
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start 0.85", "end 0.85"],
+    // Reveal runs from entry until the section reaches viewport center —
+    // by the time you're mid-section every card is already shown.
+    offset: ["start 0.85", "center center"],
   });
 
   const [progress, setProgress] = useState(reduce ? 1 : 0);
