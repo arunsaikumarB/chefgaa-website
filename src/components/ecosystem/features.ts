@@ -13,6 +13,12 @@ import {
   Smartphone,
   CreditCard,
 } from "lucide-react";
+import {
+  getPrimaryPosition,
+  getSecondaryPosition,
+  POS_POSITION,
+  type LayoutPoint,
+} from "./layout";
 
 export type IconAnimation =
   | "megaphone-wiggle"
@@ -36,34 +42,31 @@ export type EcosystemModule = {
   icon: LucideIcon;
   iconAnimation: IconAnimation;
   tier: ModuleTier;
-  x: number;
-  y: number;
+  position: LayoutPoint;
   parentId?: string;
 };
 
-export const CENTER = { x: 50, y: 50 };
+export const POS_CENTER = POS_POSITION;
 
-/** Six core modules — first scroll act */
+/** Ring 1 — six core modules, always visible */
 export const PRIMARY_MODULES: EcosystemModule[] = [
   {
     id: "kitchen",
     title: "Kitchen",
-    description: "Route tickets to stations in real time.",
+    description: "Route tickets to stations instantly.",
     icon: ChefHat,
     iconAnimation: "steam",
     tier: "primary",
-    x: 50,
-    y: 14,
+    position: getPrimaryPosition("kitchen"),
   },
   {
     id: "crm",
     title: "CRM",
-    description: "Know every guest and their preferences.",
+    description: "Know every guest and preference.",
     icon: Users,
     iconAnimation: "users-pulse",
     tier: "primary",
-    x: 17,
-    y: 44,
+    position: getPrimaryPosition("crm"),
   },
   {
     id: "online-ordering",
@@ -72,121 +75,141 @@ export const PRIMARY_MODULES: EcosystemModule[] = [
     icon: ShoppingCart,
     iconAnimation: "default",
     tier: "primary",
-    x: 83,
-    y: 44,
+    position: getPrimaryPosition("online-ordering"),
   },
   {
     id: "website",
     title: "Website",
-    description: "A branded site with ordering built in.",
+    description: "Branded site with ordering built in.",
     icon: Globe,
     iconAnimation: "globe-rotate",
     tier: "primary",
-    x: 24,
-    y: 76,
+    position: getPrimaryPosition("website"),
   },
   {
     id: "payments",
     title: "Payments",
-    description: "Cards, wallets, and contactless in one flow.",
+    description: "Cards, wallets, and tap-to-pay.",
     icon: CreditCard,
     iconAnimation: "card-pulse",
     tier: "primary",
-    x: 76,
-    y: 76,
+    position: getPrimaryPosition("payments"),
   },
   {
     id: "analytics",
     title: "Analytics",
-    description: "Sales and performance the moment they happen.",
+    description: "Live sales and performance insights.",
     icon: BarChart3,
     iconAnimation: "bars-animate",
     tier: "primary",
-    x: 50,
-    y: 86,
+    position: getPrimaryPosition("analytics"),
   },
 ];
 
-/** Organic growth — second scroll act */
+/** Ring 2 — revealed on second scroll act */
 export const SECONDARY_MODULES: EcosystemModule[] = [
   {
-    id: "loyalty",
-    title: "Loyalty",
-    description: "Reward regulars with points and tiers.",
-    icon: Award,
-    iconAnimation: "badge-shine",
+    id: "inventory",
+    title: "Inventory",
+    description: "Track stock and cut waste.",
+    icon: Package,
+    iconAnimation: "cube-rotate",
     tier: "secondary",
     parentId: "crm",
-    x: 10,
-    y: 56,
+    position: getSecondaryPosition("inventory"),
   },
   {
     id: "marketing",
     title: "Marketing",
-    description: "Campaigns and offers that bring guests back.",
+    description: "Campaigns that bring guests back.",
     icon: Megaphone,
     iconAnimation: "megaphone-wiggle",
     tier: "secondary",
     parentId: "website",
-    x: 14,
-    y: 90,
+    position: getSecondaryPosition("marketing"),
+  },
+  {
+    id: "loyalty",
+    title: "Loyalty",
+    description: "Reward regulars with points.",
+    icon: Award,
+    iconAnimation: "badge-shine",
+    tier: "secondary",
+    parentId: "crm",
+    position: getSecondaryPosition("loyalty"),
   },
   {
     id: "mobile-app",
     title: "Mobile App",
-    description: "A branded app on every guest's phone.",
+    description: "Your brand on every phone.",
     icon: Smartphone,
     iconAnimation: "phone-float",
     tier: "secondary",
     parentId: "online-ordering",
-    x: 90,
-    y: 56,
-  },
-  {
-    id: "inventory",
-    title: "Inventory",
-    description: "Track stock and reduce waste automatically.",
-    icon: Package,
-    iconAnimation: "cube-rotate",
-    tier: "secondary",
-    parentId: "kitchen",
-    x: 36,
-    y: 26,
+    position: getSecondaryPosition("mobile-app"),
   },
   {
     id: "reservations",
     title: "Reservations",
-    description: "Smart booking with no-show protection.",
+    description: "Smart booking, fewer no-shows.",
     icon: Calendar,
     iconAnimation: "calendar-flip",
     tier: "secondary",
-    parentId: "payments",
-    x: 86,
-    y: 64,
+    parentId: "online-ordering",
+    position: getSecondaryPosition("reservations"),
   },
   {
     id: "catering",
     title: "Catering",
-    description: "Quote and deliver large-format orders.",
+    description: "Quote and fulfill large orders.",
     icon: Truck,
     iconAnimation: "default",
     tier: "secondary",
     parentId: "analytics",
-    x: 58,
-    y: 94,
+    position: getSecondaryPosition("catering"),
   },
 ];
 
 export const ALL_MODULES = [...PRIMARY_MODULES, ...SECONDARY_MODULES];
 
-export const PRIMARY_ORDER = PRIMARY_MODULES.map((m) => m.id);
+export const PRIMARY_ORDER = [
+  "kitchen",
+  "crm",
+  "online-ordering",
+  "website",
+  "payments",
+  "analytics",
+] as const;
 
-export const SECONDARY_ORDER = SECONDARY_MODULES.map((m) => m.id);
+export const SECONDARY_ORDER = [
+  "inventory",
+  "marketing",
+  "loyalty",
+  "mobile-app",
+  "reservations",
+  "catering",
+] as const;
 
-/** Parent → child for hover highlighting */
-export const CHILD_MAP: Record<string, string> = Object.fromEntries(
-  SECONDARY_MODULES.map((m) => [m.parentId!, m.id])
-);
+export const CHILD_MAP: Record<string, string> = {
+  crm: "loyalty",
+  website: "marketing",
+  "online-ordering": "mobile-app",
+  analytics: "catering",
+};
+
+/** CRM has two children in layout — loyalty + inventory */
+export const RELATED_MAP: Record<string, string[]> = {
+  crm: ["loyalty", "inventory"],
+  website: ["marketing"],
+  "online-ordering": ["mobile-app", "reservations"],
+  analytics: ["catering"],
+  inventory: ["crm"],
+  marketing: ["website"],
+  loyalty: ["crm"],
+  "mobile-app": ["online-ordering"],
+  reservations: ["online-ordering"],
+  catering: ["analytics"],
+};
 
 export const PARENT_MAP: Record<string, string> = Object.fromEntries(
   SECONDARY_MODULES.map((m) => [m.id, m.parentId!])
@@ -197,13 +220,12 @@ export const NAV_DOTS = [
   { id: "expanded", label: "Expanded ecosystem", progress: 0.65 },
 ] as const;
 
-/** Smooth cubic bezier — no straight lines */
 export function buildCurvePath(
   sx: number,
   sy: number,
   ex: number,
   ey: number,
-  bend = 0.18
+  bend = 0.16
 ): string {
   const mx = (sx + ex) / 2;
   const my = (sy + ey) / 2;
@@ -211,8 +233,8 @@ export function buildCurvePath(
   const dy = ey - sy;
   const c1x = mx - dy * bend;
   const c1y = my + dx * bend;
-  const c2x = mx + dy * bend * 0.45;
-  const c2y = my - dx * bend * 0.45;
+  const c2x = mx + dy * bend * 0.4;
+  const c2y = my - dx * bend * 0.4;
   return `M ${sx} ${sy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${ex} ${ey}`;
 }
 
@@ -220,7 +242,6 @@ export function getModule(id: string): EcosystemModule | undefined {
   return ALL_MODULES.find((m) => m.id === id);
 }
 
-/** Scroll phase breakpoints (0–1 across 180vh) */
 export const SCROLL_PHASES = {
   header: { start: 0, end: 0.07 },
   pos: { start: 0.07, end: 0.22 },
@@ -246,4 +267,14 @@ export function itemProgress(
   const slot = 1 / total;
   const itemStart = index * slot;
   return Math.max(0, Math.min(1, (local - itemStart) / slot));
+}
+
+export function isRelatedModule(hoverId: string | null, moduleId: string): boolean {
+  if (!hoverId) return false;
+  if (hoverId === moduleId) return true;
+  const related = RELATED_MAP[hoverId] ?? [];
+  if (related.includes(moduleId)) return true;
+  if (PARENT_MAP[moduleId] === hoverId) return true;
+  if (PARENT_MAP[hoverId] === moduleId) return true;
+  return false;
 }

@@ -1,9 +1,10 @@
 import { useEffect, useRef } from "react";
 import { useReducedMotion } from "framer-motion";
+import { COMPOSITION } from "./layout";
 import {
   buildCurvePath,
-  CENTER,
   getModule,
+  POS_CENTER,
   PRIMARY_MODULES,
   PRIMARY_ORDER,
   SECONDARY_MODULES,
@@ -29,14 +30,15 @@ export function ConnectionLines({
 
   return (
     <svg
-      className="pointer-events-none absolute inset-0 h-full w-full"
-      viewBox="0 0 100 100"
-      preserveAspectRatio="none"
+      className="pointer-events-none absolute inset-0"
+      width={COMPOSITION.width}
+      height={COMPOSITION.height}
+      viewBox={`0 0 ${COMPOSITION.width} ${COMPOSITION.height}`}
       aria-hidden="true"
     >
       <defs>
         <filter id="eco-glow" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="0.35" result="blur" />
+          <feGaussianBlur stdDeviation="2" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
             <feMergeNode in="SourceGraphic" />
@@ -52,11 +54,16 @@ export function ConnectionLines({
         </linearGradient>
       </defs>
 
-      {/* Primary: POS → module */}
+      {/* Primary: POS → primary only */}
       {PRIMARY_ORDER.map((id) => {
         const mod = PRIMARY_MODULES.find((m) => m.id === id);
         if (!mod) return null;
-        const pathD = buildCurvePath(CENTER.x, CENTER.y, mod.x, mod.y);
+        const pathD = buildCurvePath(
+          POS_CENTER.x,
+          POS_CENTER.y,
+          mod.position.x,
+          mod.position.y
+        );
         const progress = primaryProgress[id] ?? 0;
         const lit = highlightedId === id || pulseId === id;
         return (
@@ -73,13 +80,19 @@ export function ConnectionLines({
         );
       })}
 
-      {/* Secondary: parent → child */}
+      {/* Secondary: primary → secondary only */}
       {SECONDARY_ORDER.map((id) => {
         const mod = SECONDARY_MODULES.find((m) => m.id === id);
         if (!mod?.parentId) return null;
         const parent = getModule(mod.parentId);
         if (!parent) return null;
-        const pathD = buildCurvePath(parent.x, parent.y, mod.x, mod.y, 0.14);
+        const pathD = buildCurvePath(
+          parent.position.x,
+          parent.position.y,
+          mod.position.x,
+          mod.position.y,
+          0.12
+        );
         const progress = secondaryProgress[id] ?? 0;
         const lit =
           highlightedId === id ||
@@ -126,25 +139,22 @@ function LineGroup({
         d={pathD}
         fill="none"
         stroke="#e8e8ed"
-        strokeWidth={secondary ? "0.1" : "0.12"}
-        vectorEffect="non-scaling-stroke"
+        strokeWidth={secondary ? 1.5 : 2}
+        strokeLinecap="round"
       />
       <path
         d={pathD}
         fill="none"
         stroke={secondary ? "url(#eco-line-secondary)" : "url(#eco-line)"}
-        strokeWidth={lit ? "0.22" : secondary ? "0.12" : "0.16"}
+        strokeWidth={lit ? 3 : secondary ? 1.5 : 2}
         strokeLinecap="round"
-        vectorEffect="non-scaling-stroke"
         pathLength={1}
         strokeDasharray={1}
         strokeDashoffset={1 - progress}
         filter={lit ? "url(#eco-glow)" : undefined}
         style={{ willChange: "stroke-dashoffset" }}
       />
-      {showParticles && !reduce && (
-        <ParticleOnPath pathD={pathD} id={particleId} />
-      )}
+      {showParticles && !reduce && <ParticleOnPath pathD={pathD} id={particleId} />}
     </g>
   );
 }
@@ -180,10 +190,10 @@ function ParticleOnPath({ pathD, id }: { pathD: string; id: string }) {
       <path ref={pathRef} d={pathD} fill="none" stroke="none" />
       <circle
         ref={circleRef}
-        r="0.28"
+        r="3"
         fill="#ff6e14"
         opacity="0.7"
-        style={{ filter: "drop-shadow(0 0 1px rgba(255,110,20,0.6))" }}
+        style={{ filter: "drop-shadow(0 0 2px rgba(255,110,20,0.6))" }}
       />
     </g>
   );

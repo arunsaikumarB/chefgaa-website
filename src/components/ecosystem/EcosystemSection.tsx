@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   motion,
   useMotionValueEvent,
@@ -11,27 +11,19 @@ import { GlowPlatform } from "./GlowPlatform";
 import { ConnectionLines } from "./ConnectionLines";
 import { EcosystemFeatureCard } from "./FeatureCard";
 import { AnimatedParticles } from "./AnimatedParticles";
+import { COMPOSITION, POS_POSITION } from "./layout";
 import {
-  CHILD_MAP,
+  isRelatedModule,
   NAV_DOTS,
-  PARENT_MAP,
   PRIMARY_MODULES,
   PRIMARY_ORDER,
   SCROLL_PHASES,
   SECONDARY_MODULES,
   SECONDARY_ORDER,
+  getModule,
   itemProgress,
   phaseProgress,
 } from "./features";
-
-function isRelated(hoverId: string | null, moduleId: string): boolean {
-  if (!hoverId) return false;
-  if (hoverId === moduleId) return true;
-  if (CHILD_MAP[hoverId] === moduleId) return true;
-  if (PARENT_MAP[moduleId] === hoverId) return true;
-  if (PARENT_MAP[hoverId] === moduleId) return true;
-  return false;
-}
 
 function DotNav({
   activeId,
@@ -70,6 +62,133 @@ function DotNav({
   );
 }
 
+function EcosystemComposition({
+  progress,
+  reduce,
+  hoveredId,
+  setHoveredId,
+  primaryLineProgress,
+  secondaryLineProgress,
+  pulseId,
+  storyActive,
+}: {
+  progress: number;
+  reduce: boolean;
+  hoveredId: string | null;
+  setHoveredId: (id: string | null) => void;
+  primaryLineProgress: Record<string, number>;
+  secondaryLineProgress: Record<string, number>;
+  pulseId: string | null;
+  storyActive: boolean;
+}) {
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useLayoutEffect(() => {
+    const update = () => {
+      const stage = stageRef.current;
+      if (!stage) return;
+      const pw = stage.clientWidth;
+      const ph = stage.clientHeight;
+      const s = Math.min(pw / COMPOSITION.width, ph / COMPOSITION.height, 1);
+      setScale(s);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  const posAssemble = phaseProgress(progress, SCROLL_PHASES.pos);
+  const platformVisible = phaseProgress(progress, SCROLL_PHASES.platform) > 0.05;
+  const anyHovered = hoveredId !== null;
+
+  return (
+    <div ref={stageRef} className="relative flex h-full w-full items-center justify-center">
+      <div
+        className="relative"
+        style={{
+          width: COMPOSITION.width,
+          height: COMPOSITION.height,
+          transform: `scale(${scale})`,
+          transformOrigin: "center center",
+          willChange: "transform",
+        }}
+      >
+        {/* Lines behind everything */}
+        <div className="absolute inset-0 z-[5]">
+          <ConnectionLines
+            primaryProgress={primaryLineProgress}
+            secondaryProgress={secondaryLineProgress}
+            highlightedId={hoveredId}
+            pulseId={pulseId}
+            showParticles={storyActive}
+          />
+        </div>
+
+        {/* POS — exact center */}
+        <div
+          className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
+          style={{ left: POS_POSITION.x, top: POS_POSITION.y }}
+        >
+          <GlowPlatform visible={platformVisible || !!reduce} breathing={storyActive} />
+          <AnimatedPOS
+            assemble={reduce ? 1 : posAssemble}
+            glowing={anyHovered}
+          />
+        </div>
+
+        {/* Ring 1 — primary cards */}
+        {PRIMARY_MODULES.map((mod) => {
+          const lineP = primaryLineProgress[mod.id] ?? 0;
+          const visible = reduce || lineP > 0.72;
+          return (
+            <div
+              key={mod.id}
+              className="absolute z-30 -translate-x-1/2 -translate-y-1/2"
+              style={{ left: mod.position.x, top: mod.position.y }}
+            >
+              <EcosystemFeatureCard
+                module={mod}
+                visible={visible}
+                dimmed={anyHovered && !isRelatedModule(hoveredId, mod.id)}
+                highlighted={hoveredId === mod.id}
+                related={isRelatedModule(hoveredId, mod.id) && hoveredId !== mod.id}
+                onHover={setHoveredId}
+                layout="fixed"
+              />
+            </div>
+          );
+        })}
+
+        {/* Ring 2 — secondary cards */}
+        {SECONDARY_MODULES.map((mod) => {
+          const lineP = secondaryLineProgress[mod.id] ?? 0;
+          const visible = reduce || lineP > 0.72;
+          const parent = mod.parentId ? getModule(mod.parentId) : undefined;
+          return (
+            <div
+              key={mod.id}
+              className="absolute z-[28] -translate-x-1/2 -translate-y-1/2"
+              style={{ left: mod.position.x, top: mod.position.y }}
+            >
+              <EcosystemFeatureCard
+                module={mod}
+                visible={visible}
+                dimmed={anyHovered && !isRelatedModule(hoveredId, mod.id)}
+                highlighted={hoveredId === mod.id}
+                related={isRelatedModule(hoveredId, mod.id) && hoveredId !== mod.id}
+                emergeFrom={parent?.position}
+                onHover={setHoveredId}
+                layout="fixed"
+              />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function EcosystemSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
@@ -88,8 +207,6 @@ export default function EcosystemSection() {
   });
 
   const headerOpacity = phaseProgress(progress, SCROLL_PHASES.header);
-  const posAssemble = phaseProgress(progress, SCROLL_PHASES.pos);
-  const platformVisible = phaseProgress(progress, SCROLL_PHASES.platform) > 0.05;
   const storyActive = progress > 0.5;
 
   const primaryLineProgress = useMemo(() => {
@@ -124,13 +241,12 @@ export default function EcosystemSection() {
   }, []);
 
   const anyHovered = hoveredId !== null;
-  const posGlowing = anyHovered;
 
   useEffect(() => {
     if (!storyActive || reduce || anyHovered) return;
     const interval = setInterval(() => {
       const pool =
-        progress >= 0.58 ? [...PRIMARY_ORDER, ...SECONDARY_ORDER] : PRIMARY_ORDER;
+        progress >= 0.58 ? [...PRIMARY_ORDER, ...SECONDARY_ORDER] : [...PRIMARY_ORDER];
       const id = pool[Math.floor(Math.random() * pool.length)];
       setPulseId(id);
       setTimeout(() => setPulseId(null), 1100);
@@ -151,13 +267,12 @@ export default function EcosystemSection() {
       style={{ height: "180vh" }}
       aria-labelledby="ecosystem-heading"
     >
-      {/* Desktop / tablet — pinned scroll story */}
-      <div className="sticky top-0 hidden h-screen overflow-hidden md:block">
+      <div className="sticky top-0 hidden h-screen flex-col overflow-hidden md:flex">
         <SectionBackground />
         <AnimatedParticles active={storyActive} />
 
         <motion.header
-          className="relative z-10 mx-auto max-w-[700px] px-6 pt-14 text-center md:pt-[72px] lg:pt-20"
+          className="relative z-10 mx-auto max-w-[700px] shrink-0 px-6 pt-12 text-center md:pt-14 lg:pt-16"
           style={{ opacity: reduce ? 1 : headerOpacity, willChange: "opacity" }}
         >
           <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-ember md:text-[12px]">
@@ -165,7 +280,7 @@ export default function EcosystemSection() {
           </p>
           <h2
             id="ecosystem-heading"
-            className="mt-4 font-sf-pro-display text-[32px] font-semibold leading-[1.08] tracking-[-0.2px] text-primary-ink md:text-[44px] lg:text-[52px]"
+            className="mt-3 font-sf-pro-display text-[30px] font-semibold leading-[1.08] tracking-[-0.2px] text-primary-ink md:text-[40px] lg:text-[48px]"
           >
             The{" "}
             <span
@@ -179,85 +294,31 @@ export default function EcosystemSection() {
             </span>{" "}
             Ecosystem
           </h2>
-          <p className="mt-4 text-[17px] leading-[1.45] text-mid-gray md:text-[19px]">
+          <p className="mt-3 text-[16px] leading-[1.45] text-mid-gray md:text-[18px]">
             Everything your restaurant needs.
             <br />
             Powered by one intelligent platform.
           </p>
         </motion.header>
 
-        <div className="relative z-10 mx-auto h-[calc(100vh-200px)] w-full max-w-[1280px] px-4 lg:max-w-[1400px] lg:px-6">
-          <ConnectionLines
-            primaryProgress={primaryLineProgress}
-            secondaryProgress={secondaryLineProgress}
-            highlightedId={hoveredId}
+        <div className="relative z-10 min-h-0 flex-1">
+          <EcosystemComposition
+            progress={progress}
+            reduce={!!reduce}
+            hoveredId={hoveredId}
+            setHoveredId={setHoveredId}
+            primaryLineProgress={primaryLineProgress}
+            secondaryLineProgress={secondaryLineProgress}
             pulseId={pulseId}
-            showParticles={storyActive}
+            storyActive={storyActive}
           />
-
-          <div className="absolute left-1/2 top-[46%] z-20 -translate-x-1/2 -translate-y-1/2">
-            <GlowPlatform visible={platformVisible || !!reduce} breathing={storyActive} />
-            <AnimatedPOS
-              assemble={reduce ? 1 : posAssemble}
-              glowing={posGlowing}
-              floating={storyActive}
-            />
-          </div>
-
-          {PRIMARY_MODULES.map((mod) => {
-            const lineP = primaryLineProgress[mod.id] ?? 0;
-            const visible = reduce || lineP > 0.72;
-            return (
-              <div
-                key={mod.id}
-                className="absolute z-30 -translate-x-1/2 -translate-y-1/2"
-                style={{ left: `${mod.x}%`, top: `${mod.y}%` }}
-              >
-                <EcosystemFeatureCard
-                  module={mod}
-                  visible={visible}
-                  dimmed={anyHovered && !isRelated(hoveredId, mod.id)}
-                  highlighted={hoveredId === mod.id}
-                  related={isRelated(hoveredId, mod.id) && hoveredId !== mod.id}
-                  floating={storyActive}
-                  onHover={setHoveredId}
-                  layout="orbit"
-                />
-              </div>
-            );
-          })}
-
-          {SECONDARY_MODULES.map((mod) => {
-            const lineP = secondaryLineProgress[mod.id] ?? 0;
-            const visible = reduce || lineP > 0.72;
-            const parent = PRIMARY_MODULES.find((p) => p.id === mod.parentId);
-            return (
-              <div
-                key={mod.id}
-                className="absolute z-[25] -translate-x-1/2 -translate-y-1/2"
-                style={{ left: `${mod.x}%`, top: `${mod.y}%` }}
-              >
-                <EcosystemFeatureCard
-                  module={mod}
-                  visible={visible}
-                  dimmed={anyHovered && !isRelated(hoveredId, mod.id)}
-                  highlighted={hoveredId === mod.id}
-                  related={isRelated(hoveredId, mod.id) && hoveredId !== mod.id}
-                  floating={storyActive && visible}
-                  emergeFrom={parent ? { x: parent.x, y: parent.y } : undefined}
-                  onHover={setHoveredId}
-                  layout="orbit"
-                />
-              </div>
-            );
-          })}
         </div>
 
         <DotNav activeId={activeNavId} onSelect={scrollToProgress} />
       </div>
 
-      {/* Mobile — vertical storytelling */}
-      <div className="relative px-6 py-16 md:hidden">
+      {/* Mobile — scaled composition, same fixed layout */}
+      <div className="relative overflow-hidden px-4 py-16 md:hidden">
         <SectionBackground />
         <header className="relative z-10 mx-auto max-w-[700px] text-center">
           <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-ember">
@@ -281,61 +342,17 @@ export default function EcosystemSection() {
           </p>
         </header>
 
-        <motion.div
-          className="relative z-10 mx-auto mt-12 flex flex-col items-center"
-          initial={{ opacity: 0, y: 32 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.35 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <GlowPlatform visible breathing />
-          <AnimatedPOS assemble={1} floating />
-        </motion.div>
-
-        <div className="relative z-10 mx-auto mt-14 flex max-w-[320px] flex-col gap-5">
-          <p className="text-center text-[12px] font-medium uppercase tracking-[0.1em] text-mid-gray">
-            Core platform
-          </p>
-          {PRIMARY_MODULES.map((mod, i) => (
-            <motion.div
-              key={mod.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-24px" }}
-              transition={{ duration: 0.45, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <EcosystemFeatureCard
-                module={mod}
-                visible
-                dimmed={false}
-                highlighted={hoveredId === mod.id}
-                onHover={setHoveredId}
-                layout="stack"
-              />
-            </motion.div>
-          ))}
-
-          <p className="mt-6 text-center text-[12px] font-medium uppercase tracking-[0.1em] text-mid-gray">
-            Grows with you
-          </p>
-          {SECONDARY_MODULES.map((mod, i) => (
-            <motion.div
-              key={mod.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-24px" }}
-              transition={{ duration: 0.45, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <EcosystemFeatureCard
-                module={mod}
-                visible
-                dimmed={false}
-                highlighted={hoveredId === mod.id}
-                onHover={setHoveredId}
-                layout="stack"
-              />
-            </motion.div>
-          ))}
+        <div className="relative z-10 mx-auto mt-8 h-[70vh] min-h-[480px] w-full">
+          <EcosystemComposition
+            progress={1}
+            reduce
+            hoveredId={hoveredId}
+            setHoveredId={setHoveredId}
+            primaryLineProgress={Object.fromEntries(PRIMARY_ORDER.map((id) => [id, 1]))}
+            secondaryLineProgress={Object.fromEntries(SECONDARY_ORDER.map((id) => [id, 1]))}
+            pulseId={null}
+            storyActive
+          />
         </div>
       </div>
     </section>

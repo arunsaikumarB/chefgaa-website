@@ -10,7 +10,7 @@ export function GlowPlatform({ visible, breathing = false }: GlowPlatformProps) 
 
   return (
     <motion.div
-      className="pointer-events-none absolute left-1/2 top-[58%] -translate-x-1/2 -translate-y-1/2"
+      className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
       initial={{ scale: 0, opacity: 0 }}
       animate={
         visible
@@ -21,7 +21,7 @@ export function GlowPlatform({ visible, breathing = false }: GlowPlatformProps) 
       aria-hidden="true"
     >
       <motion.div
-        className="h-[280px] w-[280px] rounded-full md:h-[340px] md:w-[340px]"
+        className="h-[300px] w-[300px] rounded-full"
         style={{
           background:
             "radial-gradient(circle, rgba(255,110,20,0.18) 0%, rgba(255,110,20,0.06) 40%, transparent 70%)",
