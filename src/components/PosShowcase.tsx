@@ -305,8 +305,10 @@ export default function PosShowcase() {
               className="absolute inset-0 bg-cover bg-center"
             />
           ))}
-          {/* Soft wash keeps the light theme and caption legibility */}
-          <div className="absolute inset-0 bg-paper/60" />
+          {/* Side-gradient scrim: lighter at the edges for caption legibility,
+              clearer in the center so the scene + device read as one. */}
+          <div className="absolute inset-0 bg-gradient-to-r from-paper/90 via-paper/20 to-paper/90" />
+          <div className="absolute inset-0 bg-gradient-to-b from-paper/50 via-transparent to-paper/40" />
 
           <div className="relative mx-auto grid h-full w-full max-w-[1200px] grid-cols-[1fr_auto_1fr] items-center gap-8 px-10">
             {/* Left captions — steps 01 & 03 */}
