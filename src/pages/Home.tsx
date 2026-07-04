@@ -18,6 +18,7 @@ import {
 } from "../components/Icons";
 
 const PosShowcase = lazy(() => import("../components/PosShowcase"));
+const EcosystemSection = lazy(() => import("../components/ecosystem/EcosystemSection"));
 
 const features: {
   title: string;
@@ -137,8 +138,13 @@ export function Home() {
         </div>
       </Section>
 
+      {/* Chefgaa Ecosystem — premium interactive */}
+      <Suspense fallback={null}>
+        <EcosystemSection />
+      </Suspense>
+
       {/* POS band */}
-      <Section bg="white">
+      <Section bg="gray">
         <SectionHeading
           title="Built for Speed & Efficiency"
           intro="The Chefgaa POS keeps your front and back of house in perfect sync."
