@@ -42,27 +42,24 @@ export function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="hero-section">
-        <div className="hero-section__scrim" aria-hidden="true" />
-        <div className="relative z-10 mx-auto w-full max-w-[1200px] px-6 md:px-10">
+      <section className="hero-section bg-paper">
+        <div className="mx-auto w-full max-w-[1200px] px-6 md:px-10">
           <motion.div
             className="flex flex-col items-center text-center"
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <h1 className="font-sf-pro-display text-[40px] font-bold leading-[1.05] tracking-[-0.5px] text-white md:text-[64px] md:tracking-[-0.8px] lg:text-[72px] lg:leading-[1.05] lg:tracking-[-1px] xl:text-[88px] xl:leading-[1.04]">
+            <h1 className="font-sf-pro-display text-[40px] font-bold leading-[1.05] tracking-[-0.5px] text-primary-ink md:text-[64px] md:tracking-[-0.8px] lg:text-[72px] lg:leading-[1.05] lg:tracking-[-1px] xl:text-[88px] xl:leading-[1.04]">
               <span className="block md:whitespace-nowrap">All-in-One POS &amp; Online Ordering</span>
               <span className="block md:whitespace-nowrap">for Restaurants.</span>
             </h1>
-            <p className="mt-6 w-full text-[17px] leading-[1.47] text-white/80 sm:text-[18px] md:whitespace-nowrap md:text-[19px] xl:text-[21px]">
+            <p className="mt-6 w-full text-[17px] leading-[1.47] text-mid-gray sm:text-[18px] md:whitespace-nowrap md:text-[19px] xl:text-[21px]">
               Streamline operations, boost sales, and enhance customer experience with Chefgaa&apos;s powerful restaurant management solution.
             </p>
             <div className="mt-10 flex flex-col items-center gap-5 sm:flex-row">
               <PrimaryButton to="/contact">Request a Demo</PrimaryButton>
-              <ArrowLink to="/contact" className="!text-white/90 hover:!text-white">
-                Get in Touch
-              </ArrowLink>
+              <ArrowLink to="/contact">Get in Touch</ArrowLink>
             </div>
           </motion.div>
         </div>

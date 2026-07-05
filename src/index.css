@@ -93,25 +93,7 @@ button {
   overflow: hidden;
   position: relative;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding-top: calc(3.5rem + clamp(48px, 10vh, 112px));
-  background-color: #0a0a0a;
-  background-image: url("/hero/hero-background.png");
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-}
-
-.hero-section__scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.62) 0%,
-    rgba(0, 0, 0, 0.28) 38%,
-    rgba(0, 0, 0, 0.08) 62%,
-    rgba(0, 0, 0, 0.42) 100%
-  );
-  pointer-events: none;
+  padding-top: 3.5rem; /* clear fixed nav (h-14) */
 }
