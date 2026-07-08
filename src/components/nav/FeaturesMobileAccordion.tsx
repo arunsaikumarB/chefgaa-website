@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { FEATURE_MENU_ITEMS } from "./featuresMenuData";
 
 type FeaturesMobileAccordionProps = {
@@ -10,20 +10,24 @@ type FeaturesMobileAccordionProps = {
 
 export function FeaturesMobileAccordion({ onNavigate }: FeaturesMobileAccordionProps) {
   const [open, setOpen] = useState(false);
+  const [activeId, setActiveId] = useState(FEATURE_MENU_ITEMS[0].id);
+
+  const activeItem =
+    FEATURE_MENU_ITEMS.find((item) => item.id === activeId) ?? FEATURE_MENU_ITEMS[0];
 
   return (
-    <div className="border-b border-hairline">
+    <div className="border-b border-[#F2F2F2]">
       <button
         type="button"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="flex w-full items-center justify-between py-4 font-sf-pro-display text-[28px] font-semibold text-primary-ink"
+        className="flex w-full items-center justify-between py-4 text-[22px] font-semibold text-[#2D2D2D]"
       >
         Features
         <ChevronDown
-          size={22}
+          size={20}
           strokeWidth={2}
-          className={`transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+          className={`text-[#777777] transition-transform duration-300 ${open ? "rotate-180" : ""}`}
         />
       </button>
 
@@ -33,38 +37,67 @@ export function FeaturesMobileAccordion({ onNavigate }: FeaturesMobileAccordionP
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden pb-4"
+            transition={{ duration: 0.25, ease: [0.33, 1, 0.68, 1] }}
+            className="overflow-hidden pb-6"
           >
-            <p className="mb-4 text-[12px] font-bold uppercase tracking-[0.12em] text-[#111111]">
+            <p className="mb-4 text-[12px] font-bold uppercase tracking-[0.12em] text-[#999999]">
               Features
             </p>
-            <div className="flex flex-col gap-4">
+
+            <div className="flex flex-col gap-1">
               {FEATURE_MENU_ITEMS.map((item) => {
-                const Icon = item.icon;
+                const isActive = item.id === activeId;
                 return (
-                  <NavLink
+                  <button
                     key={item.id}
-                    to={item.to}
-                    onClick={onNavigate}
-                    className="group flex items-center gap-3 rounded-xl py-2.5 pr-2 transition-colors duration-[250ms]"
+                    type="button"
+                    onClick={() => setActiveId(item.id)}
+                    className={`relative flex h-11 items-center rounded-lg pl-4 text-left text-[16px] transition-colors duration-200 ${
+                      isActive
+                        ? "font-bold text-[#111111]"
+                        : "font-medium text-[#777777]"
+                    }`}
                   >
-                    <Icon
-                      size={22}
-                      strokeWidth={1.5}
-                      className="shrink-0 text-[#8A8A8A] transition-colors duration-[250ms] group-hover:text-brand"
-                    />
-                    <span className="min-w-0 flex-1 text-[16px] font-medium text-[#111111]">
-                      {item.title}
-                    </span>
-                    <ArrowRight
-                      size={16}
-                      strokeWidth={2}
-                      className="shrink-0 text-brand opacity-0 transition-all duration-[250ms] group-hover:translate-x-0.5 group-hover:opacity-100"
-                    />
-                  </NavLink>
+                    {isActive && (
+                      <span
+                        className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-full bg-brand"
+                        aria-hidden="true"
+                      />
+                    )}
+                    {item.title}
+                  </button>
                 );
               })}
+            </div>
+
+            <div className="mt-6 border-t border-[#F2F2F2] pt-6">
+              <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-[#999999]">
+                Discover
+              </p>
+              <h4 className="mt-3 text-[24px] font-bold text-[#111111]">{activeItem.title}</h4>
+              <p className="mt-2 text-[16px] leading-relaxed text-[#555555]">
+                {activeItem.description}
+              </p>
+              <ul className="mt-5 flex flex-col gap-3">
+                {activeItem.highlights.map((highlight) => {
+                  const Icon = highlight.icon;
+                  return (
+                    <li key={highlight.title} className="flex items-center gap-2.5">
+                      <Icon size={20} strokeWidth={1.8} className="text-[#777777]" />
+                      <span className="text-[15px] font-medium text-[#2D2D2D]">
+                        {highlight.title}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+              <NavLink
+                to={activeItem.to}
+                onClick={onNavigate}
+                className="mt-5 inline-flex h-11 items-center rounded-full bg-brand px-6 text-[14px] font-semibold !text-white"
+              >
+                Learn more
+              </NavLink>
             </div>
           </motion.div>
         )}

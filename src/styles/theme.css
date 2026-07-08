@@ -64,8 +64,8 @@
   --spacing-144: 144px;
 
   /* Site header (synced with Nav.tsx) */
-  --site-nav-height: 6rem;
-  --site-nav-height-scrolled: 5.5rem;
+  --site-nav-height: 5rem;
+  --site-nav-height-scrolled: 5rem;
 
   /* Border Radius */
   --radius-lg: 10px;
