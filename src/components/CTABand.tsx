@@ -1,6 +1,7 @@
 import { Section } from "./Section";
 import { PrimaryButton, ArrowLink } from "./Buttons";
 import { Reveal } from "./Reveal";
+import { BrandMeshGradient } from "./effects/BrandMeshGradient";
 
 type CTABandProps = {
   title?: string;
@@ -9,10 +10,10 @@ type CTABandProps = {
   primaryTo?: string;
   secondaryLabel?: string;
   secondaryTo?: string;
-  bg?: "white" | "gray";
+  bg?: "white" | "gray" | "gradient";
 };
 
-/** Closing call-to-action band. One blue button maximum. */
+/** Closing call-to-action band with optional brand gradient. */
 export function CTABand({
   title = "Ready to get started?",
   subtitle = "See how Chefgaa can transform your restaurant operations.",
@@ -23,8 +24,9 @@ export function CTABand({
   bg = "gray",
 }: CTABandProps) {
   return (
-    <Section bg={bg}>
-      <Reveal className="flex flex-col items-center text-center">
+    <Section bg={bg === "gray" ? "gray" : "white"} className="relative overflow-hidden">
+      {bg === "gradient" && <BrandMeshGradient intensity={0.2} />}
+      <Reveal className="relative z-10 flex flex-col items-center text-center">
         <h2 className="font-sf-pro-display text-[32px] font-semibold leading-[1.07] tracking-[-0.01em] md:text-[40px] lg:text-[56px] lg:tracking-[-0.2px]">
           {title}
         </h2>

@@ -21,7 +21,7 @@ const mainLinks = [
 
 function navLinkClass(isActive: boolean) {
   return `px-2.5 py-1 text-[14px] font-medium transition-colors ${
-    isActive ? "text-[#ff6e14]" : "text-primary-ink hover:text-[#ff6e14]"
+    isActive ? "text-brand" : "text-primary-ink hover:text-brand"
   }`;
 }
 
@@ -87,7 +87,7 @@ export function Nav() {
       >
         <nav className="mx-auto flex h-14 max-w-[1280px] items-center justify-between gap-6 px-5 md:px-8 lg:px-10">
           <Link to="/" className="shrink-0" aria-label="Chefgaa home">
-            <ChefgaaLogo />
+            <ChefgaaLogo showWordmark={false} />
           </Link>
 
           <ul className="hidden items-center gap-1 lg:flex">
@@ -107,8 +107,8 @@ export function Nav() {
                 onClick={() => setFeaturesOpen((open) => !open)}
                 className={`inline-flex items-center gap-1 px-2.5 py-1 text-[14px] font-medium transition-colors ${
                   featuresActive || featuresOpen
-                    ? "text-[#ff6e14]"
-                    : "text-primary-ink hover:text-[#ff6e14]"
+                    ? "text-brand"
+                    : "text-primary-ink hover:text-brand"
                 }`}
               >
                 Features
@@ -135,7 +135,7 @@ export function Nav() {
                         role="menuitem"
                         className={({ isActive }) =>
                           `block px-4 py-2.5 text-[14px] transition-colors hover:bg-canvas ${
-                            isActive ? "font-medium text-[#ff6e14]" : "text-primary-ink"
+                            isActive ? "font-medium text-brand" : "text-primary-ink"
                           }`
                         }
                       >
@@ -197,7 +197,7 @@ export function Nav() {
                 aria-expanded={languageOpen}
                 aria-label="Select language"
                 onClick={() => setLanguageOpen((open) => !open)}
-                className="inline-flex items-center gap-2 rounded-full bg-[#ff6e14] px-4 py-2 text-[13px] font-medium text-white transition-opacity hover:opacity-90"
+                className="inline-flex items-center gap-2 rounded-full bg-brand px-4 py-2 text-[13px] font-medium text-white transition-opacity hover:opacity-90"
               >
                 <Globe size={14} strokeWidth={2} aria-hidden="true" />
                 English
@@ -214,7 +214,7 @@ export function Nav() {
                   >
                     <button
                       type="button"
-                      className="block w-full px-4 py-2.5 text-left text-[14px] font-medium text-[#ff6e14] hover:bg-canvas"
+                      className="block w-full px-4 py-2.5 text-left text-[14px] font-medium text-brand hover:bg-canvas"
                     >
                       English
                     </button>
@@ -267,7 +267,7 @@ export function Nav() {
                     end={link.end}
                     className={({ isActive }) =>
                       `block border-b border-hairline py-4 font-sf-pro-display text-[28px] font-semibold ${
-                        isActive ? "text-[#ff6e14]" : "text-primary-ink"
+                        isActive ? "text-brand" : "text-primary-ink"
                       }`
                     }
                   >
@@ -289,7 +289,7 @@ export function Nav() {
                     to={link.to}
                     className={({ isActive }) =>
                       `block border-b border-hairline py-3 text-[22px] font-semibold ${
-                        isActive ? "text-[#ff6e14]" : "text-primary-ink"
+                        isActive ? "text-brand" : "text-primary-ink"
                       }`
                     }
                   >
@@ -309,7 +309,7 @@ export function Nav() {
               </button>
               <button
                 type="button"
-                className="inline-flex items-center gap-2 rounded-full bg-[#ff6e14] px-4 py-2 text-[14px] font-medium text-white"
+                className="inline-flex items-center gap-2 rounded-full bg-brand px-4 py-2 text-[14px] font-medium text-white"
               >
                 <Globe size={14} strokeWidth={2} aria-hidden="true" />
                 English

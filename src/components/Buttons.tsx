@@ -24,7 +24,7 @@ export function PrimaryButton({
   disabled,
   className = "",
 }: PrimaryButtonProps) {
-  const classes = `inline-flex items-center justify-center rounded-full bg-electric-blue text-paper text-[17px] font-normal leading-none px-[22px] py-[11px] transition-opacity duration-200 hover:opacity-85 disabled:opacity-50 disabled:cursor-not-allowed ${className}`;
+  const classes = `inline-flex items-center justify-center rounded-full bg-gradient-to-r from-brand to-brand-light text-paper text-[17px] font-normal leading-none px-[22px] py-[11px] shadow-[0_8px_24px_rgba(251,87,52,0.25)] transition-all duration-300 hover:scale-[1.02] hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed ${className}`;
 
   if (to) {
     return (
@@ -95,7 +95,7 @@ type ArrowLinkProps = {
 
 /** Inline text link in link-blue with trailing chevron; underline on hover. */
 export function ArrowLink({ to, href, children, className = "" }: ArrowLinkProps) {
-  const classes = `group inline-flex items-center gap-[2px] text-link-blue text-[17px] font-normal ${className}`;
+  const classes = `group inline-flex items-center gap-[2px] text-brand text-[17px] font-normal ${className}`;
   const content = (
     <>
       <span className="group-hover:underline underline-offset-2">{children}</span>

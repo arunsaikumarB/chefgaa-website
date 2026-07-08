@@ -1,47 +1,59 @@
+import { useEffect, useRef } from "react";
+import { animate } from "animejs";
+import { BRAND } from "../lib/brand";
+
 type ChefgaaLogoProps = {
   className?: string;
+  /** Show wordmark beside the logo mark */
+  showWordmark?: boolean;
+  /** Subtle entrance animation — use in home hero only */
+  animateIn?: boolean;
+  /** Logo height in pixels at md breakpoint */
+  size?: "nav" | "hero";
 };
 
-export function ChefgaaLogo({ className = "" }: ChefgaaLogoProps) {
+export function ChefgaaLogo({
+  className = "",
+  showWordmark = true,
+  animateIn = false,
+  size = "nav",
+}: ChefgaaLogoProps) {
+  const markRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    if (!animateIn || !markRef.current) return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
+
+    animate(markRef.current, {
+      opacity: [0, 1],
+      scale: [0.94, 1],
+      translateY: [8, 0],
+      duration: 900,
+      ease: "outExpo",
+    });
+  }, [animateIn]);
+
+  const heightClass = size === "hero" ? "h-11 md:h-14" : "h-8 md:h-9";
+
   return (
-    <span className={`inline-flex items-center gap-2.5 ${className}`}>
-      <svg
-        width="36"
-        height="28"
-        viewBox="0 0 36 28"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-      >
-        <path
-          d="M2 14h3M6 11h2.5M6 17h2.5"
-          stroke="#ff6e14"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-        />
-        <path
-          d="M11 22h14"
-          stroke="#1d1d1f"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-        />
-        <path
-          d="M13.5 22c0-5.2 2.2-9.5 4.5-9.5s4.5 4.3 4.5 9.5"
-          stroke="#ff6e14"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-        />
-        <path
-          d="M12 22h12"
-          stroke="#ff6e14"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-        />
-        <circle cx="18" cy="8" r="1.15" fill="#ff6e14" />
-      </svg>
-      <span className="font-sf-pro-display text-[22px] font-semibold tracking-[-0.02em] text-primary-ink">
-        Chefgaa
-      </span>
+    <span className={`inline-flex items-center gap-3 ${className}`}>
+      <img
+        ref={markRef}
+        src="/chefgaa-logo.png"
+        alt="Chefgaa"
+        className={`${heightClass} w-auto object-contain object-left`}
+        width={size === "hero" ? 180 : 120}
+        height={size === "hero" ? 56 : 36}
+        decoding="async"
+      />
+      {showWordmark && (
+        <span className="font-sf-pro-display text-[22px] font-semibold tracking-[-0.02em] text-primary-ink">
+          Chefgaa
+        </span>
+      )}
     </span>
   );
 }
+
+export { BRAND };

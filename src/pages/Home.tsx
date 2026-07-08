@@ -1,5 +1,4 @@
 import { lazy, Suspense } from "react";
-import { motion } from "framer-motion";
 import { Section } from "../components/Section";
 import { SectionHeading } from "../components/SectionHeading";
 import { ModulesCarousel } from "../components/ModulesCarousel";
@@ -7,6 +6,9 @@ import { CheckList } from "../components/CheckList";
 import { CTABand } from "../components/CTABand";
 import { Reveal } from "../components/Reveal";
 import { PrimaryButton, ArrowLink } from "../components/Buttons";
+import { ChefgaaLogo } from "../components/ChefgaaLogo";
+import { BrandMeshGradient } from "../components/effects/BrandMeshGradient";
+import { useHeroReveal } from "../hooks/useHeroReveal";
 
 const PosShowcase = lazy(() => import("../components/PosShowcase"));
 const EcosystemSection = lazy(() => import("../components/ecosystem/EcosystemSection"));
@@ -39,29 +41,36 @@ const whyChefgaa = [
 const integrations = ["Clover", "Stripe", "Zeeko", "UberEats", "DoorDash", "NMI"];
 
 export function Home() {
+  const heroRef = useHeroReveal<HTMLDivElement>();
+
   return (
     <>
       {/* Hero */}
-      <section className="hero-section bg-paper">
-        <div className="mx-auto w-full max-w-[1200px] px-6 md:px-10">
-          <motion.div
-            className="flex flex-col items-center text-center"
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <h1 className="font-sf-pro-display text-[40px] font-bold leading-[1.05] tracking-[-0.5px] text-primary-ink md:text-[64px] md:tracking-[-0.8px] lg:text-[72px] lg:leading-[1.05] lg:tracking-[-1px] xl:text-[88px] xl:leading-[1.04]">
+      <section className="hero-section relative bg-paper">
+        <BrandMeshGradient intensity={0.28} />
+        <div className="relative z-10 mx-auto w-full max-w-[1200px] px-6 md:px-10">
+          <div ref={heroRef} className="flex flex-col items-center text-center">
+            <div data-hero-item className="mb-8 flex justify-center md:mb-10">
+              <ChefgaaLogo size="hero" showWordmark={false} animateIn />
+            </div>
+            <h1
+              data-hero-item
+              className="font-sf-pro-display text-[40px] font-bold leading-[1.05] tracking-[-0.5px] text-primary-ink md:text-[64px] md:tracking-[-0.8px] lg:text-[72px] lg:leading-[1.05] lg:tracking-[-1px] xl:text-[88px] xl:leading-[1.04]"
+            >
               <span className="block md:whitespace-nowrap">All-in-One POS &amp; Online Ordering</span>
               <span className="block md:whitespace-nowrap">for Restaurants.</span>
             </h1>
-            <p className="mt-6 w-full text-[17px] leading-[1.47] text-mid-gray sm:text-[18px] md:whitespace-nowrap md:text-[19px] xl:text-[21px]">
+            <p
+              data-hero-item
+              className="mt-6 w-full text-[17px] leading-[1.47] text-mid-gray sm:text-[18px] md:whitespace-nowrap md:text-[19px] xl:text-[21px]"
+            >
               Streamline operations, boost sales, and enhance customer experience with Chefgaa&apos;s powerful restaurant management solution.
             </p>
-            <div className="mt-10 flex flex-col items-center gap-5 sm:flex-row">
+            <div data-hero-item className="mt-10 flex flex-col items-center gap-5 sm:flex-row">
               <PrimaryButton to="/contact">Request a Demo</PrimaryButton>
               <ArrowLink to="/contact">Get in Touch</ArrowLink>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -146,7 +155,7 @@ export function Home() {
         subtitle="Join the restaurants running smarter service with Chefgaa."
         primaryLabel="Request a Demo"
         primaryTo="/contact"
-        bg="white"
+        bg="gradient"
       />
     </>
   );

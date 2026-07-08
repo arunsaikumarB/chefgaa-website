@@ -83,6 +83,7 @@ export function Pricing() {
         eyebrow="Pricing"
         title="Plans that grow with you."
         subtitle="Simple, transparent pricing for restaurants of every size. No hidden fees, ever."
+        bg="gradient"
       />
 
       <Section bg="white">
@@ -95,7 +96,7 @@ export function Pricing() {
                 }`}
               >
                 {plan.featured && (
-                  <p className="mb-3 text-[14px] font-medium text-ember">
+                  <p className="mb-3 text-[14px] font-medium text-brand">
                     Most Popular
                   </p>
                 )}
@@ -115,7 +116,7 @@ export function Pricing() {
                 <ul className="mt-8 flex flex-col gap-4">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-3">
-                      <span className="mt-[2px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-electric-blue text-paper">
+                      <span className="mt-[2px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand text-paper">
                         <CheckIcon width={14} height={14} />
                       </span>
                       <span className="text-[17px] leading-snug text-primary-ink">

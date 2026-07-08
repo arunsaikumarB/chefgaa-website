@@ -24,7 +24,7 @@ export function CheckList({ items, columns = 2 }: CheckListProps) {
       {items.map((item, i) => (
         <Reveal key={item.title} delay={i * 0.05}>
           <li className="flex items-start gap-3">
-            <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-electric-blue text-paper">
+            <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-paper">
               <CheckIcon />
             </span>
             <div>

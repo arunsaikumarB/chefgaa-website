@@ -29,6 +29,7 @@ import {
   HW_SCROLL_OFFSET,
 } from "./HardwareUI";
 import { HardwareNav } from "./HardwareNav";
+import { BrandMeshGradient } from "../effects/BrandMeshGradient";
 
 const CENTER = { x: 50, y: 50 };
 
@@ -51,14 +52,15 @@ function curve(sx: number, sy: number, ex: number, ey: number) {
 export function HeroSection() {
   return (
     <section className="relative overflow-hidden bg-white pt-32 pb-20 md:pt-40 md:pb-24">
-      <div className="mx-auto max-w-[1600px] px-6 text-center md:px-10 lg:px-20">
+      <BrandMeshGradient intensity={0.25} />
+      <div className="relative z-10 mx-auto max-w-[1600px] px-6 text-center md:px-10 lg:px-20">
         <div className="mx-auto max-w-[1440px]">
           <motion.div
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           >
-            <span className="inline-flex rounded-full border border-black/[0.06] bg-[#F5F6F8] px-6 py-2 text-[16px] font-semibold uppercase tracking-[0.12em] text-[#ED3C18]">
+            <span className="inline-flex rounded-full border border-brand/10 bg-brand-soft px-6 py-2 text-[16px] font-semibold uppercase tracking-[0.12em] text-brand">
               Chefgaa Hardware
             </span>
             <h1 className={`mx-auto mt-10 max-w-[960px] ${hwType.hero}`}>

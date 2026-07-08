@@ -87,6 +87,7 @@ export function Contact() {
         eyebrow="Request a Demo"
         title="Let's get in touch."
         subtitle="Tell us about your restaurant and we'll show you what Chefgaa can do."
+        bg="gradient"
       />
 
       <Section bg="gray">
@@ -98,7 +99,7 @@ export function Contact() {
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               className="flex flex-col items-center rounded-[28px] bg-paper p-10 text-center md:p-14"
             >
-              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-electric-blue text-paper">
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand text-paper">
                 <CheckIcon width={28} height={28} />
               </span>
               <h2 className="mt-6 font-sf-pro-display text-[28px] font-semibold md:text-[32px]">
