@@ -1,19 +1,27 @@
+import { useState } from "react";
 import { PricingHero } from "../components/pricing/PricingHero";
-import { PricingPlans } from "../components/pricing/PricingPlans";
-import { PricingEnterprise } from "../components/pricing/PricingEnterprise";
+import { PricingCards } from "../components/pricing/PricingCards";
+import { PricingWhy } from "../components/pricing/PricingWhy";
 import { PricingCompare } from "../components/pricing/PricingCompare";
+import { PricingHardware } from "../components/pricing/PricingHardware";
+import { PricingTrust } from "../components/pricing/PricingTrust";
 import { PricingFAQ } from "../components/pricing/PricingFAQ";
-import { PricingCTA } from "../components/pricing/PricingCTA";
+import { PricingFinalCTA } from "../components/pricing/PricingFinalCTA";
+import type { BillingPeriod } from "../components/pricing/pricingData";
 
 export function Pricing() {
+  const [billing, setBilling] = useState<BillingPeriod>("monthly");
+
   return (
-    <div className="bg-white">
-      <PricingHero />
-      <PricingPlans />
-      <PricingEnterprise />
+    <div className="overflow-x-clip bg-white">
+      <PricingHero billing={billing} onBillingChange={setBilling} />
+      <PricingCards billing={billing} />
+      <PricingWhy />
       <PricingCompare />
+      <PricingHardware />
+      <PricingTrust />
       <PricingFAQ />
-      <PricingCTA />
+      <PricingFinalCTA />
     </div>
   );
 }
