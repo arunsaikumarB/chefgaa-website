@@ -1,22 +1,69 @@
-import { forwardRef } from "react";
-import { HardwareGroup } from "./HardwareGroup";
+import { forwardRef, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+
+const WORKSTATION_IMAGE = "/ecosystem/chefgaa-workstation.png";
+const ENTRANCE_EASE = [0.22, 1, 0.36, 1] as const;
 
 type AnimatedPOSProps = {
-  assemble: number;
+  visible: boolean;
+  idle?: boolean;
+  onHoverChange?: (hovered: boolean) => void;
 };
 
-/** No image — hardware hub only. Slot your POS render here later. */
 export const AnimatedPOS = forwardRef<HTMLDivElement, AnimatedPOSProps>(
-  function AnimatedPOS({ assemble }, ref) {
+  function AnimatedPOS({ visible, idle = false, onHoverChange }, ref) {
+    const reduce = useReducedMotion();
+    const [hovered, setHovered] = useState(false);
+
+    const handleHover = (next: boolean) => {
+      setHovered(next);
+      onHoverChange?.(next);
+    };
+
     return (
-      <div ref={ref} className="relative h-[180px] w-[260px]">
-        <HardwareGroup visible={assemble > 0.5} />
-        <div
-          className="pointer-events-none absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember/40"
-          style={{ boxShadow: "0 0 12px rgba(255,110,20,0.25)", transform: "translateZ(0)" }}
-          aria-hidden="true"
-        />
-      </div>
+      <motion.div
+        ref={ref}
+        className="relative z-[30] flex items-center justify-center"
+        initial={{ opacity: 0, scale: 0.95, y: 30 }}
+        animate={
+          visible
+            ? { opacity: 1, scale: 1, y: 0 }
+            : { opacity: 0, scale: 0.95, y: 30 }
+        }
+        transition={{ duration: 0.7, ease: ENTRANCE_EASE }}
+        onMouseEnter={() => handleHover(true)}
+        onMouseLeave={() => handleHover(false)}
+        onFocus={() => handleHover(true)}
+        onBlur={() => handleHover(false)}
+      >
+        <motion.div
+          className="relative"
+          animate={idle && !reduce ? { y: [0, -4, 0] } : { y: 0 }}
+          transition={
+            idle && !reduce
+              ? { duration: 6, repeat: Infinity, ease: "easeInOut" }
+              : { duration: 0 }
+          }
+          style={{ transform: "translateZ(0)" }}
+        >
+          <img
+            src={WORKSTATION_IMAGE}
+            alt="Chefgaa POS workstation with receipt printer and barcode scanner"
+            width={1560}
+            height={1040}
+            decoding="async"
+            draggable={false}
+            className="h-auto w-[90vw] max-w-none object-contain md:w-[600px] lg:w-[720px] xl:w-[780px]"
+            style={{
+              boxShadow: hovered
+                ? "0 48px 100px rgba(0,0,0,0.22)"
+                : "0 40px 90px rgba(0,0,0,0.18)",
+              transition: "box-shadow 300ms ease",
+              transform: "translateZ(0)",
+            }}
+          />
+        </motion.div>
+      </motion.div>
     );
   }
 );
