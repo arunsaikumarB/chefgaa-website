@@ -4,8 +4,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Globe } from "lucide-react";
 import { ChefgaaLogo } from "./ChefgaaLogo";
 import { FeaturesMegaMenu } from "./nav/FeaturesMegaMenu";
+import { BuiltForMegaMenu } from "./nav/BuiltForMegaMenu";
 import { FeaturesMobileAccordion } from "./nav/FeaturesMobileAccordion";
+import { BuiltForMobileAccordion } from "./nav/BuiltForMobileAccordion";
 import { FEATURE_MENU_ITEMS, getActiveFeatureIndex } from "./nav/featuresMenuData";
+import { isBuiltForRouteActive } from "./nav/builtForMenuData";
 
 const NAV_LINKS = [
   { to: "/", label: "Home", end: true },
@@ -23,9 +26,18 @@ function navLinkClass(isActive: boolean) {
   }`;
 }
 
+function megaMenuTriggerClass(isActive: boolean) {
+  return `inline-flex items-center gap-1.5 font-[Inter] text-[16px] leading-none transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 ${
+    isActive
+      ? "font-semibold text-[#111111]"
+      : "font-medium text-[#2D2D2D] hover:text-[#111111]"
+  }`;
+}
+
 export function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [featuresOpen, setFeaturesOpen] = useState(false);
+  const [builtForOpen, setBuiltForOpen] = useState(false);
   const [countryOpen, setCountryOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -42,25 +54,30 @@ export function Nav() {
       return location.pathname === item.to;
     });
 
+  const builtForActive = isBuiltForRouteActive(location.pathname, location.hash);
+  const megaMenuOpen = featuresOpen || builtForOpen;
+
   useEffect(() => {
     setMenuOpen(false);
     setFeaturesOpen(false);
+    setBuiltForOpen(false);
     setCountryOpen(false);
     setLanguageOpen(false);
   }, [location.pathname, location.hash]);
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen || featuresOpen ? "hidden" : "";
+    document.body.style.overflow = menuOpen || megaMenuOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [menuOpen, featuresOpen]);
+  }, [menuOpen, megaMenuOpen]);
 
   useEffect(() => {
     const onPointerDown = (event: MouseEvent) => {
       const target = event.target as Node;
       if (headerRef.current && !headerRef.current.contains(target)) {
         setFeaturesOpen(false);
+        setBuiltForOpen(false);
       }
       if (countryRef.current && !countryRef.current.contains(target)) {
         setCountryOpen(false);
@@ -78,7 +95,7 @@ export function Nav() {
       <header
         ref={headerRef}
         className={`fixed inset-x-0 top-0 z-50 border-b border-[#F2F2F2] backdrop-blur-[18px] transition-[background-color,border-color] duration-300 ${
-          featuresOpen ? "bg-white" : "bg-white/[0.88]"
+          megaMenuOpen ? "bg-white" : "bg-white/[0.88]"
         }`}
       >
         <div className="relative z-10 mx-auto h-[80px] min-h-[80px] max-w-[1600px] px-6 md:px-10 lg:px-[48px]">
@@ -103,25 +120,54 @@ export function Nav() {
                   type="button"
                   aria-expanded={featuresOpen}
                   aria-haspopup="menu"
-                  onClick={() => setFeaturesOpen((open) => !open)}
+                  onClick={() => {
+                    setBuiltForOpen(false);
+                    setFeaturesOpen((open) => !open);
+                  }}
                   onKeyDown={(event) => {
                     if (event.key === "Escape") setFeaturesOpen(false);
                     if (event.key === "ArrowDown" && !featuresOpen) {
                       event.preventDefault();
+                      setBuiltForOpen(false);
                       setFeaturesOpen(true);
                     }
                   }}
-                  className={`inline-flex items-center gap-1.5 font-[Inter] text-[16px] leading-none transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 ${
-                    featuresActive || featuresOpen
-                      ? "font-semibold text-[#111111]"
-                      : "font-medium text-[#2D2D2D] hover:text-[#111111]"
-                  }`}
+                  className={megaMenuTriggerClass(featuresActive || featuresOpen)}
                 >
                   Features
                   <ChevronDown
                     size={16}
                     strokeWidth={2}
                     className={`transition-transform duration-300 ${featuresOpen ? "rotate-180" : ""}`}
+                    aria-hidden="true"
+                  />
+                </button>
+              </li>
+
+              <li>
+                <button
+                  type="button"
+                  aria-expanded={builtForOpen}
+                  aria-haspopup="menu"
+                  onClick={() => {
+                    setFeaturesOpen(false);
+                    setBuiltForOpen((open) => !open);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Escape") setBuiltForOpen(false);
+                    if (event.key === "ArrowDown" && !builtForOpen) {
+                      event.preventDefault();
+                      setFeaturesOpen(false);
+                      setBuiltForOpen(true);
+                    }
+                  }}
+                  className={megaMenuTriggerClass(builtForActive || builtForOpen)}
+                >
+                  Built For
+                  <ChevronDown
+                    size={16}
+                    strokeWidth={2}
+                    className={`transition-transform duration-300 ${builtForOpen ? "rotate-180" : ""}`}
                     aria-hidden="true"
                   />
                 </button>
@@ -236,6 +282,13 @@ export function Nav() {
               onClose={() => setFeaturesOpen(false)}
             />
           )}
+          {builtForOpen && (
+            <BuiltForMegaMenu
+              pathname={location.pathname}
+              hash={location.hash}
+              onClose={() => setBuiltForOpen(false)}
+            />
+          )}
         </AnimatePresence>
       </header>
 
@@ -265,6 +318,10 @@ export function Nav() {
 
               <li>
                 <FeaturesMobileAccordion onNavigate={() => setMenuOpen(false)} />
+              </li>
+
+              <li>
+                <BuiltForMobileAccordion onNavigate={() => setMenuOpen(false)} />
               </li>
 
               {NAV_LINKS.slice(1).map((link) => (

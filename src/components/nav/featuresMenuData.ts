@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import type { MegaMenuSection } from "./megaMenuTypes";
 import {
   BarChart3,
   Bell,
@@ -166,6 +167,17 @@ export const FEATURE_MENU_ITEMS: FeatureMenuItem[] = [
     ],
   },
 ];
+
+export const FEATURE_MENU_SECTION: MegaMenuSection = {
+  type: "flat",
+  items: FEATURE_MENU_ITEMS.map(({ id, to, title, description, highlights }) => ({
+    id,
+    to,
+    title,
+    description,
+    highlights,
+  })),
+};
 
 export function getActiveFeatureIndex(pathname: string, hash: string): number {
   const index = FEATURE_MENU_ITEMS.findIndex((item) => {
