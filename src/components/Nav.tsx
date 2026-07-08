@@ -79,7 +79,7 @@ export function Nav() {
         ref={headerRef}
         className="fixed inset-x-0 top-0 z-50 border-b border-[#F2F2F2] bg-white/[0.88] backdrop-blur-[18px] transition-[background-color,border-color] duration-300"
       >
-        <div className="relative mx-auto h-20 max-w-[1600px] px-6 md:px-10 lg:px-48">
+        <div className="relative z-10 mx-auto h-[var(--site-nav-height)] max-w-[1600px] px-6 md:px-10 lg:px-48">
           <nav className="grid h-full grid-cols-[1fr_auto_1fr] items-center">
             <Link
               to="/"
@@ -224,17 +224,17 @@ export function Nav() {
               />
             </button>
           </nav>
-
-          <AnimatePresence>
-            {featuresOpen && (
-              <FeaturesMegaMenu
-                pathname={location.pathname}
-                hash={location.hash}
-                onClose={() => setFeaturesOpen(false)}
-              />
-            )}
-          </AnimatePresence>
         </div>
+
+        <AnimatePresence>
+          {featuresOpen && (
+            <FeaturesMegaMenu
+              pathname={location.pathname}
+              hash={location.hash}
+              onClose={() => setFeaturesOpen(false)}
+            />
+          )}
+        </AnimatePresence>
       </header>
 
       <AnimatePresence>

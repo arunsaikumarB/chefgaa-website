@@ -63,9 +63,9 @@
   --spacing-120: 120px;
   --spacing-144: 144px;
 
-  /* Site header (synced with Nav.tsx) */
-  --site-nav-height: 5rem;
-  --site-nav-height-scrolled: 5rem;
+  /* Site header (synced with Nav.tsx) — use spacing-80 token (80px), not h-20 */
+  --site-nav-height: 80px;
+  --site-nav-height-scrolled: 80px;
 
   /* Border Radius */
   --radius-lg: 10px;

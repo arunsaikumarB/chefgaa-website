@@ -111,11 +111,11 @@ export function FeaturesMegaMenu({ pathname, hash, onClose }: FeaturesMegaMenuPr
       ref={menuRef}
       role="menu"
       aria-label="Chefgaa features"
-      initial={{ opacity: 0, y: -8 }}
+      initial={{ opacity: 0, y: -6 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
+      exit={{ opacity: 0, y: -6 }}
       transition={{ duration: 0.22, ease: EASE_OUT }}
-      className="absolute inset-x-0 top-full border-t border-[#F3F3F3] bg-white"
+      className="absolute inset-x-0 top-[var(--site-nav-height)] border-t border-[#F3F3F3] bg-white"
     >
       <div className="mx-auto flex max-w-[1600px] gap-16 px-6 py-10 md:px-10 md:py-12 lg:gap-24 lg:px-48 lg:py-48">
         <div className="w-full shrink-0 md:w-[260px]">
