@@ -137,7 +137,7 @@ export default function EcosystemSection() {
       {/* Desktop — 3-column grid fills full width */}
       <div
         ref={canvasRef}
-        className="relative z-10 mx-auto mt-2 hidden w-full min-h-[88vh] px-6 md:block lg:px-12 xl:px-16"
+        className="relative z-10 mx-auto mt-2 hidden w-full min-h-[88vh] overflow-visible px-6 md:block lg:px-12 xl:px-16"
       >
         {/* Top — AI */}
         <div className="absolute left-1/2 top-0 z-10 w-full max-w-[400px] -translate-x-1/2">
@@ -155,7 +155,7 @@ export default function EcosystemSection() {
         </div>
 
         {/* Main row — left | center | right */}
-        <div className="absolute inset-x-6 top-[11%] bottom-[16%] flex items-center justify-between gap-4 lg:inset-x-12 lg:gap-6 xl:inset-x-16">
+        <div className="absolute inset-x-6 top-[11%] bottom-[16%] flex items-center justify-between gap-4 overflow-visible lg:inset-x-12 lg:gap-6 xl:inset-x-16">
           <div className="z-10 flex w-[min(400px,22vw)] min-w-[280px] flex-col justify-between gap-5 py-4">
             {featuresInColumn("left").map((f) => (
               <FeatureCard
@@ -170,7 +170,7 @@ export default function EcosystemSection() {
             ))}
           </div>
 
-          <div className="relative flex min-w-0 flex-1 items-center justify-center self-center px-2 lg:px-4">
+          <div className="relative flex min-w-0 flex-1 items-center justify-center self-center overflow-visible bg-transparent px-2 lg:px-4">
             <GlowPlatform
               visible={platformVisible}
               breathing={sequenceComplete}
@@ -225,7 +225,7 @@ export default function EcosystemSection() {
 
       {/* Mobile — workstation first, cards below */}
       <div className="relative z-10 mt-10 flex flex-col items-center gap-10 px-6 md:hidden">
-        <div className="relative flex w-full items-center justify-center py-4">
+        <div className="relative flex w-full items-center justify-center overflow-visible bg-transparent py-4">
           <GlowPlatform visible={true} breathing={sequenceComplete} hovered={hubHovered} />
           <AnimatedPOS
             visible
