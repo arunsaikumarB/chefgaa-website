@@ -231,10 +231,10 @@ function ModuleVisual({ type }: { type: Module["visual"] }) {
           </div>
           <div className="grid grid-cols-2 gap-2">
             {[
-              { n: "#142", t: "2× Biryani", s: "12m" },
-              { n: "#143", t: "1× Naan", s: "4m" },
-              { n: "#144", t: "3× Curry", s: "8m" },
-              { n: "#145", t: "2× Salad", s: "2m" },
+              { n: "#142", t: "2? Biryani", s: "12m" },
+              { n: "#143", t: "1? Naan", s: "4m" },
+              { n: "#144", t: "3? Curry", s: "8m" },
+              { n: "#145", t: "2? Salad", s: "2m" },
             ].map((o) => (
               <div key={o.n} className="rounded-lg bg-paper/10 p-2">
                 <div className="flex justify-between text-[8px] text-paper/60">
@@ -374,7 +374,7 @@ function ModuleCard({ module }: { module: Module }) {
           className={`mt-6 inline-flex w-fit items-center gap-1.5 rounded-full px-5 py-2.5 text-[15px] font-medium text-paper transition-opacity ${theme.button}`}
         >
           Learn More
-          <span aria-hidden="true">→</span>
+          <span aria-hidden="true">?</span>
         </Link>
       </div>
 
@@ -427,7 +427,11 @@ export function ModulesCarousel() {
     const cards = track.querySelectorAll<HTMLElement>("article");
     const card = cards[index];
     if (!card) return;
-    track.scrollTo({ left: card.offsetLeft - 24, behavior: "smooth" });
+
+    const stageInset =
+      window.innerWidth >= 1024 ? 48 : window.innerWidth >= 768 ? 32 : 20;
+
+    track.scrollTo({ left: card.offsetLeft - stageInset, behavior: "smooth" });
     setActiveIndex(index);
   };
 
@@ -436,7 +440,7 @@ export function ModulesCarousel() {
 
   return (
     <section className="overflow-hidden bg-paper py-16 md:py-[120px]" aria-label="Explore modules">
-      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-10 px-6 md:px-10 lg:flex-row lg:items-start lg:gap-12">
+      <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-10 px-5 sm:px-8 lg:flex-row lg:items-start lg:gap-[56px] lg:px-[64px]">
         {/* Left intro + navigation */}
         <div className="shrink-0 lg:w-[280px] xl:w-[300px]">
           <motion.div
@@ -494,15 +498,17 @@ export function ModulesCarousel() {
           </motion.div>
         </div>
 
-        {/* Horizontal carousel — bleeds right */}
-        <div className="relative min-w-0 flex-1 lg:-mr-10 xl:-mr-16">
-          <div
-            ref={trackRef}
-            className="flex gap-6 overflow-x-auto scroll-smooth pb-2 pr-6 scrollbar-none snap-x snap-mandatory md:gap-8 md:pr-10"
-          >
-            {modules.map((module) => (
-              <ModuleCard key={module.id} module={module} />
-            ))}
+        {/* Carousel stage */}
+        <div className="relative min-w-0 flex-1">
+          <div className="overflow-hidden py-4 md:py-5 lg:py-[24px]">
+            <div
+              ref={trackRef}
+              className="modules-carousel-track flex gap-[40px] overflow-x-auto scroll-smooth px-5 py-6 scrollbar-none snap-x snap-mandatory md:scroll-px-8 md:px-8 lg:scroll-px-[48px] lg:px-[48px]"
+            >
+              {modules.map((module) => (
+                <ModuleCard key={module.id} module={module} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
