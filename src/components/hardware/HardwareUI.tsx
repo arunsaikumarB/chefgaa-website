@@ -33,7 +33,7 @@ export function HwShell({
   return (
     <section
       id={id}
-      className={`${className} pt-[120px] pb-[140px] ${id ? HW_SCROLL_OFFSET : ""}`}
+      className={`${className} py-[72px] md:py-[96px] lg:py-[112px] ${id ? HW_SCROLL_OFFSET : ""}`}
     >
       <div className="mx-auto w-full max-w-[1600px] px-6 md:px-10 lg:px-20">
         <div className="mx-auto w-full max-w-[1440px]">{children}</div>

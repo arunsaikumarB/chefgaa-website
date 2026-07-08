@@ -142,16 +142,16 @@ export function ComparisonSection() {
         <HwSectionIntro title="Compare devices" />
       </HwReveal>
 
-      <div className="mt-14 overflow-x-auto">
+      <div className="mt-[40px] overflow-x-auto md:mt-[48px]">
         <div className="min-w-[880px]">
-          <div className="sticky top-[11.5rem] z-10 grid grid-cols-5 gap-8 rounded-[32px] bg-[#F5F6F8]/95 py-8 backdrop-blur-md">
+          <div className="sticky top-[11.5rem] z-10 grid grid-cols-5 gap-[24px] rounded-[28px] bg-[#F5F6F8]/95 py-[24px] backdrop-blur-md md:gap-[32px] md:py-[32px]">
             <div aria-hidden="true" />
             {COMPARE_COLUMNS.map((name, i) => (
               <div key={name} className="text-center">
-                <div className="flex h-[180px] items-center justify-center">
+                <div className="flex h-[140px] items-center justify-center md:h-[160px]">
                   <ProductVisual product={visuals[i]} size="sm" />
                 </div>
-                <p className={`mt-6 ${hwType.cardTitle} text-[24px] md:text-[28px]`}>{name}</p>
+                <p className={`mt-[16px] ${hwType.cardTitle} text-[22px] md:text-[26px]`}>{name}</p>
               </div>
             ))}
           </div>
@@ -159,15 +159,15 @@ export function ComparisonSection() {
           {COMPARE_ROWS.map((row, ri) => (
             <div
               key={row.label}
-              className={`grid grid-cols-5 items-center gap-8 py-10 ${
+              className={`grid grid-cols-5 items-center gap-[24px] py-[28px] md:gap-[32px] md:py-[32px] ${
                 ri < COMPARE_ROWS.length - 1 ? "border-b border-black/[0.05]" : ""
               }`}
             >
-              <p className="text-[16px] font-semibold uppercase tracking-[0.06em] leading-[1.6] text-[#666666]">
+              <p className="text-[14px] font-semibold uppercase tracking-[0.06em] leading-[1.4] text-[#666666] md:text-[15px]">
                 {row.label}
               </p>
               {row.values.map((val, vi) => (
-                <p key={vi} className="text-center text-[16px] leading-[1.6] text-[#444444]">
+                <p key={vi} className="text-center text-[15px] leading-[1.5] text-[#444444] md:text-[16px]">
                   {val}
                 </p>
               ))}
