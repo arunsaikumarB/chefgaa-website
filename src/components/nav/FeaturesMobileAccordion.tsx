@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { FEATURE_MENU_ITEMS } from "./featuresMenuData";
 
 type FeaturesMobileAccordionProps = {
@@ -39,7 +39,7 @@ export function FeaturesMobileAccordion({ onNavigate }: FeaturesMobileAccordionP
             <p className="mb-4 text-[12px] font-bold uppercase tracking-[0.12em] text-[#111111]">
               Features
             </p>
-            <div className="grid grid-cols-1 gap-3">
+            <div className="flex flex-col gap-4">
               {FEATURE_MENU_ITEMS.map((item) => {
                 const Icon = item.icon;
                 return (
@@ -47,20 +47,21 @@ export function FeaturesMobileAccordion({ onNavigate }: FeaturesMobileAccordionP
                     key={item.id}
                     to={item.to}
                     onClick={onNavigate}
-                    className={({ isActive }) =>
-                      `group flex items-center gap-3.5 rounded-2xl p-4 transition-all duration-[250ms] hover:bg-[#FFF7F3] ${
-                        isActive ? "bg-[#FFF7F3]" : ""
-                      }`
-                    }
+                    className="group flex items-center gap-3 rounded-xl py-2.5 pr-2 transition-colors duration-[250ms]"
                   >
                     <Icon
-                      size={24}
-                      strokeWidth={1.75}
-                      className="shrink-0 text-brand transition-transform duration-[250ms] group-hover:translate-x-[3px]"
+                      size={22}
+                      strokeWidth={1.5}
+                      className="shrink-0 text-[#8A8A8A] transition-colors duration-[250ms] group-hover:text-brand"
                     />
-                    <span className="text-[18px] font-semibold text-[#222222] transition-colors duration-[250ms] group-hover:text-brand">
+                    <span className="min-w-0 flex-1 text-[16px] font-medium text-[#111111]">
                       {item.title}
                     </span>
+                    <ArrowRight
+                      size={16}
+                      strokeWidth={2}
+                      className="shrink-0 text-brand opacity-0 transition-all duration-[250ms] group-hover:translate-x-0.5 group-hover:opacity-100"
+                    />
                   </NavLink>
                 );
               })}
