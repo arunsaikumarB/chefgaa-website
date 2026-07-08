@@ -28,6 +28,7 @@ import {
   hwType,
   HW_SCROLL_OFFSET,
 } from "./HardwareUI";
+import { HardwareNav } from "./HardwareNav";
 
 const CENTER = { x: 50, y: 50 };
 
@@ -45,54 +46,98 @@ function curve(sx: number, sy: number, ex: number, ey: number) {
   return `M ${sx} ${sy} C ${mx - dy * 0.14} ${my + dx * 0.14}, ${mx + dy * 0.07} ${my - dx * 0.07}, ${ex} ${ey}`;
 }
 
-/* ── 1. Featured ───────────────────────────────────────── */
+/* ── 1. Hero ───────────────────────────────────────────── */
+
+export function HeroSection() {
+  return (
+    <section className="relative overflow-hidden bg-white pt-32 pb-20 md:pt-40 md:pb-24">
+      <div className="mx-auto max-w-[1600px] px-6 text-center md:px-10 lg:px-20">
+        <div className="mx-auto max-w-[1440px]">
+          <motion.div
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <span className="inline-flex rounded-full border border-black/[0.06] bg-[#F5F6F8] px-6 py-2 text-[16px] font-semibold uppercase tracking-[0.12em] text-[#ED3C18]">
+              Chefgaa Hardware
+            </span>
+            <h1 className={`mx-auto mt-10 max-w-[960px] ${hwType.hero}`}>
+              Hardware built for modern restaurants.
+            </h1>
+            <p className={`mx-auto mt-8 max-w-[720px] ${hwType.body}`}>
+              Every Chefgaa device works together as one intelligent ecosystem—fast, reliable, and built to scale with your business.
+            </p>
+            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
+              <HwPrimaryBtn>Explore Hardware</HwPrimaryBtn>
+              <HwGhostBtn>Request Demo</HwGhostBtn>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="relative mt-20 md:mt-24"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div
+              className="pointer-events-none absolute left-1/2 top-1/2 h-[min(560px,65vw)] w-[min(560px,65vw)] -translate-x-1/2 -translate-y-1/2 rounded-full"
+              style={{
+                background:
+                  "radial-gradient(circle, rgba(250,144,64,0.18) 0%, rgba(237,60,24,0.05) 45%, transparent 70%)",
+                filter: "blur(50px)",
+              }}
+            />
+            <ProductVisual product="workstation" size="hero" />
+          </motion.div>
+        </div>
+      </div>
+      <HardwareNav />
+    </section>
+  );
+}
+
+/* ── 2. Featured ───────────────────────────────────────── */
 
 export function FeaturedSection() {
   return (
-    <section
-      id="register"
-      className={`relative z-0 ${HW_SCROLL_OFFSET} bg-white pb-[140px] pt-12`}
-    >
-      <div className="mx-auto w-full max-w-[1600px] px-6 md:px-10 lg:px-20">
-        <div className="mx-auto w-full max-w-[1440px]">
-          <div className="relative z-0 overflow-hidden rounded-[32px] bg-[#F5F6F8] shadow-[0_20px_60px_rgba(0,0,0,0.06)]">
-            <div className="grid items-center lg:grid-cols-2">
-              <div className="p-10 md:p-16 lg:p-20">
-                <p className={hwType.eyebrow}>{FEATURED.eyebrow}</p>
-                <h2 className={`mt-6 ${hwType.sectionTitle}`}>{FEATURED.headline}</h2>
-                <p className={`mt-6 ${hwType.body}`}>{FEATURED.description}</p>
-                <ul className="mt-8 space-y-4">
-                  {FEATURED.features.map((f) => (
-                    <li key={f} className="flex items-start gap-3 text-[18px] leading-[1.6] text-[#444444]">
-                      <Check size={20} className="mt-1 shrink-0 text-[#ED3C18]" strokeWidth={2.5} />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-8 text-[18px] leading-[1.6] text-[#111111]">
-                  <span className="font-semibold">{FEATURED.price}</span>
-                  <span className="text-[#666666]"> · {FEATURED.priceNote}</span>
-                </p>
-                <div className="mt-8 flex flex-wrap items-center gap-6">
-                  <HwPrimaryBtn>Request Demo</HwPrimaryBtn>
-                  <HwLink>Learn more</HwLink>
-                </div>
+    <HwShell id="register">
+      <HwReveal>
+        <div className="overflow-hidden rounded-[32px] bg-[#F5F6F8]">
+          <div className="grid items-center lg:grid-cols-2">
+            <div className="p-10 md:p-16 lg:p-20">
+              <p className={hwType.eyebrow}>{FEATURED.eyebrow}</p>
+              <h2 className={`mt-6 ${hwType.sectionTitle}`}>{FEATURED.headline}</h2>
+              <p className={`mt-6 ${hwType.body}`}>{FEATURED.description}</p>
+              <ul className="mt-8 space-y-4">
+                {FEATURED.features.map((f) => (
+                  <li key={f} className="flex items-start gap-3 text-[18px] leading-[1.6] text-[#444444]">
+                    <Check size={20} className="mt-1 shrink-0 text-[#ED3C18]" strokeWidth={2.5} />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-8 text-[18px] leading-[1.6] text-[#111111]">
+                <span className="font-semibold">{FEATURED.price}</span>
+                <span className="text-[#666666]"> · {FEATURED.priceNote}</span>
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-6">
+                <HwPrimaryBtn>Request Demo</HwPrimaryBtn>
+                <HwLink>Learn more</HwLink>
               </div>
-              <div className="relative flex min-h-[400px] items-center justify-center p-8 md:min-h-[520px] md:p-12 lg:p-16">
-                <div
-                  className="absolute inset-0 m-6 rounded-[32px] md:m-10"
-                  style={{
-                    background:
-                      "radial-gradient(circle at 50% 60%, rgba(250,144,64,0.12) 0%, transparent 65%)",
-                  }}
-                />
-                <ProductVisual product={FEATURED.visual} size="xl" showcase />
-              </div>
+            </div>
+            <div className="relative flex min-h-[400px] items-center justify-center p-10 md:min-h-[520px] md:p-16">
+              <div
+                className="absolute inset-0 m-8 rounded-[32px]"
+                style={{
+                  background: "radial-gradient(circle at 50% 60%, rgba(250,144,64,0.12) 0%, transparent 65%)",
+                }}
+              />
+              <ProductVisual product={FEATURED.visual} size="xl" />
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </HwReveal>
+    </HwShell>
   );
 }
 
@@ -108,36 +153,33 @@ export function ProductGridSection() {
         />
       </HwReveal>
 
-      <div className="mt-14 grid grid-cols-1 gap-x-10 gap-y-12 md:grid-cols-2">
+      <div className="mt-14 grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-x-12 md:gap-y-12">
         {GRID_PRODUCTS.map((p, i) => (
-          <HwReveal key={p.id} delay={i * 0.04} className="h-full">
-            <HwProductCard
-              id={p.id === "register" ? undefined : p.anchor}
-              compact
-            >
-              <div className="overflow-hidden rounded-[24px] bg-[#F5F6F8]/60 px-6 py-4">
+          <div key={p.id} id={p.anchor} className={`h-full ${HW_SCROLL_OFFSET}`}>
+            <HwReveal delay={i * 0.06} className="h-full">
+              <HwProductCard>
                 <ProductVisual product={p.visual} size="md" />
-              </div>
-              <h3 className="mt-6 font-sf-pro-display text-[24px] font-bold leading-[1.6] tracking-[-0.02em] text-[#111111] md:text-[28px]">
-                {p.name}
-              </h3>
-              <p className={`mt-4 ${hwType.body}`}>{p.description}</p>
-              <ul className="mt-5 flex flex-wrap gap-2">
-                {p.specs.map((s) => (
-                  <li
-                    key={s}
-                    className="rounded-full bg-[#F5F6F8] px-3 py-1.5 text-[14px] leading-[1.6] text-[#444444]"
-                  >
-                    {s}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-6 flex flex-wrap items-center gap-5">
-                <HwLink>Learn More</HwLink>
-                <HwLink>Request Demo</HwLink>
-              </div>
-            </HwProductCard>
-          </HwReveal>
+                <h3 className="mt-6 font-sf-pro-display text-[24px] font-bold leading-[1.6] tracking-[-0.02em] text-[#111111] md:text-[28px]">
+                  {p.name}
+                </h3>
+                <p className={`mt-4 ${hwType.body}`}>{p.description}</p>
+                <ul className="mt-6 flex flex-wrap gap-2">
+                  {p.specs.map((s) => (
+                    <li
+                      key={s}
+                      className="rounded-full bg-[#F5F6F8] px-4 py-2 text-[16px] leading-[1.6] text-[#444444]"
+                    >
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-6 flex flex-wrap items-center gap-6">
+                  <HwLink>Learn More</HwLink>
+                  <HwLink>Request Demo</HwLink>
+                </div>
+              </HwProductCard>
+            </HwReveal>
+          </div>
         ))}
       </div>
     </HwShell>
@@ -257,7 +299,7 @@ export function ComparisonSection() {
 
       <div className="mt-14 overflow-x-auto">
         <div className="min-w-[880px]">
-          <div className="sticky top-[9.5rem] z-10 grid grid-cols-5 gap-8 rounded-[32px] bg-[#F5F6F8]/95 py-8 backdrop-blur-md">
+          <div className="sticky top-[7.5rem] z-10 grid grid-cols-5 gap-8 rounded-[32px] bg-[#F5F6F8]/95 py-8 backdrop-blur-md">
             <div aria-hidden="true" />
             {COMPARE_COLUMNS.map((name, i) => (
               <div key={name} className="text-center">

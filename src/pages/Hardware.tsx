@@ -1,5 +1,5 @@
-import { HardwareNav } from "../components/hardware/HardwareNav";
 import {
+  HeroSection,
   FeaturedSection,
   ProductGridSection,
   EcosystemSection,
@@ -16,8 +16,8 @@ import {
 
 export function Hardware() {
   return (
-    <div className="isolate bg-white pt-14 [scroll-padding-top:9.75rem]">
-      <HardwareNav />
+    <>
+      <HeroSection />
       <FeaturedSection />
       <ProductGridSection />
       <EcosystemSection />
@@ -30,6 +30,6 @@ export function Hardware() {
       <StoriesSection />
       <FaqSection />
       <CtaSection />
-    </div>
+    </>
   );
 }

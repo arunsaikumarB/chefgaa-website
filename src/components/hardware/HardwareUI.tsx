@@ -15,10 +15,11 @@ export const hwType = {
   eyebrow: "text-[16px] font-semibold uppercase tracking-[0.12em] text-[#ED3C18]",
 } as const;
 
-/* ── Layout ─────────────────────────────────────────────── */
+/** Clears fixed global nav (56px) + sticky hardware category nav (~88px) */
+export const HW_SCROLL_OFFSET = "scroll-mt-[9.5rem]";
+export const HW_NAV_SCROLL_PADDING = 152;
 
-/** Offset for fixed global nav (56px) + sticky hardware category bar (~100px) */
-export const HW_SCROLL_OFFSET = "scroll-mt-[9.75rem]";
+/* ── Layout ─────────────────────────────────────────────── */
 
 export function HwShell({
   id,
@@ -30,7 +31,10 @@ export function HwShell({
   className?: string;
 }) {
   return (
-    <section id={id} className={`${className} ${id ? HW_SCROLL_OFFSET : ""} pt-[120px] pb-[140px]`}>
+    <section
+      id={id}
+      className={`${className} pt-[120px] pb-[140px] ${id ? HW_SCROLL_OFFSET : ""}`}
+    >
       <div className="mx-auto w-full max-w-[1600px] px-6 md:px-10 lg:px-20">
         <div className="mx-auto w-full max-w-[1440px]">{children}</div>
       </div>
@@ -72,10 +76,10 @@ export function HwReveal({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, y: 60 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
     </motion.div>
@@ -125,23 +129,18 @@ export function HwLink({ children, to = "/contact" }: { children: ReactNode; to?
 export function HwProductCard({
   children,
   className = "",
-  id,
-  compact = false,
 }: {
   children: ReactNode;
   className?: string;
-  id?: string;
-  compact?: boolean;
 }) {
   return (
-    <article
-      id={id}
-      className={`relative z-0 flex h-full flex-col rounded-[32px] bg-white shadow-[0_20px_60px_rgba(0,0,0,0.06)] transition-all duration-350 hover:-translate-y-1 hover:shadow-[0_24px_72px_rgba(0,0,0,0.09)] ${
-        compact ? "p-8" : "p-10"
-      } ${id ? HW_SCROLL_OFFSET : ""} ${className}`}
+    <motion.article
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      className={`flex h-full flex-col rounded-[32px] bg-white p-10 shadow-[0_20px_60px_rgba(0,0,0,0.06)] transition-shadow duration-350 hover:shadow-[0_24px_72px_rgba(0,0,0,0.09)] ${className}`}
     >
       {children}
-    </article>
+    </motion.article>
   );
 }
 
@@ -155,12 +154,14 @@ export function HwFeatureCard({
   className?: string;
 }) {
   return (
-    <article
-      className={`relative z-0 flex h-full flex-col rounded-[32px] p-10 transition-all duration-350 hover:-translate-y-1 hover:shadow-[0_24px_72px_rgba(0,0,0,0.06)] ${className}`}
+    <motion.article
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      className={`flex h-full flex-col rounded-[32px] p-10 transition-shadow duration-350 hover:shadow-[0_24px_72px_rgba(0,0,0,0.06)] ${className}`}
       style={{ backgroundColor: tint }}
     >
       {children}
-    </article>
+    </motion.article>
   );
 }
 
@@ -175,9 +176,9 @@ export function HwIconBox({ children }: { children: ReactNode }) {
 /* ── Product visual ─────────────────────────────────────── */
 
 const VISUAL_HEIGHTS = {
-  sm: "h-[140px]",
-  md: "h-[180px]",
-  lg: "h-[220px]",
+  sm: "h-[160px]",
+  md: "h-[200px]",
+  lg: "h-[280px]",
   xl: "h-[360px]",
   hero: "h-[min(480px,55vh)] md:h-[min(560px,60vh)]",
 } as const;
@@ -186,27 +187,21 @@ export function ProductVisual({
   product,
   className = "",
   size = "md",
-  showcase = false,
 }: {
   product: VisualId;
   className?: string;
   size?: "sm" | "md" | "lg" | "xl" | "hero";
-  showcase?: boolean;
   /** @deprecated hover-only lift is applied automatically */
   floating?: boolean;
 }) {
   const heightKey = size === "xl" && product === "workstation" ? "hero" : size;
-  const fill = showcase ? "h-[88%] w-[88%]" : "h-[65%] w-[65%]";
-  const height = showcase && size === "xl" ? "h-[min(480px,52vh)] md:h-[min(520px,56vh)]" : VISUAL_HEIGHTS[heightKey];
 
   return (
     <div
-      className={`group/product flex w-full items-center justify-center ${height} ${className}`}
+      className={`group/product flex w-full items-center justify-center ${VISUAL_HEIGHTS[heightKey]} ${className}`}
     >
-      <div
-        className={`flex ${fill} items-center justify-center transition-transform duration-350 group-hover/product:-translate-y-[3px]`}
-      >
-        <DeviceRender product={product} size={showcase ? "xl" : size} />
+      <div className="flex h-[65%] w-[65%] items-center justify-center transition-transform duration-350 group-hover/product:-translate-y-[3px]">
+        <DeviceRender product={product} size={size} />
       </div>
     </div>
   );
@@ -254,7 +249,7 @@ function WorkstationVisual({ size }: { size: string }) {
 function TerminalVisual({ size }: { size: string }) {
   const w =
     size === "hero" || size === "xl"
-      ? "w-full max-w-[340px]"
+      ? "w-full max-w-[280px]"
       : size === "lg"
         ? "w-full max-w-[220px]"
         : size === "sm"
