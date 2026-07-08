@@ -19,8 +19,28 @@ const mainLinks = [
   { to: "/contact", label: "Contact Us" },
 ];
 
-function navLinkClass(isActive: boolean) {
-  return `px-2.5 py-1 text-[14px] font-medium transition-colors ${
+type NavVariant = "overlay" | "solid";
+
+function navLinkClass(isActive: boolean, variant: NavVariant) {
+  if (variant === "overlay") {
+    return `px-3 py-2 text-[14px] font-medium leading-none transition-colors ${
+      isActive ? "text-brand" : "!text-white/90 hover:!text-white"
+    }`;
+  }
+
+  return `px-3 py-2 text-[14px] font-medium leading-none transition-colors ${
+    isActive ? "text-brand" : "text-primary-ink hover:text-brand"
+  }`;
+}
+
+function featuresTriggerClass(isActive: boolean, variant: NavVariant) {
+  if (variant === "overlay") {
+    return `inline-flex items-center gap-1 px-3 py-2 text-[14px] font-medium leading-none transition-colors ${
+      isActive ? "text-brand" : "!text-white/90 hover:!text-white"
+    }`;
+  }
+
+  return `inline-flex items-center gap-1 px-3 py-2 text-[14px] font-medium leading-none transition-colors ${
     isActive ? "text-brand" : "text-primary-ink hover:text-brand"
   }`;
 }
@@ -36,6 +56,9 @@ export function Nav() {
   const languageRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 
+  const isHome = location.pathname === "/";
+  const isSolid = scrolled || menuOpen || !isHome;
+  const variant: NavVariant = isSolid ? "solid" : "overlay";
   const featuresActive = featureLinks.some((link) => location.pathname === link.to);
 
   useEffect(() => {
@@ -80,24 +103,30 @@ export function Nav() {
     <>
       <header
         className={`fixed inset-x-0 top-0 z-50 border-b transition-[height,background-color,border-color,backdrop-filter] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          scrolled || menuOpen
-            ? "h-[var(--site-nav-height-scrolled)] border-hairline/60 bg-faded-surface/90 backdrop-blur-[20px]"
-            : "h-[var(--site-nav-height)] border-transparent bg-paper"
+          isSolid
+            ? scrolled || menuOpen
+              ? "h-[var(--site-nav-height-scrolled)] border-hairline/60 bg-faded-surface/90 backdrop-blur-[20px]"
+              : "h-[var(--site-nav-height)] border-transparent bg-paper/95 backdrop-blur-[12px]"
+            : "h-[var(--site-nav-height)] border-white/10 bg-transparent"
         }`}
       >
-        <nav className="mx-auto flex h-full max-w-[1280px] items-center justify-between gap-8 px-5 md:gap-10 md:px-8 lg:px-10">
+        <nav className="mx-auto flex h-full max-w-[1280px] items-center justify-between gap-6 px-5 md:gap-8 md:px-8 lg:px-10">
           <Link
             to="/"
-            className="flex h-full shrink-0 items-center py-3 md:py-4"
+            className="flex shrink-0 items-center"
             aria-label="Chefgaa home"
           >
             <ChefgaaLogo showWordmark={false} compact={scrolled && !menuOpen} />
           </Link>
 
-          <ul className="hidden items-center gap-1 lg:flex">
+          <ul className="hidden items-center gap-0.5 lg:flex">
             {mainLinks.slice(0, 1).map((link) => (
               <li key={link.to}>
-                <NavLink to={link.to} end={link.end} className={({ isActive }) => navLinkClass(isActive)}>
+                <NavLink
+                  to={link.to}
+                  end={link.end}
+                  className={({ isActive }) => navLinkClass(isActive, variant)}
+                >
                   {link.label}
                 </NavLink>
               </li>
@@ -109,11 +138,7 @@ export function Nav() {
                 aria-expanded={featuresOpen}
                 aria-haspopup="menu"
                 onClick={() => setFeaturesOpen((open) => !open)}
-                className={`inline-flex items-center gap-1 px-2.5 py-1 text-[14px] font-medium transition-colors ${
-                  featuresActive || featuresOpen
-                    ? "text-brand"
-                    : "text-primary-ink hover:text-brand"
-                }`}
+                className={featuresTriggerClass(featuresActive || featuresOpen, variant)}
               >
                 Features
                 <ChevronDown
@@ -153,7 +178,7 @@ export function Nav() {
 
             {mainLinks.slice(1).map((link) => (
               <li key={link.to}>
-                <NavLink to={link.to} className={({ isActive }) => navLinkClass(isActive)}>
+                <NavLink to={link.to} className={({ isActive }) => navLinkClass(isActive, variant)}>
                   {link.label}
                 </NavLink>
               </li>
@@ -167,12 +192,20 @@ export function Nav() {
                 aria-expanded={countryOpen}
                 aria-label="Select country"
                 onClick={() => setCountryOpen((open) => !open)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-hairline bg-paper px-2.5 py-1.5 text-[13px] text-primary-ink transition-colors hover:bg-canvas"
+                className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[13px] leading-none transition-colors ${
+                  variant === "overlay"
+                    ? "border-white/25 bg-white/5 !text-white hover:bg-white/10"
+                    : "border-hairline bg-paper text-primary-ink hover:bg-canvas"
+                }`}
               >
                 <span className="text-base leading-none" aria-hidden="true">
                   🇮🇳
                 </span>
-                <ChevronDown size={12} strokeWidth={2} className="text-mid-gray" />
+                <ChevronDown
+                  size={12}
+                  strokeWidth={2}
+                  className={variant === "overlay" ? "text-white/70" : "text-mid-gray"}
+                />
               </button>
               <AnimatePresence>
                 {countryOpen && (
@@ -201,7 +234,7 @@ export function Nav() {
                 aria-expanded={languageOpen}
                 aria-label="Select language"
                 onClick={() => setLanguageOpen((open) => !open)}
-                className="inline-flex items-center gap-2 rounded-full bg-brand px-4 py-2 text-[13px] font-medium text-white transition-opacity hover:opacity-90"
+                className="inline-flex items-center gap-2 rounded-full bg-brand px-4 py-2 text-[13px] font-medium leading-none !text-[#FFFFFF] transition-opacity hover:opacity-90"
               >
                 <Globe size={14} strokeWidth={2} aria-hidden="true" />
                 English
@@ -233,17 +266,17 @@ export function Nav() {
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
-            className="relative z-50 flex h-9 w-9 flex-col items-center justify-center gap-[5px] lg:hidden"
+            className="relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-[5px] lg:hidden"
           >
             <span
-              className={`h-[1.5px] w-5 bg-primary-ink transition-transform duration-300 ${
-                menuOpen ? "translate-y-[6.5px] rotate-45" : ""
-              }`}
+              className={`h-[1.5px] w-5 transition-transform duration-300 ${
+                variant === "overlay" && !menuOpen ? "bg-white" : "bg-primary-ink"
+              } ${menuOpen ? "translate-y-[6.5px] rotate-45" : ""}`}
             />
             <span
-              className={`h-[1.5px] w-5 bg-primary-ink transition-transform duration-300 ${
-                menuOpen ? "-translate-y-[6.5px] -rotate-45" : ""
-              }`}
+              className={`h-[1.5px] w-5 transition-transform duration-300 ${
+                variant === "overlay" && !menuOpen ? "bg-white" : "bg-primary-ink"
+              } ${menuOpen ? "-translate-y-[6.5px] -rotate-45" : ""}`}
             />
           </button>
         </nav>
@@ -313,7 +346,7 @@ export function Nav() {
               </button>
               <button
                 type="button"
-                className="inline-flex items-center gap-2 rounded-full bg-brand px-4 py-2 text-[14px] font-medium text-white"
+                className="inline-flex items-center gap-2 rounded-full bg-brand px-4 py-2 text-[14px] font-medium leading-none !text-[#FFFFFF]"
               >
                 <Globe size={14} strokeWidth={2} aria-hidden="true" />
                 English
