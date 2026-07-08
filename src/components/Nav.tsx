@@ -77,19 +77,21 @@ export function Nav() {
     <>
       <header
         ref={headerRef}
-        className="fixed inset-x-0 top-0 z-50 border-b border-[#F2F2F2] bg-white/[0.88] backdrop-blur-[18px] transition-[background-color,border-color] duration-300"
+        className={`fixed inset-x-0 top-0 z-50 border-b border-[#F2F2F2] backdrop-blur-[18px] transition-[background-color,border-color] duration-300 ${
+          featuresOpen ? "bg-white" : "bg-white/[0.88]"
+        }`}
       >
-        <div className="relative z-10 mx-auto h-[var(--site-nav-height)] max-w-[1600px] px-6 md:px-10 lg:px-48">
-          <nav className="grid h-full grid-cols-[1fr_auto_1fr] items-center">
+        <div className="relative z-10 mx-auto h-[80px] min-h-[80px] max-w-[1600px] px-6 md:px-10 lg:px-[48px]">
+          <nav className="relative h-full">
             <Link
               to="/"
-              className="flex shrink-0 items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+              className="absolute left-0 top-1/2 z-10 flex -translate-y-1/2 items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
               aria-label="Chefgaa home"
             >
-              <ChefgaaLogo showWordmark={false} className="[&_img]:!h-[34px]" />
+              <ChefgaaLogo showWordmark={false} markHeightPx={34} />
             </Link>
 
-            <ul className="hidden items-center gap-[36px] lg:flex">
+            <ul className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-[36px] lg:flex">
               <li>
                 <NavLink to="/" end className={({ isActive }) => navLinkClass(isActive)}>
                   Home
@@ -134,14 +136,14 @@ export function Nav() {
               ))}
             </ul>
 
-            <div className="hidden items-center justify-end gap-3 lg:flex">
+            <div className="absolute right-0 top-1/2 hidden -translate-y-1/2 items-center gap-[12px] lg:flex">
               <div ref={countryRef} className="relative">
                 <button
                   type="button"
                   aria-expanded={countryOpen}
                   aria-label="Select country"
                   onClick={() => setCountryOpen((open) => !open)}
-                  className="inline-flex h-11 items-center gap-2 rounded-lg border border-[#E8E8E8] bg-white px-3.5 font-[Inter] text-[14px] font-medium text-[#2D2D2D] transition-colors duration-200 hover:border-[#D0D0D0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                  className="inline-flex h-[44px] items-center gap-2 rounded-lg border border-[#E8E8E8] bg-white px-3.5 font-[Inter] text-[14px] font-medium leading-none text-[#2D2D2D] transition-colors duration-200 hover:border-[#D0D0D0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
                 >
                   <span className="text-base leading-none" aria-hidden="true">
                     🇮🇳
@@ -175,7 +177,7 @@ export function Nav() {
                   aria-expanded={languageOpen}
                   aria-label="Select language"
                   onClick={() => setLanguageOpen((open) => !open)}
-                  className="inline-flex h-11 items-center gap-2 rounded-full bg-brand px-5 font-[Inter] text-[14px] font-semibold !text-white transition-opacity duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                  className="inline-flex h-[44px] items-center gap-2 rounded-full bg-brand px-5 font-[Inter] text-[14px] font-semibold leading-none !text-white transition-opacity duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
                 >
                   <Globe size={15} strokeWidth={2} aria-hidden="true" />
                   English
@@ -203,7 +205,7 @@ export function Nav() {
 
               <Link
                 to="/contact"
-                className="inline-flex h-11 items-center rounded-full bg-brand px-6 font-[Inter] text-[14px] font-semibold !text-white transition-opacity duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                className="inline-flex h-[44px] items-center rounded-full bg-brand px-6 font-[Inter] text-[14px] font-semibold leading-none !text-white transition-opacity duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
               >
                 Request Demo
               </Link>
@@ -214,7 +216,7 @@ export function Nav() {
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((v) => !v)}
-              className="relative z-50 col-start-3 flex h-10 w-10 flex-col items-center justify-center justify-self-end gap-[5px] lg:hidden"
+              className="absolute right-0 top-1/2 z-50 flex h-[44px] w-[44px] -translate-y-1/2 flex-col items-center justify-center gap-[5px] lg:hidden"
             >
               <span
                 className={`h-[1.5px] w-5 bg-[#2D2D2D] transition-transform duration-300 ${menuOpen ? "translate-y-[6.5px] rotate-45" : ""}`}
@@ -244,7 +246,7 @@ export function Nav() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-40 flex flex-col overflow-y-auto bg-white px-6 pt-[calc(var(--site-nav-height)+1.5rem)] pb-10 lg:hidden"
+            className="fixed inset-0 z-40 flex flex-col overflow-y-auto bg-white px-6 pt-[96px] pb-10 lg:hidden"
           >
             <ul className="flex flex-col">
               <li className="border-b border-[#F2F2F2]">
@@ -284,14 +286,14 @@ export function Nav() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <button
                 type="button"
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-[#E8E8E8] px-4 font-[Inter] text-[14px] font-medium text-[#2D2D2D]"
+                className="inline-flex h-[44px] items-center justify-center gap-2 rounded-lg border border-[#E8E8E8] px-4 font-[Inter] text-[14px] font-medium text-[#2D2D2D]"
               >
                 <span aria-hidden="true">🇮🇳</span>
                 India
               </button>
               <button
                 type="button"
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-brand px-5 font-[Inter] text-[14px] font-semibold !text-white"
+                className="inline-flex h-[44px] items-center justify-center gap-2 rounded-full bg-brand px-5 font-[Inter] text-[14px] font-semibold !text-white"
               >
                 <Globe size={15} strokeWidth={2} aria-hidden="true" />
                 English
@@ -299,7 +301,7 @@ export function Nav() {
               <Link
                 to="/contact"
                 onClick={() => setMenuOpen(false)}
-                className="inline-flex h-11 items-center justify-center rounded-full bg-brand px-6 font-[Inter] text-[14px] font-semibold !text-white"
+                className="inline-flex h-[44px] items-center justify-center rounded-full bg-brand px-6 font-[Inter] text-[14px] font-semibold !text-white"
               >
                 Request Demo
               </Link>

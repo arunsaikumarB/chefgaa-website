@@ -63,7 +63,7 @@
   --spacing-120: 120px;
   --spacing-144: 144px;
 
-  /* Site header (synced with Nav.tsx) — use spacing-80 token (80px), not h-20 */
+  /* Site header — always use explicit px in components (h-20 = 20px in this scale) */
   --site-nav-height: 80px;
   --site-nav-height-scrolled: 80px;
 

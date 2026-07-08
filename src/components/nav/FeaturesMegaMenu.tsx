@@ -38,7 +38,7 @@ function FeaturePreview({ item }: { item: FeatureMenuItem }) {
         {item.description}
       </p>
 
-      <ul className="mt-10 flex flex-col gap-20">
+      <ul className="mt-10 flex flex-col gap-[20px]">
         {item.highlights.map((highlight) => {
           const Icon = highlight.icon;
           return (
@@ -115,9 +115,9 @@ export function FeaturesMegaMenu({ pathname, hash, onClose }: FeaturesMegaMenuPr
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -6 }}
       transition={{ duration: 0.22, ease: EASE_OUT }}
-      className="absolute inset-x-0 top-[var(--site-nav-height)] border-t border-[#F3F3F3] bg-white"
+      className="absolute inset-x-0 top-[80px] border-t border-[#F3F3F3] bg-white"
     >
-      <div className="mx-auto flex max-w-[1600px] gap-16 px-6 py-10 md:px-10 md:py-12 lg:gap-24 lg:px-48 lg:py-48">
+      <div className="mx-auto flex max-w-[1600px] gap-16 px-6 py-10 md:px-10 md:py-12 lg:gap-[96px] lg:px-[48px] lg:py-[48px]">
         <div className="w-full shrink-0 md:w-[260px]">
           <h3 className="mb-6 text-[14px] font-bold uppercase tracking-[0.12em] text-[#999999]">
             Features
@@ -135,7 +135,7 @@ export function FeaturesMegaMenu({ pathname, hash, onClose }: FeaturesMegaMenuPr
                     onMouseEnter={() => setActiveIndex(index)}
                     onFocus={() => setActiveIndex(index)}
                     onClick={onClose}
-                    className={`relative flex h-52 items-center pl-5 text-[18px] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand ${
+                    className={`relative flex h-[52px] items-center pl-5 text-[18px] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand ${
                       isActive
                         ? "font-bold text-[#111111]"
                         : "font-semibold text-[#777777] hover:text-[#111111]"

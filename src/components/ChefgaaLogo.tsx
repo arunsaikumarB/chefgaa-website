@@ -12,6 +12,8 @@ type ChefgaaLogoProps = {
   size?: "nav" | "hero";
   /** Slightly smaller mark when the header is compact (e.g. on scroll) */
   compact?: boolean;
+  /** Fixed mark height in px — overrides size/compact when set */
+  markHeightPx?: number;
 };
 
 export function ChefgaaLogo({
@@ -20,6 +22,7 @@ export function ChefgaaLogo({
   animateIn = false,
   size = "nav",
   compact = false,
+  markHeightPx,
 }: ChefgaaLogoProps) {
   const markRef = useRef<HTMLImageElement>(null);
 
@@ -37,14 +40,15 @@ export function ChefgaaLogo({
     });
   }, [animateIn]);
 
-  const heightClass =
-    size === "hero"
+  const heightClass = markHeightPx
+    ? ""
+    : size === "hero"
       ? "h-11 md:h-14"
       : compact
         ? "h-9 sm:h-10 md:h-12"
         : "h-10 sm:h-12 md:h-14";
 
-  const intrinsicHeight = size === "hero" ? 56 : compact ? 48 : 56;
+  const intrinsicHeight = markHeightPx ?? (size === "hero" ? 56 : compact ? 48 : 56);
   const intrinsicWidth = Math.round(intrinsicHeight * (1024 / 260));
 
   return (
@@ -54,6 +58,7 @@ export function ChefgaaLogo({
         src="/chefgaa-logo.png"
         alt="Chefgaa"
         className={`${heightClass} w-auto max-w-none object-contain object-left transition-[height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]`}
+        style={markHeightPx ? { height: markHeightPx } : undefined}
         width={size === "hero" ? 220 : intrinsicWidth}
         height={intrinsicHeight}
         decoding="async"
