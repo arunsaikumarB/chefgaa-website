@@ -56,7 +56,7 @@ export function HwSectionIntro({
     <div className={alignClass}>
       <h2 className={hwType.sectionTitle}>{title}</h2>
       {description && (
-        <p className={`mt-6 max-w-[640px] ${hwType.body} ${align === "center" ? "mx-auto" : ""}`}>
+        <p className={`mt-[20px] max-w-[640px] ${hwType.body} ${align === "center" ? "mx-auto" : ""}`}>
           {description}
         </p>
       )}
@@ -89,13 +89,13 @@ export function HwReveal({
 /* ── Buttons ────────────────────────────────────────────── */
 
 const btnBase =
-  "inline-flex h-14 items-center justify-center rounded-full px-8 text-[18px] font-medium leading-none transition-all duration-350";
+  "inline-flex h-[52px] items-center justify-center rounded-full px-[28px] text-[16px] font-semibold leading-none transition-all duration-300";
 
 export function HwPrimaryBtn({ children, to = "/contact" }: { children: ReactNode; to?: string }) {
   return (
     <Link
       to={to}
-      className={`${btnBase} bg-[#ED3C18] text-white hover:scale-[1.02] hover:opacity-95`}
+      className={`${btnBase} bg-[#ED3C18] !text-white hover:scale-[1.02] hover:opacity-95`}
     >
       {children}
     </Link>
@@ -106,7 +106,7 @@ export function HwGhostBtn({ children, to = "/contact" }: { children: ReactNode;
   return (
     <Link
       to={to}
-      className={`${btnBase} border border-[#111111] text-[#111111] hover:scale-[1.02] hover:bg-[#111111] hover:text-white`}
+      className={`${btnBase} border border-[#111111] text-[#111111] hover:scale-[1.02] hover:bg-[#111111] hover:!text-white`}
     >
       {children}
     </Link>
@@ -117,7 +117,7 @@ export function HwLink({ children, to = "/contact" }: { children: ReactNode; to?
   return (
     <Link
       to={to}
-      className="group relative inline-flex h-14 items-center text-[18px] font-medium leading-none text-[#ED3C18] after:absolute after:bottom-4 after:left-0 after:h-px after:w-0 after:bg-[#ED3C18] after:transition-all after:duration-300 hover:after:w-full"
+      className="group relative inline-flex h-[48px] items-center text-[16px] font-semibold leading-none text-[#ED3C18] after:absolute after:bottom-[14px] after:left-0 after:h-px after:w-0 after:bg-[#ED3C18] after:transition-all after:duration-300 hover:after:w-full"
     >
       {children}
     </Link>
@@ -137,7 +137,7 @@ export function HwProductCard({
     <motion.article
       whileHover={{ y: -4 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className={`flex h-full flex-col rounded-[32px] bg-white p-10 shadow-[0_20px_60px_rgba(0,0,0,0.06)] transition-shadow duration-350 hover:shadow-[0_24px_72px_rgba(0,0,0,0.09)] ${className}`}
+      className={`flex h-full flex-col rounded-[28px] border border-black/[0.04] bg-white p-[32px] text-left shadow-[0_16px_48px_rgba(0,0,0,0.05)] transition-shadow duration-300 hover:shadow-[0_24px_64px_rgba(0,0,0,0.08)] md:p-[40px] ${className}`}
     >
       {children}
     </motion.article>
@@ -157,7 +157,7 @@ export function HwFeatureCard({
     <motion.article
       whileHover={{ y: -4 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className={`flex h-full flex-col rounded-[32px] p-10 transition-shadow duration-350 hover:shadow-[0_24px_72px_rgba(0,0,0,0.06)] ${className}`}
+      className={`flex h-full flex-col rounded-[28px] p-[32px] text-left transition-shadow duration-300 hover:shadow-[0_24px_64px_rgba(0,0,0,0.06)] md:p-[40px] ${className}`}
       style={{ backgroundColor: tint }}
     >
       {children}
@@ -167,7 +167,7 @@ export function HwFeatureCard({
 
 export function HwIconBox({ children }: { children: ReactNode }) {
   return (
-    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm">
+    <div className="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-[16px] bg-white shadow-sm">
       {children}
     </div>
   );

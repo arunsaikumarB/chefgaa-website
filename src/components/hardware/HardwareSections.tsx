@@ -53,30 +53,30 @@ export function FeaturedSection() {
       <HwReveal>
         <div className="overflow-hidden rounded-[32px] bg-[#F5F6F8]">
           <div className="grid items-center lg:grid-cols-2">
-            <div className="p-10 md:p-16 lg:p-20">
+            <div className="p-[40px] md:p-[56px] lg:p-[64px]">
               <p className={hwType.eyebrow}>{FEATURED.eyebrow}</p>
-              <h2 className={`mt-6 ${hwType.sectionTitle}`}>{FEATURED.headline}</h2>
-              <p className={`mt-6 ${hwType.body}`}>{FEATURED.description}</p>
-              <ul className="mt-8 space-y-4">
+              <h2 className={`mt-[24px] ${hwType.sectionTitle}`}>{FEATURED.headline}</h2>
+              <p className={`mt-[20px] ${hwType.body}`}>{FEATURED.description}</p>
+              <ul className="mt-[28px] space-y-[14px]">
                 {FEATURED.features.map((f) => (
-                  <li key={f} className="flex items-start gap-3 text-[18px] leading-[1.6] text-[#444444]">
-                    <Check size={20} className="mt-1 shrink-0 text-[#ED3C18]" strokeWidth={2.5} />
+                  <li key={f} className="flex items-start gap-[12px] text-[18px] leading-[1.5] text-[#444444]">
+                    <Check size={20} className="mt-[2px] shrink-0 text-[#ED3C18]" strokeWidth={2.5} />
                     {f}
                   </li>
                 ))}
               </ul>
-              <p className="mt-8 text-[18px] leading-[1.6] text-[#111111]">
+              <p className="mt-[28px] text-[18px] leading-[1.5] text-[#111111]">
                 <span className="font-semibold">{FEATURED.price}</span>
                 <span className="text-[#666666]"> · {FEATURED.priceNote}</span>
               </p>
-              <div className="mt-8 flex flex-wrap items-center gap-6">
+              <div className="mt-[28px] flex flex-wrap items-center gap-[24px]">
                 <HwPrimaryBtn>Request Demo</HwPrimaryBtn>
                 <HwLink>Learn more</HwLink>
               </div>
             </div>
-            <div className="relative flex min-h-[400px] items-center justify-center p-10 md:min-h-[520px] md:p-16">
+            <div className="relative flex min-h-[400px] items-center justify-center p-[40px] md:min-h-[520px] md:p-[56px]">
               <div
-                className="absolute inset-0 m-8 rounded-[32px]"
+                className="absolute inset-[24px] rounded-[32px]"
                 style={{
                   background: "radial-gradient(circle at 50% 60%, rgba(250,144,64,0.12) 0%, transparent 65%)",
                 }}
@@ -102,27 +102,27 @@ export function ProductGridSection() {
         />
       </HwReveal>
 
-      <div className="mt-14 grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-x-12 md:gap-y-12">
+      <div className="mt-[56px] grid grid-cols-1 gap-[32px] md:grid-cols-2 md:gap-[40px]">
         {GRID_PRODUCTS.map((p, i) => (
           <div key={p.id} id={p.anchor} className={`h-full ${HW_SCROLL_OFFSET}`}>
             <HwReveal delay={i * 0.06} className="h-full">
               <HwProductCard>
                 <ProductVisual product={p.visual} size="md" />
-                <h3 className="mt-6 font-sf-pro-display text-[24px] font-bold leading-[1.6] tracking-[-0.02em] text-[#111111] md:text-[28px]">
+                <h3 className="mt-[28px] font-sf-pro-display text-[24px] font-bold leading-[1.25] tracking-[-0.02em] text-[#111111] md:text-[28px]">
                   {p.name}
                 </h3>
-                <p className={`mt-4 ${hwType.body}`}>{p.description}</p>
-                <ul className="mt-6 flex flex-wrap gap-2">
+                <p className={`mt-[12px] ${hwType.body}`}>{p.description}</p>
+                <ul className="mt-[20px] flex flex-wrap gap-[8px]">
                   {p.specs.map((s) => (
                     <li
                       key={s}
-                      className="rounded-full bg-[#F5F6F8] px-4 py-2 text-[16px] leading-[1.6] text-[#444444]"
+                      className="rounded-full bg-[#F5F6F8] px-[14px] py-[8px] text-[14px] leading-none text-[#444444]"
                     >
                       {s}
                     </li>
                   ))}
                 </ul>
-                <div className="mt-6 flex flex-wrap items-center gap-6">
+                <div className="mt-auto flex flex-wrap items-center gap-[24px] pt-[28px]">
                   <HwLink>Learn More</HwLink>
                   <HwLink>Request Demo</HwLink>
                 </div>
@@ -323,15 +323,15 @@ export function KitsSection() {
         />
       </HwReveal>
 
-      <div className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2">
+      <div className="mt-[56px] grid grid-cols-1 gap-[32px] md:grid-cols-2 md:gap-[40px]">
         {KITS.map((kit, i) => (
           <HwReveal key={kit.id} delay={i * 0.06} className="h-full">
             <HwProductCard>
               <ProductVisual product={kit.visual} size="lg" />
-              <h3 className={`mt-6 ${hwType.cardTitle}`}>{kit.name}</h3>
-              <p className={`mt-4 ${hwType.caption}`}>Includes: {kit.includes.join(" · ")}</p>
-              <p className="mt-6 text-[18px] font-semibold leading-[1.6] text-[#111111]">{kit.price}</p>
-              <div className="mt-6">
+              <h3 className={`mt-[28px] ${hwType.cardTitle}`}>{kit.name}</h3>
+              <p className={`mt-[12px] ${hwType.caption}`}>Includes: {kit.includes.join(" · ")}</p>
+              <p className="mt-[20px] text-[18px] font-semibold leading-[1.4] text-[#111111]">{kit.price}</p>
+              <div className="mt-auto pt-[28px]">
                 <HwPrimaryBtn>Request Demo</HwPrimaryBtn>
               </div>
             </HwProductCard>
@@ -351,7 +351,7 @@ export function WhySection() {
         <HwSectionIntro title="Why Chefgaa hardware" />
       </HwReveal>
 
-      <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-[56px] grid grid-cols-1 gap-[24px] sm:grid-cols-2 sm:gap-[32px] lg:grid-cols-3">
         {WHY_ITEMS.map((item, i) => {
           const Icon = item.icon;
           return (
@@ -360,8 +360,8 @@ export function WhySection() {
                 <HwIconBox>
                   <Icon size={28} className="text-[#ED3C18]" strokeWidth={1.75} />
                 </HwIconBox>
-                <h3 className={`mt-6 ${hwType.cardTitle} text-[24px]`}>{item.title}</h3>
-                <p className={`mt-4 ${hwType.body}`}>{item.description}</p>
+                <h3 className={`mt-[24px] ${hwType.cardTitle} text-[24px] leading-[1.25]`}>{item.title}</h3>
+                <p className={`mt-[12px] ${hwType.body}`}>{item.description}</p>
               </HwFeatureCard>
             </HwReveal>
           );
@@ -491,19 +491,19 @@ export function StoriesSection() {
         <HwSectionIntro title="Customer stories" />
       </HwReveal>
 
-      <div className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-3">
+      <div className="mt-[56px] grid grid-cols-1 gap-[32px] md:grid-cols-3">
         {STORIES.map((s, i) => (
           <HwReveal key={s.name} delay={i * 0.06} className="h-full">
-            <article className="flex h-full flex-col overflow-hidden rounded-[32px] bg-white shadow-[0_20px_60px_rgba(0,0,0,0.06)] transition-all duration-350 hover:-translate-y-1 hover:shadow-[0_24px_72px_rgba(0,0,0,0.09)]">
-              <div className={`h-56 bg-gradient-to-br ${s.gradient}`} aria-hidden="true" />
-              <div className="flex flex-1 flex-col p-10">
-                <p className="text-[16px] font-semibold leading-[1.6] text-[#ED3C18]">{s.metric}</p>
-                <blockquote className={`mt-4 flex-1 ${hwType.body} text-[#444444]`}>
+            <article className="flex h-full flex-col overflow-hidden rounded-[28px] bg-white text-left shadow-[0_16px_48px_rgba(0,0,0,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_64px_rgba(0,0,0,0.08)]">
+              <div className={`h-[180px] bg-gradient-to-br ${s.gradient}`} aria-hidden="true" />
+              <div className="flex flex-1 flex-col p-[32px] md:p-[36px]">
+                <p className="text-[15px] font-semibold leading-[1.4] text-[#ED3C18]">{s.metric}</p>
+                <blockquote className={`mt-[14px] flex-1 ${hwType.body} text-[#444444]`}>
                   &ldquo;{s.quote}&rdquo;
                 </blockquote>
-                <footer className="mt-8 border-t border-black/[0.05] pt-8">
-                  <p className="text-[18px] font-semibold leading-[1.6] text-[#111111]">{s.name}</p>
-                  <p className={`mt-2 ${hwType.caption}`}>{s.role}</p>
+                <footer className="mt-[28px] border-t border-black/[0.05] pt-[24px]">
+                  <p className="text-[17px] font-semibold leading-[1.4] text-[#111111]">{s.name}</p>
+                  <p className={`mt-[6px] ${hwType.caption}`}>{s.role}</p>
                 </footer>
               </div>
             </article>
