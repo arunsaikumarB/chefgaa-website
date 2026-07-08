@@ -48,46 +48,47 @@ function curve(sx: number, sy: number, ex: number, ey: number) {
 
 export function FeaturedSection() {
   return (
-    <section id="register" className="bg-white pb-[140px] pt-8">
+    <section
+      id="register"
+      className="relative z-0 scroll-mt-[9.5rem] bg-white pb-[140px] pt-12"
+    >
       <div className="mx-auto w-full max-w-[1600px] px-6 md:px-10 lg:px-20">
         <div className="mx-auto w-full max-w-[1440px]">
-          <HwReveal>
-            <div className="overflow-hidden rounded-[32px] bg-[#F5F6F8]">
-              <div className="grid items-center lg:grid-cols-2">
-                <div className="p-10 md:p-16 lg:p-20">
-                  <p className={hwType.eyebrow}>{FEATURED.eyebrow}</p>
-                  <h2 className={`mt-6 ${hwType.sectionTitle}`}>{FEATURED.headline}</h2>
-                  <p className={`mt-6 ${hwType.body}`}>{FEATURED.description}</p>
-                  <ul className="mt-8 space-y-4">
-                    {FEATURED.features.map((f) => (
-                      <li key={f} className="flex items-start gap-3 text-[18px] leading-[1.6] text-[#444444]">
-                        <Check size={20} className="mt-1 shrink-0 text-[#ED3C18]" strokeWidth={2.5} />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="mt-8 text-[18px] leading-[1.6] text-[#111111]">
-                    <span className="font-semibold">{FEATURED.price}</span>
-                    <span className="text-[#666666]"> · {FEATURED.priceNote}</span>
-                  </p>
-                  <div className="mt-8 flex flex-wrap items-center gap-6">
-                    <HwPrimaryBtn>Request Demo</HwPrimaryBtn>
-                    <HwLink>Learn more</HwLink>
-                  </div>
-                </div>
-                <div className="relative flex min-h-[400px] items-center justify-center p-8 md:min-h-[520px] md:p-12 lg:p-16">
-                  <div
-                    className="absolute inset-0 m-6 rounded-[32px] md:m-10"
-                    style={{
-                      background:
-                        "radial-gradient(circle at 50% 60%, rgba(250,144,64,0.12) 0%, transparent 65%)",
-                    }}
-                  />
-                  <ProductVisual product={FEATURED.visual} size="xl" showcase />
+          <div className="relative z-0 overflow-hidden rounded-[32px] bg-[#F5F6F8] shadow-[0_20px_60px_rgba(0,0,0,0.06)]">
+            <div className="grid items-center lg:grid-cols-2">
+              <div className="p-10 md:p-16 lg:p-20">
+                <p className={hwType.eyebrow}>{FEATURED.eyebrow}</p>
+                <h2 className={`mt-6 ${hwType.sectionTitle}`}>{FEATURED.headline}</h2>
+                <p className={`mt-6 ${hwType.body}`}>{FEATURED.description}</p>
+                <ul className="mt-8 space-y-4">
+                  {FEATURED.features.map((f) => (
+                    <li key={f} className="flex items-start gap-3 text-[18px] leading-[1.6] text-[#444444]">
+                      <Check size={20} className="mt-1 shrink-0 text-[#ED3C18]" strokeWidth={2.5} />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-8 text-[18px] leading-[1.6] text-[#111111]">
+                  <span className="font-semibold">{FEATURED.price}</span>
+                  <span className="text-[#666666]"> · {FEATURED.priceNote}</span>
+                </p>
+                <div className="mt-8 flex flex-wrap items-center gap-6">
+                  <HwPrimaryBtn>Request Demo</HwPrimaryBtn>
+                  <HwLink>Learn more</HwLink>
                 </div>
               </div>
+              <div className="relative flex min-h-[400px] items-center justify-center p-8 md:min-h-[520px] md:p-12 lg:p-16">
+                <div
+                  className="absolute inset-0 m-6 rounded-[32px] md:m-10"
+                  style={{
+                    background:
+                      "radial-gradient(circle at 50% 60%, rgba(250,144,64,0.12) 0%, transparent 65%)",
+                  }}
+                />
+                <ProductVisual product={FEATURED.visual} size="xl" showcase />
+              </div>
             </div>
-          </HwReveal>
+          </div>
         </div>
       </div>
     </section>
@@ -248,7 +249,7 @@ export function ComparisonSection() {
 
       <div className="mt-14 overflow-x-auto">
         <div className="min-w-[880px]">
-          <div className="sticky top-[8.75rem] z-10 grid grid-cols-5 gap-8 rounded-[32px] bg-[#F5F6F8]/95 py-8 backdrop-blur-md">
+          <div className="sticky top-[9.5rem] z-10 grid grid-cols-5 gap-8 rounded-[32px] bg-[#F5F6F8]/95 py-8 backdrop-blur-md">
             <div aria-hidden="true" />
             {COMPARE_COLUMNS.map((name, i) => (
               <div key={name} className="text-center">

@@ -16,7 +16,7 @@ import {
 
 export function Hardware() {
   return (
-    <div className="bg-white pt-14">
+    <div className="isolate bg-white pt-14">
       <HardwareNav />
       <FeaturedSection />
       <ProductGridSection />
