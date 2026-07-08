@@ -8,7 +8,7 @@ function HeroPrimaryBtn({ children, to }: { children: string; to: string }) {
   return (
     <Link
       to={to}
-      className="inline-flex h-14 items-center justify-center rounded-full bg-[#ED3C18] px-8 text-[18px] font-medium text-white transition-transform duration-300 hover:-translate-y-0.5 hover:opacity-95"
+      className="inline-flex min-h-14 shrink-0 items-center justify-center rounded-full bg-[#ED3C18] px-10 py-4 text-[17px] font-medium leading-none !text-[#FFFFFF] transition-transform duration-300 hover:-translate-y-0.5 hover:opacity-95"
     >
       {children}
     </Link>
@@ -19,7 +19,7 @@ function HeroGhostBtn({ children, to }: { children: string; to: string }) {
   return (
     <Link
       to={to}
-      className="inline-flex h-14 items-center justify-center rounded-full border border-white bg-transparent px-8 text-[18px] font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-[#111111]"
+      className="inline-flex min-h-14 shrink-0 items-center justify-center rounded-full border border-white bg-transparent px-10 py-4 text-[17px] font-medium leading-none !text-[#FFFFFF] transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:!text-[#111111]"
     >
       {children}
     </Link>
@@ -110,7 +110,7 @@ export function HomeHero() {
 
           <div
             data-hero-buttons
-            className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5 lg:mt-10"
+            className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-5"
           >
             <HeroPrimaryBtn to="/contact">Request a Demo</HeroPrimaryBtn>
             <HeroGhostBtn to="/contact">Get in Touch</HeroGhostBtn>
