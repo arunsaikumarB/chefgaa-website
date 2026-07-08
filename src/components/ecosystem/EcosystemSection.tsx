@@ -108,14 +108,14 @@ export default function EcosystemSection() {
 
       <div
         ref={headerRef}
-        className="relative z-10 mx-auto w-full max-w-none px-6 text-center opacity-0"
+        className="relative z-10 mx-auto w-full max-w-none px-6 pb-[32px] text-center opacity-0 md:pb-[48px]"
       >
-        <span className="inline-flex items-center rounded-full border border-hairline/80 bg-paper px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-ember shadow-sm">
+        <span className="inline-flex items-center rounded-full border border-hairline/80 bg-paper px-5 py-2 text-[11px] font-medium uppercase tracking-[0.12em] text-ember shadow-sm">
           All-in-One Restaurant Operating System
         </span>
         <h2
           id="ecosystem-heading"
-          className="mt-5 font-sf-pro-display text-[36px] font-semibold leading-[1.08] tracking-[-0.2px] text-[#111111] md:text-[48px] lg:text-[56px]"
+          className="mt-[24px] font-sf-pro-display text-[36px] font-semibold leading-[1.12] tracking-[-0.2px] text-[#111111] md:mt-[28px] md:text-[48px] lg:mt-[32px] lg:text-[56px]"
         >
           The{" "}
           <span
@@ -129,7 +129,7 @@ export default function EcosystemSection() {
           </span>{" "}
           Ecosystem
         </h2>
-        <p className="mt-5 text-[17px] leading-[1.47] text-mid-gray sm:text-[18px] md:whitespace-nowrap md:text-[19px] xl:text-[21px]">
+        <p className="mx-auto mt-[16px] max-w-[640px] text-[17px] leading-[1.55] text-mid-gray sm:text-[18px] md:mt-[20px] md:max-w-[720px] md:text-[19px] lg:mt-[24px] lg:leading-[1.6] xl:text-[21px]">
           Everything your restaurant needs. Connected beautifully. Powered by one intelligent platform.
         </p>
       </div>
@@ -137,7 +137,7 @@ export default function EcosystemSection() {
       {/* Desktop — 3-column grid fills full width */}
       <div
         ref={canvasRef}
-        className="relative z-10 mx-auto mt-2 hidden w-full min-h-[88vh] overflow-visible px-6 md:block lg:px-12 xl:px-16"
+        className="relative z-10 mx-auto mt-[24px] hidden w-full min-h-[88vh] overflow-visible px-6 md:mt-[32px] md:block lg:px-12 xl:px-16"
       >
         {/* Top — AI */}
         <div className="absolute left-1/2 top-0 z-10 w-full max-w-[400px] -translate-x-1/2">
