@@ -1,11 +1,7 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Mouse } from "lucide-react";
 import { motion } from "framer-motion";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 type ModuleTheme = {
   accent: string;
@@ -180,39 +176,37 @@ function WaveDecor({ color }: { color: string }) {
 }
 
 function ModuleVisual({ type }: { type: Module["visual"] }) {
-  const wrap = (children: ReactNode) => (
-    <div className="flex h-full items-center justify-center overflow-visible p-6">
-      <div className="origin-center scale-110">{children}</div>
-    </div>
-  );
-
   if (type === "pos") {
-    return wrap(
-      <div className="overflow-hidden rounded-[20px] bg-[#050506] shadow-[0_24px_48px_rgba(0,0,0,0.18)]">
-        <img
-          src="/ecosystem/pos-hardware.png"
-          alt="Chefgaa POS hardware"
-          className="h-[200px] w-auto object-contain md:h-[260px] lg:h-[300px]"
-          draggable={false}
-        />
+    return (
+      <div className="flex h-full items-center justify-center p-4">
+        <div className="overflow-hidden rounded-[20px] bg-[#050506] shadow-[0_24px_48px_rgba(0,0,0,0.18)]">
+          <img
+            src="/ecosystem/pos-hardware.png"
+            alt="Chefgaa POS hardware"
+            className="h-[200px] w-auto object-contain md:h-[240px]"
+            draggable={false}
+          />
+        </div>
       </div>
     );
   }
 
   if (type === "phone") {
-    return wrap(
-      <div className="relative h-[280px] w-[140px] rounded-[28px] border-[6px] border-[#1d1d1f] bg-paper shadow-[0_24px_48px_rgba(0,0,0,0.15)] md:h-[300px] md:w-[150px]">
-        <div className="absolute left-1/2 top-2 h-1 w-10 -translate-x-1/2 rounded-full bg-[#1d1d1f]/20" />
-        <div className="mt-6 flex flex-col gap-2 px-3">
-          <div className="h-16 rounded-xl bg-gradient-to-br from-[#f5d78e] to-[#e8a317]/40" />
-          {["Chicken Biryani", "Butter Chicken", "Garlic Naan"].map((item) => (
-            <div key={item} className="flex items-center gap-2 rounded-lg bg-canvas px-2 py-1.5">
-              <div className="h-7 w-7 shrink-0 rounded-md bg-cool-wash" />
-              <span className="truncate text-[8px] font-medium text-primary-ink">{item}</span>
+    return (
+      <div className="flex h-full items-center justify-center p-4">
+        <div className="relative h-[280px] w-[140px] rounded-[28px] border-[6px] border-[#1d1d1f] bg-paper shadow-[0_24px_48px_rgba(0,0,0,0.15)] md:h-[300px] md:w-[150px]">
+          <div className="absolute left-1/2 top-2 h-1 w-10 -translate-x-1/2 rounded-full bg-[#1d1d1f]/20" />
+          <div className="mt-6 flex flex-col gap-2 px-3">
+            <div className="h-16 rounded-xl bg-gradient-to-br from-[#f5d78e] to-[#e8a317]/40" />
+            {["Chicken Biryani", "Butter Chicken", "Garlic Naan"].map((item) => (
+              <div key={item} className="flex items-center gap-2 rounded-lg bg-canvas px-2 py-1.5">
+                <div className="h-7 w-7 shrink-0 rounded-md bg-cool-wash" />
+                <span className="truncate text-[8px] font-medium text-primary-ink">{item}</span>
+              </div>
+            ))}
+            <div className="mt-1 rounded-full bg-[#e8a317] py-1.5 text-center text-[8px] font-semibold text-paper">
+              Checkout
             </div>
-          ))}
-          <div className="mt-1 rounded-full bg-[#e8a317] py-1.5 text-center text-[8px] font-semibold text-paper">
-            Checkout
           </div>
         </div>
       </div>
@@ -220,105 +214,115 @@ function ModuleVisual({ type }: { type: Module["visual"] }) {
   }
 
   if (type === "kds") {
-    return wrap(
-      <div className="w-[260px] rounded-[16px] border border-hairline/60 bg-[#1d1d1f] p-3 shadow-[0_24px_48px_rgba(0,0,0,0.18)] md:w-[300px]">
-        <div className="mb-2 flex gap-2">
-          {["New", "Prep", "Ready"].map((tab, i) => (
-            <span
-              key={tab}
-              className={`rounded-md px-2 py-0.5 text-[9px] font-medium ${
-                i === 0 ? "bg-[#e85d3f] text-paper" : "text-paper/50"
-              }`}
-            >
-              {tab}
-            </span>
-          ))}
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          {[
-            { n: "#142", t: "2× Biryani", s: "12m" },
-            { n: "#143", t: "1× Naan", s: "4m" },
-            { n: "#144", t: "3× Curry", s: "8m" },
-            { n: "#145", t: "2× Salad", s: "2m" },
-          ].map((o) => (
-            <div key={o.n} className="rounded-lg bg-paper/10 p-2">
-              <div className="flex justify-between text-[8px] text-paper/60">
-                <span>{o.n}</span>
-                <span>{o.s}</span>
+    return (
+      <div className="flex h-full items-center justify-center p-4">
+        <div className="w-[260px] rounded-[16px] border border-hairline/60 bg-[#1d1d1f] p-3 shadow-[0_24px_48px_rgba(0,0,0,0.18)] md:w-[280px]">
+          <div className="mb-2 flex gap-2">
+            {["New", "Prep", "Ready"].map((tab, i) => (
+              <span
+                key={tab}
+                className={`rounded-md px-2 py-0.5 text-[9px] font-medium ${
+                  i === 0 ? "bg-[#e85d3f] text-paper" : "text-paper/50"
+                }`}
+              >
+                {tab}
+              </span>
+            ))}
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { n: "#142", t: "2× Biryani", s: "12m" },
+              { n: "#143", t: "1× Naan", s: "4m" },
+              { n: "#144", t: "3× Curry", s: "8m" },
+              { n: "#145", t: "2× Salad", s: "2m" },
+            ].map((o) => (
+              <div key={o.n} className="rounded-lg bg-paper/10 p-2">
+                <div className="flex justify-between text-[8px] text-paper/60">
+                  <span>{o.n}</span>
+                  <span>{o.s}</span>
+                </div>
+                <p className="mt-1 text-[10px] font-medium text-paper">{o.t}</p>
               </div>
-              <p className="mt-1 text-[10px] font-medium text-paper">{o.t}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     );
   }
 
   if (type === "menu") {
-    return wrap(
-      <div className="w-[260px] rounded-[16px] border border-hairline/60 bg-paper p-4 shadow-[0_16px_40px_rgba(0,0,0,0.08)] md:w-[300px]">
-        <p className="text-[11px] font-semibold text-primary-ink">Live Menu</p>
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          {["Biryani", "Curries", "Breads", "Drinks"].map((cat, i) => (
-            <div
-              key={cat}
-              className={`rounded-lg p-2 text-center text-[9px] font-medium ${
-                i === 0 ? "bg-[#a67c52]/15 text-[#a67c52]" : "bg-canvas text-mid-gray"
-              }`}
-            >
-              {cat}
-            </div>
-          ))}
-        </div>
-        <div className="mt-3 space-y-1.5">
-          {[
-            ["Chicken Biryani", "$12.99"],
-            ["Veg Biryani", "$10.99"],
-          ].map(([name, price]) => (
-            <div key={name} className="flex justify-between text-[9px]">
-              <span className="text-primary-ink">{name}</span>
-              <span className="text-mid-gray">{price}</span>
-            </div>
-          ))}
+    return (
+      <div className="flex h-full items-center justify-center p-4">
+        <div className="w-[260px] rounded-[16px] border border-hairline/60 bg-paper p-4 shadow-[0_16px_40px_rgba(0,0,0,0.08)]">
+          <p className="text-[11px] font-semibold text-primary-ink">Live Menu</p>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            {["Biryani", "Curries", "Breads", "Drinks"].map((cat, i) => (
+              <div
+                key={cat}
+                className={`rounded-lg p-2 text-center text-[9px] font-medium ${
+                  i === 0 ? "bg-[#a67c52]/15 text-[#a67c52]" : "bg-canvas text-mid-gray"
+                }`}
+              >
+                {cat}
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 space-y-1.5">
+            {[
+              ["Chicken Biryani", "$12.99"],
+              ["Veg Biryani", "$10.99"],
+            ].map(([name, price]) => (
+              <div key={name} className="flex justify-between text-[9px]">
+                <span className="text-primary-ink">{name}</span>
+                <span className="text-mid-gray">{price}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
   }
 
   if (type === "marketing") {
-    return wrap(
-      <div className="w-[240px] rounded-[16px] border border-hairline/60 bg-paper p-4 shadow-[0_16px_40px_rgba(0,0,0,0.08)] md:w-[280px]">
-        <div className="rounded-xl bg-gradient-to-br from-[#fae8ee] to-[#fdf3f6] p-4">
-          <p className="text-[10px] font-semibold text-[#c45c7a]">Summer Special</p>
-          <p className="mt-1 text-[18px] font-bold text-primary-ink">20% Off</p>
-          <p className="mt-1 text-[9px] text-mid-gray">Loyalty members only</p>
-        </div>
-        <div className="mt-3 flex gap-2">
-          {["Email", "SMS", "Push"].map((ch) => (
-            <span
-              key={ch}
-              className="rounded-full bg-[#c45c7a]/12 px-2.5 py-1 text-[8px] font-medium text-[#c45c7a]"
-            >
-              {ch}
-            </span>
-          ))}
+    return (
+      <div className="flex h-full items-center justify-center p-4">
+        <div className="w-[240px] rounded-[16px] border border-hairline/60 bg-paper p-4 shadow-[0_16px_40px_rgba(0,0,0,0.08)]">
+          <div className="rounded-xl bg-gradient-to-br from-[#fae8ee] to-[#fdf3f6] p-4">
+            <p className="text-[10px] font-semibold text-[#c45c7a]">Summer Special</p>
+            <p className="mt-1 text-[18px] font-bold text-primary-ink">20% Off</p>
+            <p className="mt-1 text-[9px] text-mid-gray">Loyalty members only</p>
+          </div>
+          <div className="mt-3 flex gap-2">
+            {["Email", "SMS", "Push"].map((ch) => (
+              <span
+                key={ch}
+                className="rounded-full bg-[#c45c7a]/12 px-2.5 py-1 text-[8px] font-medium text-[#c45c7a]"
+              >
+                {ch}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     );
   }
 
-  return wrap(
-    <div className="w-[260px] rounded-[16px] border border-hairline/60 bg-paper p-4 shadow-[0_16px_40px_rgba(0,0,0,0.08)] md:w-[300px]">
-      <p className="text-[11px] font-semibold text-primary-ink">Today&apos;s Sales</p>
-      <p className="mt-1 font-sf-pro-display text-[28px] font-bold text-primary-ink">$4,280</p>
-      <div className="mt-4 flex items-end gap-1.5">
-        {[40, 65, 45, 80, 55, 90, 70].map((h, i) => (
-          <div
-            key={i}
-            className="flex-1 rounded-sm bg-[#5c6b7a]/30"
-            style={{ height: `${h}px` }}
-          />
-        ))}
+  return (
+    <div className="flex h-full items-center justify-center p-4">
+      <div className="w-[260px] rounded-[16px] border border-hairline/60 bg-paper p-4 shadow-[0_16px_40px_rgba(0,0,0,0.08)]">
+        <p className="text-[11px] font-semibold text-primary-ink">Today&apos;s Sales</p>
+        <p className="mt-1 font-sf-pro-display text-[28px] font-bold text-primary-ink">
+          $4,280
+        </p>
+        <div className="mt-4 flex items-end gap-1.5">
+          {[40, 65, 45, 80, 55, 90, 70].map((h, i) => (
+            <div
+              key={i}
+              className="flex-1 rounded-sm bg-[#5c6b7a]/30"
+              style={{ height: `${h}px` }}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -329,77 +333,62 @@ function ModuleCard({ module }: { module: Module }) {
 
   return (
     <article
-      className="relative flex h-[420px] w-[min(88vw,680px)] shrink-0 snap-center flex-col overflow-hidden rounded-[28px] shadow-[0_8px_40px_rgba(0,0,0,0.06)] md:h-[520px] md:w-[min(85vw,900px)] md:flex-row lg:h-[620px] lg:w-[1100px]"
+      className="relative flex h-[420px] w-[min(88vw,680px)] shrink-0 snap-start flex-col overflow-hidden rounded-[28px] shadow-[0_8px_40px_rgba(0,0,0,0.06)] md:h-[440px] md:w-[720px] md:flex-row"
       style={{ background: theme.gradient }}
       aria-label={module.title}
     >
       <WaveDecor color={theme.accent} />
 
-      <div className="relative z-10 flex flex-1 flex-col justify-center p-8 md:p-10 lg:p-12">
+      {/* Content */}
+      <div className="relative z-10 flex flex-1 flex-col justify-center px-8 py-8 md:px-10 md:py-10">
         <span
           className="font-sf-pro-display text-[15px] font-semibold"
           style={{ color: theme.accent }}
         >
           {module.index}
         </span>
-        <h3 className="mt-5 font-sf-pro-display text-[26px] font-semibold leading-tight text-primary-ink md:text-[30px] lg:text-[34px]">
+        <h3 className="mt-3 font-sf-pro-display text-[26px] font-semibold leading-tight text-primary-ink md:text-[30px]">
           {module.title}
         </h3>
-        <p className="mt-4 max-w-[360px] text-[15px] leading-[1.55] text-mid-gray md:text-[16px] lg:max-w-[400px] lg:text-[17px]">
+        <p className="mt-2 max-w-[300px] text-[15px] leading-[1.5] text-mid-gray">
           {module.description}
         </p>
 
-        <ul className="mt-8 space-y-3">
+        <ul className="mt-5 space-y-2.5">
           {module.bullets.map((bullet) => (
-            <li key={bullet} className="flex items-center gap-3">
+            <li key={bullet} className="flex items-center gap-2.5">
               <span
                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-paper ${theme.checkBg}`}
               >
-                <svg
-                  width="10"
-                  height="10"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M20 6 9 17l-5-5" />
                 </svg>
               </span>
-              <span className="text-[14px] text-primary-ink md:text-[15px]">{bullet}</span>
+              <span className="text-[14px] text-primary-ink">{bullet}</span>
             </li>
           ))}
         </ul>
 
         <Link
           to={module.to}
-          className={`mt-10 inline-flex w-fit items-center gap-1.5 rounded-full px-6 py-3 text-[15px] font-medium !text-paper transition-opacity ${theme.button}`}
+          className={`mt-6 inline-flex w-fit items-center gap-1.5 rounded-full px-5 py-2.5 text-[15px] font-medium text-paper transition-opacity ${theme.button}`}
         >
           Learn More
           <span aria-hidden="true">→</span>
         </Link>
       </div>
 
-      <div className="relative z-10 h-[200px] w-full shrink-0 overflow-visible md:h-auto md:w-[42%]">
+      {/* Visual */}
+      <div className="relative z-10 h-[200px] w-full shrink-0 md:h-auto md:w-[42%]">
         <ModuleVisual type={module.visual} />
       </div>
     </article>
   );
 }
 
-function getCenteredScrollLeft(track: HTMLDivElement, card: HTMLElement) {
-  return card.offsetLeft - (track.clientWidth - card.offsetWidth) / 2;
-}
-
 export function ModulesCarousel() {
-  const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const pinTriggerRef = useRef<ScrollTrigger | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isPinnedDesktop, setIsPinnedDesktop] = useState(false);
 
   const updateActiveIndex = useCallback(() => {
     const track = trackRef.current;
@@ -407,12 +396,14 @@ export function ModulesCarousel() {
     const cards = track.querySelectorAll<HTMLElement>("article");
     if (!cards.length) return;
 
-    const trackCenter = track.scrollLeft + track.clientWidth / 2;
+    const trackRect = track.getBoundingClientRect();
+    const trackCenter = trackRect.left + trackRect.width * 0.35;
 
     let closest = 0;
     let minDist = Infinity;
     cards.forEach((card, i) => {
-      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      const rect = card.getBoundingClientRect();
+      const cardCenter = rect.left + rect.width / 2;
       const dist = Math.abs(cardCenter - trackCenter);
       if (dist < minDist) {
         minDist = dist;
@@ -430,83 +421,13 @@ export function ModulesCarousel() {
     return () => track.removeEventListener("scroll", updateActiveIndex);
   }, [updateActiveIndex]);
 
-  useEffect(() => {
-    const section = sectionRef.current;
-    const track = trackRef.current;
-    if (!section || !track) return;
-
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduceMotion) return;
-
-    const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
-
-      mm.add("(min-width: 1024px)", () => {
-        setIsPinnedDesktop(true);
-
-        const tween = gsap.to(track, {
-          scrollLeft: () => Math.max(0, track.scrollWidth - track.clientWidth),
-          ease: "none",
-          scrollTrigger: {
-            id: "modules-carousel-pin",
-            trigger: section,
-            start: "top top",
-            end: () => `+=${Math.max(track.scrollWidth - track.clientWidth, window.innerHeight)}`,
-            pin: true,
-            scrub: 0.85,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            snap: {
-              snapTo: (value) => {
-                const steps = Math.max(modules.length - 1, 1);
-                return Math.round(value * steps) / steps;
-              },
-              duration: { min: 0.18, max: 0.42 },
-              ease: "power1.inOut",
-            },
-            onUpdate: (self) => {
-              const steps = Math.max(modules.length - 1, 1);
-              setActiveIndex(Math.round(self.progress * steps));
-            },
-          },
-        });
-
-        pinTriggerRef.current = tween.scrollTrigger ?? null;
-
-        return () => {
-          pinTriggerRef.current = null;
-          setIsPinnedDesktop(false);
-        };
-      });
-
-      mm.add("(max-width: 1023px)", () => {
-        setIsPinnedDesktop(false);
-        pinTriggerRef.current = null;
-      });
-    }, section);
-
-    return () => ctx.revert();
-  }, []);
-
   const scrollTo = (index: number) => {
     const track = trackRef.current;
     if (!track) return;
     const cards = track.querySelectorAll<HTMLElement>("article");
     const card = cards[index];
     if (!card) return;
-
-    const pinSt = pinTriggerRef.current;
-    if (pinSt && window.matchMedia("(min-width: 1024px)").matches) {
-      const steps = Math.max(modules.length - 1, 1);
-      const progress = index / steps;
-      const targetY = pinSt.start + progress * (pinSt.end - pinSt.start);
-      window.scrollTo({ top: targetY, behavior: "smooth" });
-      setActiveIndex(index);
-      return;
-    }
-
-    const offset = getCenteredScrollLeft(track, card);
-    track.scrollTo({ left: Math.max(0, offset), behavior: "smooth" });
+    track.scrollTo({ left: card.offsetLeft - 24, behavior: "smooth" });
     setActiveIndex(index);
   };
 
@@ -514,95 +435,82 @@ export function ModulesCarousel() {
   const next = () => scrollTo(Math.min(modules.length - 1, activeIndex + 1));
 
   return (
-    <section
-      ref={sectionRef}
-      className="overflow-hidden bg-paper py-16 md:py-24 lg:py-28"
-      aria-label="Explore modules"
-    >
-      <div className="mx-auto w-full max-w-[1700px] px-5 md:px-8">
-        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[28%_72%] lg:gap-16">
-          {/* Left intro + navigation */}
-          <div className="flex flex-col justify-center lg:min-h-[620px] lg:pr-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <h2 className="font-sf-pro-display text-[32px] font-semibold leading-[1.1] tracking-[-0.2px] text-primary-ink md:text-[40px] lg:text-[44px]">
-                Explore Every Module
-              </h2>
-              <p className="mt-8 max-w-[420px] text-[16px] leading-[1.55] text-mid-gray md:text-[17px] lg:text-[18px]">
-                Discover the powerful tools designed to simplify your operations and
-                delight your customers.
-              </p>
+    <section className="overflow-hidden bg-paper py-16 md:py-[120px]" aria-label="Explore modules">
+      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-10 px-6 md:px-10 lg:flex-row lg:items-start lg:gap-12">
+        {/* Left intro + navigation */}
+        <div className="shrink-0 lg:w-[280px] xl:w-[300px]">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <h2 className="font-sf-pro-display text-[32px] font-semibold leading-[1.1] tracking-[-0.2px] text-primary-ink md:text-[40px]">
+              Explore Every Module
+            </h2>
+            <p className="mt-4 text-[16px] leading-[1.5] text-mid-gray md:text-[17px]">
+              Discover the powerful tools designed to simplify your operations and
+              delight your customers.
+            </p>
 
-              <div className="mt-12 flex items-center">
-                <div className="flex items-center gap-12">
-                  <button
-                    type="button"
-                    onClick={prev}
-                    disabled={activeIndex === 0}
-                    aria-label="Previous module"
-                    className="flex h-11 w-11 items-center justify-center rounded-[12px] border border-hairline bg-paper text-primary-ink transition-colors hover:bg-canvas disabled:opacity-30"
-                  >
-                    <ChevronLeft size={20} strokeWidth={1.8} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={next}
-                    disabled={activeIndex === modules.length - 1}
-                    aria-label="Next module"
-                    className="flex h-11 w-11 items-center justify-center rounded-[12px] border border-hairline bg-paper text-primary-ink transition-colors hover:bg-canvas disabled:opacity-30"
-                  >
-                    <ChevronRight size={20} strokeWidth={1.8} />
-                  </button>
-                </div>
+            <div className="mt-8 flex items-center gap-3">
+              <button
+                type="button"
+                onClick={prev}
+                disabled={activeIndex === 0}
+                aria-label="Previous module"
+                className="flex h-11 w-11 items-center justify-center rounded-[12px] border border-hairline bg-paper text-primary-ink transition-colors hover:bg-canvas disabled:opacity-30"
+              >
+                <ChevronLeft size={20} strokeWidth={1.8} />
+              </button>
+              <button
+                type="button"
+                onClick={next}
+                disabled={activeIndex === modules.length - 1}
+                aria-label="Next module"
+                className="flex h-11 w-11 items-center justify-center rounded-[12px] border border-hairline bg-paper text-primary-ink transition-colors hover:bg-canvas disabled:opacity-30"
+              >
+                <ChevronRight size={20} strokeWidth={1.8} />
+              </button>
 
-                <div className="ml-4 flex items-center gap-3" role="tablist" aria-label="Module slides">
-                  {modules.map((m, i) => (
-                    <button
-                      key={m.id}
-                      type="button"
-                      role="tab"
-                      aria-selected={i === activeIndex}
-                      aria-label={`Go to ${m.title}`}
-                      onClick={() => scrollTo(i)}
-                      className={`h-3 rounded-full transition-all duration-300 ease-out ${
-                        i === activeIndex
-                          ? "w-8 bg-ember"
-                          : "w-3 bg-hairline hover:bg-mid-gray/40"
-                      }`}
-                    />
-                  ))}
-                </div>
+              <div className="ml-2 flex items-center gap-2" role="tablist" aria-label="Module slides">
+                {modules.map((m, i) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={i === activeIndex}
+                    aria-label={`Go to ${m.title}`}
+                    onClick={() => scrollTo(i)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      i === activeIndex
+                        ? "w-6 bg-ember"
+                        : "w-2 bg-hairline hover:bg-mid-gray/40"
+                    }`}
+                  />
+                ))}
               </div>
-            </motion.div>
-          </div>
-
-          {/* Horizontal carousel */}
-          <div className="relative min-w-0">
-            <div
-              ref={trackRef}
-              className={`flex gap-12 scroll-smooth pb-1 scrollbar-none snap-x snap-mandatory md:gap-12 lg:pl-[calc(50%-550px)] lg:pr-[calc(50%-550px)] ${
-                isPinnedDesktop
-                  ? "overflow-x-hidden"
-                  : "overflow-x-auto overscroll-x-contain"
-              }`}
-            >
-              {modules.map((module) => (
-                <ModuleCard key={module.id} module={module} />
-              ))}
             </div>
+          </motion.div>
+        </div>
 
-            <div className="mt-5 flex items-center justify-center gap-2 text-mid-gray lg:justify-start">
-              <Mouse size={18} strokeWidth={1.5} className="opacity-60" />
-              <span className="text-[14px]">
-                {isPinnedDesktop ? "Scroll to explore all modules" : "Swipe to explore all modules"}
-              </span>
-            </div>
+        {/* Horizontal carousel — bleeds right */}
+        <div className="relative min-w-0 flex-1 lg:-mr-10 xl:-mr-16">
+          <div
+            ref={trackRef}
+            className="flex gap-6 overflow-x-auto scroll-smooth pb-2 pr-6 scrollbar-none snap-x snap-mandatory md:gap-8 md:pr-10"
+          >
+            {modules.map((module) => (
+              <ModuleCard key={module.id} module={module} />
+            ))}
           </div>
         </div>
+      </div>
+
+      {/* Scroll hint */}
+      <div className="mt-10 flex items-center justify-center gap-2 text-mid-gray">
+        <Mouse size={18} strokeWidth={1.5} className="opacity-60" />
+        <span className="text-[14px]">Scroll to explore all modules</span>
       </div>
     </section>
   );
