@@ -10,7 +10,7 @@ type PricingHeroProps = {
 
 export function PricingHero({ billing, onBillingChange }: PricingHeroProps) {
   return (
-    <section className="relative flex min-h-[90vh] items-center justify-center overflow-hidden bg-white px-6 pt-[80px] md:px-10 lg:px-[48px]">
+    <section className="relative overflow-hidden bg-white px-6 pb-[48px] pt-[100px] md:px-10 md:pb-[56px] md:pt-[120px] lg:px-[48px]">
       <div
         className="pointer-events-none absolute left-1/2 top-[42%] h-[480px] w-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand opacity-[0.08] blur-[140px]"
         aria-hidden="true"
@@ -24,7 +24,7 @@ export function PricingHero({ billing, onBillingChange }: PricingHeroProps) {
         </PricingReveal>
 
         <PricingReveal delay={0.06}>
-          <h1 className="mt-10 max-w-[920px] font-[Inter] text-[44px] font-extrabold leading-[0.98] tracking-[-0.04em] text-[#111111] sm:text-[64px] lg:text-[84px]">
+          <h1 className="mt-8 max-w-[920px] font-[Inter] text-[44px] font-extrabold leading-[0.98] tracking-[-0.04em] text-[#111111] sm:text-[64px] lg:text-[84px]">
             Pricing that grows
             <br />
             with your{" "}
@@ -47,7 +47,7 @@ export function PricingHero({ billing, onBillingChange }: PricingHeroProps) {
         </PricingReveal>
 
         <PricingReveal delay={0.22}>
-          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
+          <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
             <Link
               to="/contact"
               className="inline-flex h-[52px] items-center justify-center rounded-full bg-brand px-10 font-[Inter] text-[16px] font-semibold !text-white shadow-[0_12px_32px_rgba(251,87,52,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.03] hover:shadow-[0_16px_40px_rgba(251,87,52,0.32)]"
