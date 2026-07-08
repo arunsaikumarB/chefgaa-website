@@ -1,68 +1,77 @@
 import { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { PrimaryButton, ArrowLink } from "./Buttons";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const HERO_IMAGE = "/hero-product.png";
 
+function HeroPrimaryBtn({ children, to }: { children: string; to: string }) {
+  return (
+    <Link
+      to={to}
+      className="inline-flex h-14 items-center justify-center rounded-full bg-[#ED3C18] px-8 text-[18px] font-medium text-white transition-transform duration-300 hover:-translate-y-0.5 hover:opacity-95"
+    >
+      {children}
+    </Link>
+  );
+}
+
+function HeroGhostBtn({ children, to }: { children: string; to: string }) {
+  return (
+    <Link
+      to={to}
+      className="inline-flex h-14 items-center justify-center rounded-full border border-white bg-transparent px-8 text-[18px] font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-[#111111]"
+    >
+      {children}
+    </Link>
+  );
+}
+
 export function HomeHero() {
-  const sectionRef = useRef<HTMLElement>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const section = sectionRef.current;
     const media = mediaRef.current;
     const content = contentRef.current;
-    if (!section || !media) return;
+    if (!media || !content) return;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const textItems = content.querySelectorAll("[data-hero-text]");
+    const buttons = content.querySelector("[data-hero-buttons]");
 
     if (reduceMotion) {
-      gsap.set(media, { opacity: 1, scale: 1, y: 0 });
-      if (content) gsap.set(content.children, { opacity: 1, y: 0 });
+      gsap.set(media, { opacity: 1, scale: 1 });
+      gsap.set(textItems, { opacity: 1, y: 0 });
+      if (buttons) gsap.set(buttons, { opacity: 1, y: 0 });
       return;
     }
 
     gsap.set(media, { scale: 1.05, opacity: 0, force3D: true });
-    if (content) gsap.set(content.children, { opacity: 0, y: 28 });
+    gsap.set(textItems, { opacity: 0, y: 40 });
+    if (buttons) gsap.set(buttons, { opacity: 0, y: 40 });
 
-    const loadTl = gsap.timeline({ defaults: { ease: "power2.out" } });
-    loadTl
-      .to(media, { opacity: 1, scale: 1, duration: 1.35 }, 0)
-      .to(content?.children ?? [], { opacity: 1, y: 0, duration: 0.9, stagger: 0.1 }, 0.35);
-
-    const parallax = ScrollTrigger.create({
-      trigger: section,
-      start: "top top",
-      end: "bottom top",
-      scrub: 0.6,
-      onUpdate: (self) => {
-        gsap.set(media, { y: self.progress * 72, force3D: true });
-      },
-    });
+    const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+    tl.to(media, { opacity: 1, scale: 1, duration: 1 }, 0)
+      .to(textItems, { opacity: 1, y: 0, duration: 0.85, stagger: 0.1 }, 0.2)
+      .to(buttons, { opacity: 1, y: 0, duration: 0.75 }, 0.55);
 
     return () => {
-      loadTl.kill();
-      parallax.kill();
+      tl.kill();
     };
   }, []);
 
   return (
     <section
-      ref={sectionRef}
-      className="home-hero relative isolate min-h-[90vh] max-h-[100vh] w-full overflow-hidden bg-[#1a1a1a]"
+      className="relative isolate min-h-[90vh] max-h-[100vh] w-full overflow-hidden bg-[#111111]"
       aria-label="Chefgaa platform hero"
     >
-      {/* Cinematic product environment */}
+      {/* Product environment — sole background */}
       <div ref={mediaRef} className="absolute inset-0 will-change-transform" style={{ transform: "translateZ(0)" }}>
         <img
           src={HERO_IMAGE}
           alt=""
           role="presentation"
-          className="absolute left-1/2 top-1/2 h-[112%] w-full min-w-[108%] -translate-x-1/2 -translate-y-[48%] object-cover object-center md:h-[118%] md:min-w-[112%] lg:-translate-y-[46%]"
+          className="absolute left-1/2 top-1/2 h-[110%] w-full min-w-[105%] -translate-x-1/2 -translate-y-[48%] object-cover object-[52%_46%] md:object-[54%_45%] lg:h-[112%] lg:min-w-[108%]"
           loading="eager"
           fetchPriority="high"
           decoding="async"
@@ -70,57 +79,49 @@ export function HomeHero() {
         />
       </div>
 
-      {/* Soft edge blur — far periphery only */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <div
-          className="absolute inset-y-0 left-0 w-[10%] max-w-[80px] backdrop-blur-[3px]"
-          style={{
-            WebkitMaskImage: "linear-gradient(to right, black, transparent)",
-            maskImage: "linear-gradient(to right, black, transparent)",
-          }}
-        />
-        <div
-          className="absolute inset-y-0 right-0 w-[10%] max-w-[80px] backdrop-blur-[3px]"
-          style={{
-            WebkitMaskImage: "linear-gradient(to left, black, transparent)",
-            maskImage: "linear-gradient(to left, black, transparent)",
-          }}
-        />
-        <div
-          className="absolute inset-x-0 top-0 h-[14%] max-h-[100px] backdrop-blur-[2px]"
-          style={{
-            WebkitMaskImage: "linear-gradient(to bottom, black, transparent)",
-            maskImage: "linear-gradient(to bottom, black, transparent)",
-          }}
-        />
-      </div>
+      {/* Subtle readability tint — no gradients on product */}
+      <div className="pointer-events-none absolute inset-0 bg-black/25" aria-hidden="true" />
 
-      {/* Text readability scrim — white to transparent, product stays visible */}
-      <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/88 via-white/45 to-transparent md:bg-gradient-to-r md:from-white/92 md:via-white/58 md:to-transparent"
-        aria-hidden="true"
-      />
-
-      {/* Content */}
-      <div className="relative z-10 flex min-h-[90vh] max-h-[100vh] items-center pt-[var(--site-nav-height)] pb-16 md:pb-20">
-        <div className="mx-auto w-full max-w-[1200px] px-6 md:px-10 lg:px-12">
-          <div
-            ref={contentRef}
-            className="max-w-[620px] text-left md:max-w-[680px] lg:max-w-[720px]"
+      {/* Split composition */}
+      <div className="relative z-10 mx-auto flex min-h-[90vh] max-h-[100vh] w-full max-w-[1440px] flex-col justify-center px-6 pb-12 pt-[var(--site-nav-height)] md:px-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-20 lg:pb-0">
+        {/* Left — messaging */}
+        <div ref={contentRef} className="w-full max-w-[600px] lg:max-w-[580px]">
+          <span
+            data-hero-text
+            className="inline-flex rounded-full border border-white/20 bg-white/10 px-5 py-2 text-[13px] font-semibold uppercase tracking-[0.14em] text-white/90 backdrop-blur-sm"
           >
-            <h1 className="font-sf-pro-display text-[40px] font-bold leading-[1.05] tracking-[-0.5px] text-primary-ink md:text-[56px] md:tracking-[-0.8px] lg:text-[72px] lg:leading-[1.04] lg:tracking-[-1px] xl:text-[80px]">
-              <span className="block lg:whitespace-nowrap">All-in-One POS &amp; Online Ordering</span>
-              <span className="block lg:whitespace-nowrap">for Restaurants.</span>
-            </h1>
-            <p className="mt-6 max-w-[540px] text-[17px] leading-[1.5] text-deep-gray sm:text-[18px] md:text-[19px] lg:text-[21px] lg:leading-[1.47]">
-              Streamline operations, boost sales, and enhance customer experience with Chefgaa&apos;s powerful restaurant management solution.
-            </p>
-            <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center">
-              <PrimaryButton to="/contact">Request a Demo</PrimaryButton>
-              <ArrowLink to="/contact">Get in Touch</ArrowLink>
-            </div>
+            Chefgaa Platform
+          </span>
+
+          <h1
+            data-hero-text
+            className="mt-10 max-w-[700px] font-sf-pro-display text-[44px] font-extrabold leading-[0.98] tracking-[-0.03em] text-white md:text-[60px] lg:mt-10 lg:text-[72px] xl:text-[84px]"
+          >
+            <span className="block">All-in-One POS &amp; Online Ordering</span>
+            <span className="block">for Restaurants.</span>
+          </h1>
+
+          <p
+            data-hero-text
+            className="mt-8 max-w-[560px] text-[18px] leading-[1.5] text-white/85 md:text-[20px] lg:mt-8 lg:text-[22px] lg:leading-[1.45]"
+          >
+            Streamline operations, boost sales, and enhance customer experience with Chefgaa&apos;s powerful restaurant management solution.
+          </p>
+
+          <div
+            data-hero-buttons
+            className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5 lg:mt-10"
+          >
+            <HeroPrimaryBtn to="/contact">Request a Demo</HeroPrimaryBtn>
+            <HeroGhostBtn to="/contact">Get in Touch</HeroGhostBtn>
           </div>
         </div>
+
+        {/* Right — product visible through background */}
+        <div
+          className="mt-12 min-h-[36vh] shrink-0 lg:mt-0 lg:min-h-[70vh]"
+          aria-hidden="true"
+        />
       </div>
     </section>
   );
