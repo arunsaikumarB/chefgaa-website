@@ -1,25 +1,59 @@
 import type { ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import type { VisualId } from "./data";
+
+/* ── Design tokens (8pt grid) ───────────────────────────── */
+
+export const hwType = {
+  hero: "font-sf-pro-display text-[40px] font-bold leading-[1.6] tracking-[-0.03em] text-[#111111] md:text-[56px] lg:text-[72px]",
+  sectionTitle:
+    "font-sf-pro-display text-[36px] font-bold leading-[1.6] tracking-[-0.02em] text-[#111111] md:text-[48px]",
+  cardTitle: "font-sf-pro-display text-[32px] font-bold leading-[1.6] tracking-[-0.02em] text-[#111111]",
+  body: "text-[18px] leading-[1.6] text-[#666666]",
+  caption: "text-[16px] leading-[1.6] text-[#666666]",
+  eyebrow: "text-[16px] font-semibold uppercase tracking-[0.12em] text-[#ED3C18]",
+} as const;
 
 /* ── Layout ─────────────────────────────────────────────── */
 
 export function HwShell({
   id,
   children,
-  className = "bg-paper",
+  className = "bg-white",
 }: {
   id?: string;
   children: ReactNode;
   className?: string;
 }) {
   return (
-    <section id={id} className={`${className} py-20 md:py-[140px]`}>
+    <section id={id} className={`${className} pt-[120px] pb-[140px]`}>
       <div className="mx-auto w-full max-w-[1600px] px-6 md:px-10 lg:px-20">
         <div className="mx-auto w-full max-w-[1440px]">{children}</div>
       </div>
     </section>
+  );
+}
+
+export function HwSectionIntro({
+  title,
+  description,
+  align = "center",
+}: {
+  title: string;
+  description?: string;
+  align?: "center" | "left";
+}) {
+  const alignClass = align === "center" ? "text-center mx-auto" : "text-left";
+  return (
+    <div className={alignClass}>
+      <h2 className={hwType.sectionTitle}>{title}</h2>
+      {description && (
+        <p className={`mt-6 max-w-[640px] ${hwType.body} ${align === "center" ? "mx-auto" : ""}`}>
+          {description}
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -47,11 +81,14 @@ export function HwReveal({
 
 /* ── Buttons ────────────────────────────────────────────── */
 
+const btnBase =
+  "inline-flex h-14 items-center justify-center rounded-full px-8 text-[18px] font-medium leading-none transition-all duration-350";
+
 export function HwPrimaryBtn({ children, to = "/contact" }: { children: ReactNode; to?: string }) {
   return (
     <Link
       to={to}
-      className="inline-flex items-center justify-center rounded-full bg-[#ED3C18] px-8 py-3.5 text-[18px] font-medium text-white transition-all duration-350 hover:-translate-y-0.5 hover:opacity-95"
+      className={`${btnBase} bg-[#ED3C18] text-white hover:scale-[1.02] hover:opacity-95`}
     >
       {children}
     </Link>
@@ -62,7 +99,7 @@ export function HwGhostBtn({ children, to = "/contact" }: { children: ReactNode;
   return (
     <Link
       to={to}
-      className="inline-flex items-center justify-center rounded-full border border-[#111111] px-8 py-3.5 text-[18px] font-medium text-[#111111] transition-all duration-350 hover:-translate-y-0.5 hover:bg-[#111111] hover:text-white"
+      className={`${btnBase} border border-[#111111] text-[#111111] hover:scale-[1.02] hover:bg-[#111111] hover:text-white`}
     >
       {children}
     </Link>
@@ -73,7 +110,7 @@ export function HwLink({ children, to = "/contact" }: { children: ReactNode; to?
   return (
     <Link
       to={to}
-      className="group relative text-[18px] font-medium text-[#ED3C18] after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-0 after:bg-[#ED3C18] after:transition-all after:duration-300 hover:after:w-full"
+      className="group relative inline-flex h-14 items-center text-[18px] font-medium leading-none text-[#ED3C18] after:absolute after:bottom-4 after:left-0 after:h-px after:w-0 after:bg-[#ED3C18] after:transition-all after:duration-300 hover:after:w-full"
     >
       {children}
     </Link>
@@ -94,83 +131,111 @@ export function HwProductCard({
   return (
     <motion.article
       id={id}
-      whileHover={{ scale: 1.02, y: -6 }}
+      whileHover={{ y: -4 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className={`rounded-[36px] bg-white p-10 shadow-[0_20px_60px_rgba(0,0,0,0.06)] md:p-[40px] ${className}`}
-      style={{ willChange: "transform" }}
+      className={`flex h-full flex-col rounded-[32px] bg-white p-10 shadow-[0_20px_60px_rgba(0,0,0,0.06)] transition-shadow duration-350 hover:shadow-[0_24px_72px_rgba(0,0,0,0.09)] ${className}`}
     >
       {children}
     </motion.article>
   );
 }
 
+export function HwFeatureCard({
+  children,
+  tint,
+  className = "",
+}: {
+  children: ReactNode;
+  tint: string;
+  className?: string;
+}) {
+  return (
+    <motion.article
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      className={`flex h-full flex-col rounded-[32px] p-10 transition-shadow duration-350 hover:shadow-[0_24px_72px_rgba(0,0,0,0.06)] ${className}`}
+      style={{ backgroundColor: tint }}
+    >
+      {children}
+    </motion.article>
+  );
+}
+
+export function HwIconBox({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm">
+      {children}
+    </div>
+  );
+}
+
 /* ── Product visual ─────────────────────────────────────── */
+
+const VISUAL_HEIGHTS = {
+  sm: "h-[160px]",
+  md: "h-[200px]",
+  lg: "h-[280px]",
+  xl: "h-[360px]",
+  hero: "h-[min(480px,55vh)] md:h-[min(560px,60vh)]",
+} as const;
 
 export function ProductVisual({
   product,
   className = "",
-  floating = false,
   size = "md",
 }: {
   product: VisualId;
   className?: string;
+  size?: "sm" | "md" | "lg" | "xl" | "hero";
+  /** @deprecated hover-only lift is applied automatically */
   floating?: boolean;
-  size?: "sm" | "md" | "lg" | "xl";
 }) {
-  const reduce = useReducedMotion();
-  const scales = { sm: "scale-75", md: "scale-100", lg: "scale-110", xl: "scale-125 md:scale-[1.35]" };
+  const heightKey = size === "xl" && product === "workstation" ? "hero" : size;
 
-  const inner = (
-    <div className={`${scales[size]} ${className}`}>
-      {product === "workstation" ? (
-        <WorkstationVisual size={size} />
-      ) : product === "handheld" || product === "mobile-ordering" ? (
-        <HandheldVisual size={size} />
-      ) : product === "kitchen-display" ? (
-        <KitchenVisual size={size} />
-      ) : product === "barcode-scanner" ? (
-        <ScannerVisual size={size} />
-      ) : product === "receipt-printer" ? (
-        <PrinterVisual size={size} />
-      ) : product === "customer-display" ? (
-        <DisplayVisual size={size} />
-      ) : product === "cash-drawer" ? (
-        <DrawerVisual size={size} />
-      ) : product === "tablet" ? (
-        <TabletVisual size={size} />
-      ) : (
-        <TerminalVisual size={size} />
-      )}
-    </div>
-  );
-
-  if (!floating || reduce) return inner;
   return (
-    <motion.div
-      animate={{ y: [0, -2, 0] }}
-      transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-      style={{ willChange: "transform" }}
+    <div
+      className={`group/product flex w-full items-center justify-center ${VISUAL_HEIGHTS[heightKey]} ${className}`}
     >
-      {inner}
-    </motion.div>
+      <div className="flex h-[65%] w-[65%] items-center justify-center transition-transform duration-350 group-hover/product:-translate-y-[3px]">
+        <DeviceRender product={product} size={size} />
+      </div>
+    </div>
   );
 }
 
+function DeviceRender({ product, size }: { product: VisualId; size: string }) {
+  if (product === "workstation") return <WorkstationVisual size={size} />;
+  if (product === "handheld" || product === "mobile-ordering") return <HandheldVisual size={size} />;
+  if (product === "kitchen-display") return <KitchenVisual size={size} />;
+  if (product === "barcode-scanner") return <ScannerVisual size={size} />;
+  if (product === "receipt-printer") return <PrinterVisual size={size} />;
+  if (product === "customer-display") return <DisplayVisual size={size} />;
+  if (product === "cash-drawer") return <DrawerVisual size={size} />;
+  if (product === "tablet") return <TabletVisual size={size} />;
+  return <TerminalVisual size={size} />;
+}
+
 function WorkstationVisual({ size }: { size: string }) {
-  const h = size === "xl" ? "max-h-[min(520px,50vh)]" : size === "lg" ? "max-h-[400px]" : "max-h-[320px]";
+  const heroScale = size === "hero" || size === "xl";
+  const h = heroScale
+    ? "max-h-[min(624px,60vh)] w-full"
+    : size === "lg"
+      ? "max-h-[400px] w-full"
+      : "max-h-[320px] w-full";
   return (
-    <div className="relative flex items-center justify-center">
+    <div className="relative flex h-full w-full items-center justify-center">
       <div
         className="absolute inset-0 m-auto h-[70%] w-[70%] rounded-full"
         style={{
-          background: "radial-gradient(circle, rgba(250,144,64,0.2) 0%, rgba(237,60,24,0.06) 50%, transparent 70%)",
+          background:
+            "radial-gradient(circle, rgba(250,144,64,0.2) 0%, rgba(237,60,24,0.06) 50%, transparent 70%)",
           filter: "blur(40px)",
         }}
       />
       <img
         src="/ecosystem/pos-hardware.png"
         alt="Chefgaa restaurant workstation"
-        className={`relative z-10 w-auto object-contain drop-shadow-[0_32px_64px_rgba(0,0,0,0.1)] ${h}`}
+        className={`relative z-10 object-contain drop-shadow-[0_32px_64px_rgba(0,0,0,0.1)] ${h}`}
         loading="lazy"
       />
     </div>
@@ -178,9 +243,18 @@ function WorkstationVisual({ size }: { size: string }) {
 }
 
 function TerminalVisual({ size }: { size: string }) {
-  const w = size === "xl" ? "w-64" : size === "lg" ? "w-52" : size === "sm" ? "w-28" : "w-44";
+  const w =
+    size === "hero" || size === "xl"
+      ? "w-full max-w-[280px]"
+      : size === "lg"
+        ? "w-full max-w-[220px]"
+        : size === "sm"
+          ? "w-full max-w-[120px]"
+          : "w-full max-w-[180px]";
   return (
-    <div className={`${w} rounded-[24px] border border-black/[0.05] bg-gradient-to-b from-[#FAFAFA] to-[#EFEFEF] p-4 shadow-[0_24px_56px_rgba(0,0,0,0.08)]`}>
+    <div
+      className={`${w} rounded-[24px] border border-black/[0.05] bg-gradient-to-b from-[#FAFAFA] to-[#EFEFEF] p-4 shadow-[0_24px_56px_rgba(0,0,0,0.08)]`}
+    >
       <div className="aspect-[4/3] rounded-[16px] bg-gradient-to-br from-[#1A1A1A] to-[#333] p-3">
         <div className="flex h-full flex-col rounded-[10px] bg-[#111] p-3">
           <div className="mb-2 h-1.5 w-10 rounded-full bg-[#FA9040]" />
@@ -201,9 +275,18 @@ function TerminalVisual({ size }: { size: string }) {
 }
 
 function HandheldVisual({ size }: { size: string }) {
-  const w = size === "xl" ? "w-36" : size === "lg" ? "w-32" : size === "sm" ? "w-20" : "w-28";
+  const w =
+    size === "hero" || size === "xl"
+      ? "w-full max-w-[160px]"
+      : size === "lg"
+        ? "w-full max-w-[140px]"
+        : size === "sm"
+          ? "w-full max-w-[88px]"
+          : "w-full max-w-[120px]";
   return (
-    <div className={`${w} rounded-[28px] border-[3px] border-[#1A1A1A] bg-[#1A1A1A] p-1 shadow-[0_24px_56px_rgba(0,0,0,0.12)]`}>
+    <div
+      className={`${w} rounded-[28px] border-[3px] border-[#1A1A1A] bg-[#1A1A1A] p-1 shadow-[0_24px_56px_rgba(0,0,0,0.12)]`}
+    >
       <div className="aspect-[9/19] overflow-hidden rounded-[24px] bg-[#111] p-2">
         <div className="mb-2 h-1 w-8 rounded-full bg-[#FA9040]" />
         <div className="grid grid-cols-2 gap-1">
@@ -217,9 +300,18 @@ function HandheldVisual({ size }: { size: string }) {
 }
 
 function KitchenVisual({ size }: { size: string }) {
-  const w = size === "xl" ? "w-72" : size === "lg" ? "w-60" : size === "sm" ? "w-36" : "w-48";
+  const w =
+    size === "hero" || size === "xl"
+      ? "w-full max-w-[320px]"
+      : size === "lg"
+        ? "w-full max-w-[260px]"
+        : size === "sm"
+          ? "w-full max-w-[150px]"
+          : "w-full max-w-[200px]";
   return (
-    <div className={`${w} rounded-[20px] border border-black/[0.05] bg-[#1A1A1A] p-3 shadow-[0_24px_56px_rgba(0,0,0,0.12)]`}>
+    <div
+      className={`${w} rounded-[20px] border border-black/[0.05] bg-[#1A1A1A] p-3 shadow-[0_24px_56px_rgba(0,0,0,0.12)]`}
+    >
       <div className="aspect-[16/10] rounded-[14px] bg-[#0A0A0A] p-3">
         <div className="mb-2 flex gap-1.5">
           <span className="rounded-md bg-[#ED3C18] px-2 py-0.5 text-[8px] font-semibold text-white">NEW</span>
@@ -235,9 +327,11 @@ function KitchenVisual({ size }: { size: string }) {
 }
 
 function ScannerVisual({ size }: { size: string }) {
-  const w = size === "sm" ? "w-16" : "w-24";
+  const w = size === "sm" ? "w-full max-w-[72px]" : "w-full max-w-[110px]";
   return (
-    <div className={`${w} rounded-[14px] border border-black/[0.05] bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] p-2.5 shadow-[0_20px_48px_rgba(0,0,0,0.1)]`}>
+    <div
+      className={`${w} rounded-[14px] border border-black/[0.05] bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] p-2.5 shadow-[0_20px_48px_rgba(0,0,0,0.1)]`}
+    >
       <div className="aspect-square rounded-[8px] bg-[#111] p-2">
         <div className="h-full w-full rounded-[4px] border border-[#FA9040]/40 bg-gradient-to-b from-[#ED3C18]/20 to-transparent" />
       </div>
@@ -246,9 +340,11 @@ function ScannerVisual({ size }: { size: string }) {
 }
 
 function PrinterVisual({ size }: { size: string }) {
-  const w = size === "sm" ? "w-24" : "w-32";
+  const w = size === "sm" ? "w-full max-w-[110px]" : "w-full max-w-[140px]";
   return (
-    <div className={`${w} rounded-[16px] border border-black/[0.05] bg-gradient-to-b from-[#F8F8F8] to-[#ECECEC] p-2.5 shadow-[0_20px_48px_rgba(0,0,0,0.06)]`}>
+    <div
+      className={`${w} rounded-[16px] border border-black/[0.05] bg-gradient-to-b from-[#F8F8F8] to-[#ECECEC] p-2.5 shadow-[0_20px_48px_rgba(0,0,0,0.06)]`}
+    >
       <div className="h-2 rounded-t-[6px] bg-[#444]" />
       <div className="relative h-16 rounded-[8px] bg-[#E8E8E8]">
         <div className="absolute -top-3 left-1/2 h-8 w-12 -translate-x-1/2 rounded-sm bg-white shadow-sm" />
@@ -258,9 +354,11 @@ function PrinterVisual({ size }: { size: string }) {
 }
 
 function DisplayVisual({ size }: { size: string }) {
-  const w = size === "sm" ? "w-28" : "w-40";
+  const w = size === "sm" ? "w-full max-w-[130px]" : "w-full max-w-[180px]";
   return (
-    <div className={`${w} rounded-[16px] border border-black/[0.05] bg-gradient-to-b from-[#FAFAFA] to-[#EEE] p-2.5 shadow-[0_20px_48px_rgba(0,0,0,0.06)]`}>
+    <div
+      className={`${w} rounded-[16px] border border-black/[0.05] bg-gradient-to-b from-[#FAFAFA] to-[#EEE] p-2.5 shadow-[0_20px_48px_rgba(0,0,0,0.06)]`}
+    >
       <div className="aspect-[3/4] rounded-[10px] bg-white p-3 text-center">
         <div className="text-[9px] text-[#666]">Total</div>
         <div className="text-[16px] font-bold text-[#111]">$42.96</div>
@@ -271,9 +369,11 @@ function DisplayVisual({ size }: { size: string }) {
 }
 
 function DrawerVisual({ size }: { size: string }) {
-  const w = size === "sm" ? "w-36" : "w-48";
+  const w = size === "sm" ? "w-full max-w-[160px]" : "w-full max-w-[210px]";
   return (
-    <div className={`${w} rounded-[12px] border border-black/[0.06] bg-gradient-to-b from-[#D4D4D4] to-[#B8B8B8] p-1 shadow-[0_16px_40px_rgba(0,0,0,0.08)]`}>
+    <div
+      className={`${w} rounded-[12px] border border-black/[0.06] bg-gradient-to-b from-[#D4D4D4] to-[#B8B8B8] p-1 shadow-[0_16px_40px_rgba(0,0,0,0.08)]`}
+    >
       <div className="flex h-8 items-center justify-center rounded-[8px] bg-gradient-to-b from-[#E8E8E8] to-[#D0D0D0]">
         <div className="h-1 w-8 rounded-full bg-black/20" />
       </div>
@@ -282,11 +382,13 @@ function DrawerVisual({ size }: { size: string }) {
 }
 
 function TabletVisual({ size }: { size: string }) {
-  const w = size === "sm" ? "w-32" : "w-44";
+  const w = size === "sm" ? "w-full max-w-[150px]" : "w-full max-w-[200px]";
   return (
-    <div className={`${w} rounded-[20px] border border-black/[0.05] bg-gradient-to-b from-[#FAFAFA] to-[#EFEFEF] p-3 shadow-[0_20px_48px_rgba(0,0,0,0.08)]`}>
+    <div
+      className={`${w} rounded-[20px] border border-black/[0.05] bg-gradient-to-b from-[#FAFAFA] to-[#EFEFEF] p-3 shadow-[0_20px_48px_rgba(0,0,0,0.08)]`}
+    >
       <div className="aspect-[4/3] rounded-[12px] bg-[#111] p-2">
-        <div className="h-1 w-8 rounded-full bg-[#FA9040] mb-2" />
+        <div className="mb-2 h-1 w-8 rounded-full bg-[#FA9040]" />
         <div className="h-1 w-full rounded bg-white/20" />
       </div>
     </div>

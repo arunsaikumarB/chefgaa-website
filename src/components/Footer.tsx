@@ -32,46 +32,48 @@ const columns = [
 
 export function Footer() {
   return (
-    <footer className="bg-paper">
-      <div className="mx-auto w-full max-w-[1200px] border-t border-hairline px-6 py-16 md:px-10 md:py-20">
-        <div className="grid grid-cols-2 gap-10 md:grid-cols-4">
-          <div className="col-span-2 md:col-span-1">
-            <Link
-              to="/"
-              className="font-sf-pro-display text-[21px] font-semibold text-primary-ink"
-            >
-              Chefgaa
-            </Link>
-            <p className="mt-3 max-w-[240px] text-[14px] leading-[1.5] text-mid-gray">
-              All-in-One POS &amp; Online Ordering for Restaurants.
-            </p>
+    <footer className="bg-white">
+      <div className="mx-auto w-full max-w-[1600px] border-t border-black/[0.06] px-6 pt-24 pb-16 md:px-20 md:pt-32 md:pb-20">
+        <div className="mx-auto w-full max-w-[1440px]">
+          <div className="grid grid-cols-2 gap-12 md:grid-cols-4 md:gap-16">
+            <div className="col-span-2 md:col-span-1">
+              <Link
+                to="/"
+                className="font-sf-pro-display text-[24px] font-semibold leading-[1.6] text-[#111111]"
+              >
+                Chefgaa
+              </Link>
+              <p className="mt-6 max-w-[280px] text-[16px] leading-[1.6] text-[#666666]">
+                All-in-One POS &amp; Online Ordering for Restaurants.
+              </p>
+            </div>
+
+            {columns.map((col) => (
+              <div key={col.heading}>
+                <h3 className="text-[16px] font-semibold uppercase tracking-[0.08em] leading-[1.6] text-[#666666]">
+                  {col.heading}
+                </h3>
+                <ul className="mt-6 flex flex-col gap-4">
+                  {col.links.map((link, i) => (
+                    <li key={`${link.to}-${link.label}-${i}`}>
+                      <Link
+                        to={link.to}
+                        className="text-[16px] leading-[1.6] text-[#444444] transition-colors hover:text-[#111111]"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
 
-          {columns.map((col) => (
-            <div key={col.heading}>
-              <h3 className="text-[12px] font-semibold uppercase tracking-wide text-quiet-dot">
-                {col.heading}
-              </h3>
-              <ul className="mt-6 flex flex-col gap-4">
-                {col.links.map((link, i) => (
-                  <li key={`${link.to}-${link.label}-${i}`}>
-                    <Link
-                      to={link.to}
-                      className="text-[12px] text-deep-gray transition-colors hover:text-primary-ink"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-8 border-t border-hairline pt-8 md:mt-12">
-          <p className="text-[12px] leading-[1.5] text-mid-gray">
-            &copy; {new Date().getFullYear()} Chefgaa. All rights reserved.
-          </p>
+          <div className="mt-16 border-t border-black/[0.06] pt-8 md:mt-20">
+            <p className="text-[16px] leading-[1.6] text-[#666666]">
+              &copy; {new Date().getFullYear()} Chefgaa. All rights reserved.
+            </p>
+          </div>
         </div>
       </div>
     </footer>
