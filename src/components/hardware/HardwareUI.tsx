@@ -183,21 +183,27 @@ export function ProductVisual({
   product,
   className = "",
   size = "md",
+  showcase = false,
 }: {
   product: VisualId;
   className?: string;
   size?: "sm" | "md" | "lg" | "xl" | "hero";
+  showcase?: boolean;
   /** @deprecated hover-only lift is applied automatically */
   floating?: boolean;
 }) {
   const heightKey = size === "xl" && product === "workstation" ? "hero" : size;
+  const fill = showcase ? "h-[88%] w-[88%]" : "h-[65%] w-[65%]";
+  const height = showcase && size === "xl" ? "h-[min(480px,52vh)] md:h-[min(520px,56vh)]" : VISUAL_HEIGHTS[heightKey];
 
   return (
     <div
-      className={`group/product flex w-full items-center justify-center ${VISUAL_HEIGHTS[heightKey]} ${className}`}
+      className={`group/product flex w-full items-center justify-center ${height} ${className}`}
     >
-      <div className="flex h-[65%] w-[65%] items-center justify-center transition-transform duration-350 group-hover/product:-translate-y-[3px]">
-        <DeviceRender product={product} size={size} />
+      <div
+        className={`flex ${fill} items-center justify-center transition-transform duration-350 group-hover/product:-translate-y-[3px]`}
+      >
+        <DeviceRender product={product} size={showcase ? "xl" : size} />
       </div>
     </div>
   );
@@ -245,7 +251,7 @@ function WorkstationVisual({ size }: { size: string }) {
 function TerminalVisual({ size }: { size: string }) {
   const w =
     size === "hero" || size === "xl"
-      ? "w-full max-w-[280px]"
+      ? "w-full max-w-[340px]"
       : size === "lg"
         ? "w-full max-w-[220px]"
         : size === "sm"

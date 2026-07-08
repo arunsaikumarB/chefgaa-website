@@ -24,7 +24,7 @@ export function HardwareNav() {
 
   return (
     <nav
-      className="sticky top-14 z-40 border-b border-black/[0.05] bg-white/90 pt-14 backdrop-blur-xl"
+      className="sticky top-14 z-40 border-b border-black/[0.05] bg-white/95 backdrop-blur-xl"
       aria-label="Hardware categories"
     >
       <div className="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-20">

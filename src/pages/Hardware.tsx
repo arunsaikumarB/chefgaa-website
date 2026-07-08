@@ -16,7 +16,7 @@ import {
 
 export function Hardware() {
   return (
-    <>
+    <div className="bg-white pt-14">
       <HardwareNav />
       <FeaturedSection />
       <ProductGridSection />
@@ -30,6 +30,6 @@ export function Hardware() {
       <StoriesSection />
       <FaqSection />
       <CtaSection />
-    </>
+    </div>
   );
 }
