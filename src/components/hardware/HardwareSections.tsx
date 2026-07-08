@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check } from "lucide-react";
 import {
   FEATURED,
   GRID_PRODUCTS,
-  ECOSYSTEM_DEVICES,
   COMPARE_COLUMNS,
   COMPARE_ROWS,
   KITS,
@@ -28,14 +27,6 @@ import {
   hwType,
   HW_SCROLL_OFFSET,
 } from "./HardwareUI";
-
-const CENTER = { x: 50, y: 50 };
-
-function polar(angle: number, dist: number) {
-  const rad = (angle * Math.PI) / 180;
-  const r = 36 * dist;
-  return { left: CENTER.x + r * Math.cos(rad), top: CENTER.y + r * Math.sin(rad) };
-}
 
 function curve(sx: number, sy: number, ex: number, ey: number) {
   const mx = (sx + ex) / 2;
@@ -135,102 +126,7 @@ export function ProductGridSection() {
   );
 }
 
-/* ── 4. Ecosystem ──────────────────────────────────────── */
-
-export function EcosystemSection() {
-  const [hovered, setHovered] = useState<string | null>(null);
-  const [linesOn, setLinesOn] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setLinesOn(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.3 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  const nodes = ECOSYSTEM_DEVICES.map((d) => ({ ...d, ...polar(d.angle, d.dist) }));
-
-  return (
-    <HwShell id="ecosystem">
-      <HwReveal>
-        <HwSectionIntro
-          title="One connected ecosystem"
-          description="Every device talks to every other — designed as a single restaurant platform."
-        />
-      </HwReveal>
-
-      <div ref={ref} className="relative mx-auto mt-14 h-[min(640px,75vh)] w-full max-w-[1000px]">
-        <svg
-          className="absolute inset-0 h-full w-full"
-          viewBox="0 0 100 100"
-          preserveAspectRatio="xMidYMid meet"
-          aria-hidden="true"
-        >
-          {nodes.map((n) => {
-            const pathD = curve(CENTER.x, CENTER.y, n.left, n.top);
-            const lit = hovered === n.id;
-            return (
-              <g key={n.id}>
-                <path d={pathD} fill="none" stroke="rgba(0,0,0,0.04)" strokeWidth="0.35" strokeLinecap="round" />
-                <motion.path
-                  d={pathD}
-                  fill="none"
-                  stroke={lit ? "#ED3C18" : "#FA9040"}
-                  strokeWidth={lit ? 0.55 : 0.35}
-                  strokeOpacity={lit ? 0.7 : linesOn ? 0.35 : 0}
-                  strokeLinecap="round"
-                  pathLength={1}
-                  initial={{ strokeDasharray: 1, strokeDashoffset: 1 }}
-                  animate={{ strokeDashoffset: linesOn ? 0 : 1 }}
-                  transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                />
-              </g>
-            );
-          })}
-        </svg>
-
-        <div
-          className="absolute z-20"
-          style={{ left: `${CENTER.x}%`, top: `${CENTER.y}%`, transform: "translate(-50%,-50%)" }}
-        >
-          <div
-            className="rounded-[32px] transition-shadow duration-350"
-            style={{
-              boxShadow: hovered ? "0 0 60px rgba(237,60,24,0.3)" : "none",
-            }}
-          >
-            <ProductVisual product="workstation" size="md" />
-          </div>
-        </div>
-
-        {nodes.map((n) => (
-          <button
-            key={n.id}
-            type="button"
-            className="absolute z-30 rounded-2xl border border-black/[0.05] bg-white px-5 py-3 text-[16px] font-semibold leading-[1.6] text-[#111111] shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-shadow duration-350 hover:shadow-[0_12px_32px_rgba(0,0,0,0.1)]"
-            style={{ left: `${n.left}%`, top: `${n.top}%`, transform: "translate(-50%,-50%)" }}
-            onMouseEnter={() => setHovered(n.id)}
-            onMouseLeave={() => setHovered(null)}
-          >
-            {n.label}
-          </button>
-        ))}
-      </div>
-    </HwShell>
-  );
-}
-
-/* ── 5. Comparison ─────────────────────────────────────── */
+/* ── 4. Comparison ─────────────────────────────────────── */
 
 export function ComparisonSection() {
   const visuals: ("register" | "terminal" | "handheld" | "kitchen-display")[] = [

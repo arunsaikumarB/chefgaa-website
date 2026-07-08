@@ -141,17 +141,6 @@ export const FEATURED = {
   visual: "register" as VisualId,
 };
 
-export const ECOSYSTEM_DEVICES = [
-  { id: "pos", label: "POS", angle: -90, dist: 0.55 },
-  { id: "printer", label: "Printer", angle: -30, dist: 1 },
-  { id: "scanner", label: "Scanner", angle: 25, dist: 1 },
-  { id: "drawer", label: "Cash Drawer", angle: 85, dist: 0.7 },
-  { id: "customer", label: "Customer Display", angle: 140, dist: 1 },
-  { id: "kitchen", label: "Kitchen Display", angle: 195, dist: 1.15 },
-  { id: "laptop", label: "Laptop", angle: 250, dist: 1.05 },
-  { id: "mobile", label: "Mobile", angle: 310, dist: 1.2 },
-] as const;
-
 export const COMPARE_COLUMNS = ["Register", "Terminal", "Handheld", "Kitchen Display"] as const;
 
 export const COMPARE_ROWS: { label: string; values: [string, string, string, string] }[] = [

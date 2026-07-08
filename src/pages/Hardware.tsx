@@ -1,7 +1,6 @@
 import {
   FeaturedSection,
   ProductGridSection,
-  EcosystemSection,
   ComparisonSection,
   ContactlessSection,
   KitsSection,
@@ -20,7 +19,6 @@ export function Hardware() {
       <HardwareNav />
       <FeaturedSection />
       <ProductGridSection />
-      <EcosystemSection />
       <ComparisonSection />
       <ContactlessSection />
       <KitsSection />
