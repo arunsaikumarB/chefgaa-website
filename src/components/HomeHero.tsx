@@ -95,10 +95,10 @@ export function HomeHero() {
 
           <h1
             data-hero-text
-            className="mt-10 max-w-[700px] font-sf-pro-display text-[44px] font-extrabold leading-[0.98] tracking-[-0.03em] text-white md:text-[60px] lg:mt-10 lg:text-[72px] xl:text-[84px]"
+            className="mt-10 max-w-[700px] font-sf-pro-display text-[44px] font-extrabold leading-[0.98] tracking-[-0.03em] !text-[#FFFFFF] md:text-[60px] lg:mt-10 lg:text-[72px] xl:text-[84px]"
           >
-            <span className="block">All-in-One POS &amp; Online Ordering</span>
-            <span className="block">for Restaurants.</span>
+            <span className="block text-[#FFFFFF]">All-in-One POS &amp; Online Ordering</span>
+            <span className="block text-[#FFFFFF]">for Restaurants.</span>
           </h1>
 
           <p
