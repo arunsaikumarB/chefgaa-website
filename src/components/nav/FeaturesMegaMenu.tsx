@@ -64,24 +64,24 @@ function FeatureMenuLink({
           }
         }}
         className={({ isActive }) =>
-          `group flex items-center gap-3 rounded-xl py-2.5 pr-2 transition-colors duration-[250ms] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 ${
+          `group -mx-1.5 flex items-center gap-2.5 rounded-lg border border-transparent px-2.5 py-2 transition-all duration-[200ms] hover:border-brand hover:bg-white focus-visible:outline-none focus-visible:border-brand focus-visible:bg-white ${
             isActive ? "text-brand" : ""
           }`
         }
       >
         <Icon
-          size={22}
+          size={20}
           strokeWidth={1.5}
-          className="shrink-0 text-[#8A8A8A] transition-colors duration-[250ms] group-hover:text-brand group-focus-visible:text-brand"
+          className="shrink-0 text-[#8A8A8A] transition-colors duration-[200ms] group-hover:text-brand group-focus-visible:text-brand"
           aria-hidden="true"
         />
-        <span className="min-w-0 flex-1 text-[16px] font-medium leading-snug text-[#111111]">
+        <span className="min-w-0 flex-1 whitespace-nowrap text-[15px] font-medium leading-tight text-[#111111]">
           {item.title}
         </span>
         <ArrowRight
-          size={16}
+          size={14}
           strokeWidth={2}
-          className="shrink-0 text-brand opacity-0 transition-all duration-[250ms] group-hover:translate-x-0.5 group-hover:opacity-100 group-focus-visible:translate-x-0.5 group-focus-visible:opacity-100"
+          className="w-0 shrink-0 overflow-hidden text-brand opacity-0 transition-all duration-[200ms] group-hover:w-3.5 group-hover:opacity-100 group-focus-visible:w-3.5 group-focus-visible:opacity-100"
           aria-hidden="true"
         />
       </NavLink>
@@ -101,7 +101,7 @@ function FeatureColumn({
   onFocusSibling: (index: number) => void;
 }) {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-0.5">
       {items.map((item, i) => (
         <FeatureMenuLink
           key={item.id}
@@ -117,11 +117,6 @@ function FeatureColumn({
 
 export function FeaturesMegaMenu({ onClose }: FeaturesMegaMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const first = menuRef.current?.querySelector<HTMLElement>('[role="menuitem"]');
-    first?.focus();
-  }, []);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -143,17 +138,17 @@ export function FeaturesMegaMenu({ onClose }: FeaturesMegaMenuProps) {
       ref={menuRef}
       role="menu"
       aria-label="Chefgaa features"
-      initial={{ opacity: 0, y: -10, scale: 0.98 }}
+      initial={{ opacity: 0, y: -8, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -10, scale: 0.98 }}
+      exit={{ opacity: 0, y: -8, scale: 0.98 }}
       transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-      className="absolute left-0 top-full z-50 mt-3 w-[min(720px,calc(100vw-2rem))] rounded-[24px] border border-black/[0.05] bg-[#FFFFFF] p-8 shadow-[0_24px_80px_rgba(0,0,0,0.08)]"
+      className="absolute left-0 top-[calc(100%+10px)] z-50 w-max max-w-[min(calc(100vw-2rem),520px)] origin-top-left rounded-2xl border border-black/[0.06] bg-[#FFFFFF] px-5 py-4 shadow-[0_16px_40px_rgba(0,0,0,0.1)]"
     >
-      <h3 className="mb-6 text-[14px] font-bold uppercase tracking-[0.12em] text-[#111111]">
+      <h3 className="mb-2.5 text-[12px] font-bold uppercase tracking-[0.12em] text-[#111111]">
         Features
       </h3>
 
-      <div className="grid grid-cols-1 gap-x-12 gap-y-0 sm:grid-cols-2 sm:gap-x-16">
+      <div className="flex gap-8">
         <FeatureColumn
           items={LEFT_COLUMN}
           startIndex={0}

@@ -142,6 +142,10 @@ export function Nav() {
                 onClick={() => setFeaturesOpen((open) => !open)}
                 onKeyDown={(event) => {
                   if (event.key === "Escape") setFeaturesOpen(false);
+                  if (event.key === "ArrowDown" && !featuresOpen) {
+                    event.preventDefault();
+                    setFeaturesOpen(true);
+                  }
                 }}
                 className={featuresTriggerClass(featuresActive || featuresOpen, variant)}
               >
