@@ -1,11 +1,18 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  Zap,
+  Monitor,
+  Printer,
+  ScanLine,
+  Wallet,
+  ChefHat,
+  Tv,
+  Smartphone,
+  Tablet,
+  Package,
   Shield,
-  Cloud,
-  Plug,
-  CreditCard,
-  TrendingUp,
+  Truck,
+  RefreshCw,
+  Wifi,
 } from "lucide-react";
 
 export type HardwareCategoryId =
@@ -16,243 +23,264 @@ export type HardwareCategoryId =
   | "kitchen-display"
   | "customer-display";
 
-export type HardwareCategory = {
-  id: HardwareCategoryId;
-  title: string;
-  description: string;
-  tint: string;
+export type SubNavItem = {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  href: string;
 };
 
-export const HARDWARE_CATEGORIES: HardwareCategory[] = [
-  {
-    id: "pos-terminal",
-    title: "POS Terminal",
-    description: "A fast, intuitive countertop terminal built for high-volume restaurant service.",
-    tint: "from-[#fff4f0] to-[#fffaf7]",
-  },
-  {
-    id: "receipt-printer",
-    title: "Receipt Printer",
-    description: "Thermal printing that keeps tickets moving — fast, quiet, and reliable.",
-    tint: "from-[#f8f9fa] to-[#ffffff]",
-  },
-  {
-    id: "barcode-scanner",
-    title: "Barcode Scanner",
-    description: "Instant inventory scanning with seamless POS integration.",
-    tint: "from-[#f0f7ff] to-[#ffffff]",
-  },
-  {
-    id: "cash-drawer",
-    title: "Cash Drawer",
-    description: "Secure, durable cash management that opens automatically with every sale.",
-    tint: "from-[#f5f0ff] to-[#ffffff]",
-  },
-  {
-    id: "kitchen-display",
-    title: "Kitchen Display",
-    description: "Real-time order routing that keeps your back of house in perfect sync.",
-    tint: "from-[#fff8f0] to-[#ffffff]",
-  },
-  {
-    id: "customer-display",
-    title: "Customer Display",
-    description: "Face guests with clear totals, tips, and payment prompts at checkout.",
-    tint: "from-[#f0faf5] to-[#ffffff]",
-  },
+export const HARDWARE_SUBNAV: SubNavItem[] = [
+  { id: "handheld", label: "Handheld", icon: Smartphone, href: "#handheld" },
+  { id: "terminal", label: "Terminal", icon: Monitor, href: "#terminal" },
+  { id: "register", label: "Register", icon: Tablet, href: "#register" },
+  { id: "kitchen", label: "Kitchen", icon: ChefHat, href: "#kitchen-display" },
+  { id: "reader", label: "Scanner", icon: ScanLine, href: "#scanner" },
+  { id: "printer", label: "Printer", icon: Printer, href: "#printer" },
+  { id: "drawer", label: "Drawer", icon: Wallet, href: "#drawer" },
+  { id: "display", label: "Display", icon: Tv, href: "#customer-display" },
+  { id: "kits", label: "Kits", icon: Package, href: "#kits" },
 ];
 
-export const FEATURED_PRODUCTS = [
-  {
-    id: "pos-terminal",
-    eyebrow: "Smart POS Terminal",
-    headline: ["Fast.", "Reliable.", "Built for restaurants."],
-    description:
-      "Purpose-built for the pace of a busy restaurant floor — from quick-service counters to full-service dining rooms.",
-    features: [
-      "15.6\" responsive touch display",
-      "All-day battery with wall-power mode",
-      "Wi-Fi, Ethernet & offline payments",
-      "Integrated with Chefgaa POS software",
-    ],
-    reverse: false,
-  },
-  {
-    id: "kitchen-display",
-    eyebrow: "Kitchen Display",
-    headline: ["Keep your", "kitchen moving."],
-    description:
-      "Route every order to the right station in real time. Color-coded tickets, prep timers, and bump bars keep the line flowing.",
-    features: [
-      "Multi-station order routing",
-      "Real-time sync with POS",
-      "Rush-hour prioritization",
-      "Mount-ready rugged design",
-    ],
-    reverse: true,
-  },
-  {
-    id: "mobile-ordering",
-    eyebrow: "Mobile Ordering",
-    headline: ["Take orders", "anywhere."],
-    description:
-      "Tableside ordering and payments on a pocketable device your staff can carry across the floor.",
-    features: [
-      "Handheld POS with built-in scanner",
-      "Contactless & chip payments",
-      "All-day battery life",
-      "Instant sync with kitchen",
-    ],
-    reverse: false,
-  },
-  {
-    id: "barcode-scanner",
-    eyebrow: "Barcode Scanner",
-    headline: ["Instant", "inventory scanning."],
-    description:
-      "Scan items at the counter or in the stockroom. Every scan updates inventory across your Chefgaa ecosystem.",
-    features: [
-      "1D & 2D barcode support",
-      "USB & Bluetooth connectivity",
-      "Hands-free stand mode",
-      "Real-time stock updates",
-    ],
-    reverse: true,
-  },
-  {
-    id: "receipt-printer",
-    eyebrow: "Receipt Printer",
-    headline: ["Fast printing.", "Quiet operation."],
-    description:
-      "High-speed thermal printing for receipts, kitchen tickets, and labels — without disrupting the dining room.",
-    features: [
-      "200mm/s print speed",
-      "Auto-cutter & jam detection",
-      "Ethernet & USB connectivity",
-      "Compact countertop footprint",
-    ],
-    reverse: false,
-  },
-] as const;
-
-export const ECOSYSTEM_DEVICES = [
-  { id: "pos", label: "POS Terminal", angle: -90, distance: 0 },
-  { id: "printer", label: "Receipt Printer", angle: -35, distance: 1 },
-  { id: "scanner", label: "Barcode Scanner", angle: 35, distance: 1 },
-  { id: "drawer", label: "Cash Drawer", angle: 90, distance: 0.6 },
-  { id: "customer", label: "Customer Display", angle: 145, distance: 1 },
-  { id: "kitchen", label: "Kitchen Display", angle: 200, distance: 1.2 },
-  { id: "tablet", label: "Tablet", angle: 250, distance: 1.1 },
-  { id: "phone", label: "Mobile", angle: 310, distance: 1.3 },
-] as const;
-
-export const WHY_HARDWARE: {
+export type ProductShowcase = {
+  id: string;
+  anchor: string;
+  badge?: string;
   title: string;
   description: string;
-  icon: LucideIcon;
-  tint: string;
-}[] = [
+  price?: string;
+  priceNote?: string;
+  visual: HardwareCategoryId | "mobile-ordering";
+  featured?: boolean;
+};
+
+export const PRODUCT_SHOWCASES: ProductShowcase[] = [
   {
-    title: "Lightning Fast",
-    description: "Sub-second transaction processing keeps your line moving during the rush.",
-    icon: Zap,
-    tint: "from-[#fff4f0] to-[#ffede8]",
+    id: "register",
+    anchor: "register",
+    badge: "NEW",
+    title: "Chefgaa Register",
+    description: "A complete point-of-sale system built for busy restaurant counters.",
+    price: "$899",
+    priceNote: "or $44/mo over 24 months",
+    visual: "pos-terminal",
+    featured: true,
   },
   {
-    title: "Restaurant Grade",
-    description: "Spill-resistant, heat-tolerant hardware built for the realities of a busy kitchen.",
-    icon: Shield,
-    tint: "from-[#f0f7ff] to-[#e8f2ff]",
+    id: "handheld",
+    anchor: "handheld",
+    title: "Chefgaa Handheld",
+    description: "The powerful POS that moves with you across the dining room.",
+    price: "$399",
+    priceNote: "or $37/mo over 12 months",
+    visual: "mobile-ordering",
   },
   {
-    title: "Cloud Connected",
-    description: "Every device syncs in real time with your Chefgaa cloud dashboard.",
-    icon: Cloud,
-    tint: "from-[#f5f0ff] to-[#ede8ff]",
+    id: "terminal",
+    anchor: "terminal",
+    title: "Chefgaa Terminal",
+    description: "The all-in-one POS with a built-in receipt printer.",
+    price: "$299",
+    priceNote: "or $27/mo over 12 months",
+    visual: "pos-terminal",
   },
   {
-    title: "Plug & Play",
-    description: "Unbox, connect, and start taking orders in minutes — no IT team required.",
-    icon: Plug,
-    tint: "from-[#f0faf5] to-[#e8f5ee]",
+    id: "kitchen-display",
+    anchor: "kitchen-display",
+    title: "Kitchen Display",
+    description: "Real-time order routing that keeps your back of house in perfect sync.",
+    price: "$349",
+    priceNote: "or $32/mo over 12 months",
+    visual: "kitchen-display",
   },
   {
-    title: "Secure Payments",
-    description: "PCI-compliant encryption on every transaction, online and offline.",
-    icon: CreditCard,
-    tint: "from-[#fff8f0] to-[#ffefe0]",
+    id: "scanner",
+    anchor: "scanner",
+    title: "Barcode Scanner",
+    description: "The portable scanner for instant inventory and checkout.",
+    price: "$59",
+    visual: "barcode-scanner",
   },
   {
-    title: "Built to Scale",
-    description: "From one location to hundreds — add devices as your business grows.",
-    icon: TrendingUp,
-    tint: "from-[#f8f9fa] to-[#f0f1f3]",
+    id: "printer",
+    anchor: "printer",
+    title: "Receipt Printer",
+    description: "Fast, quiet thermal printing for every ticket.",
+    price: "$199",
+    priceNote: "or $18/mo over 12 months",
+    visual: "receipt-printer",
   },
 ];
 
-export const COMPARISON_PRODUCTS = ["POS", "Printer", "Scanner", "Kitchen Display", "Tablet"] as const;
+export type CompareDevice = {
+  id: string;
+  name: string;
+  shortDescription: string;
+  visual: HardwareCategoryId | "mobile-ordering";
+  rows: Record<string, string>;
+};
 
-export const COMPARISON_ROWS: {
-  label: string;
-  values: [string, string, string, string, string];
-}[] = [
+export const COMPARE_DEVICES: CompareDevice[] = [
   {
-    label: "Connectivity",
-    values: ["Wi-Fi, Ethernet", "USB, Ethernet", "USB, Bluetooth", "Wi-Fi, Ethernet", "Wi-Fi, Bluetooth"],
+    id: "handheld",
+    name: "Handheld",
+    shortDescription: "A pocketable POS for tableside orders and payments.",
+    visual: "mobile-ordering",
+    rows: {
+      "Accepted payments": "Contactless, Chip",
+      Power: "Battery — cordless use",
+      "Internet connection": "Wi-Fi",
+      "Additional devices": "No additional device required",
+      Price: "$399 or $37/mo over 12 months",
+    },
   },
   {
-    label: "Touch Screen",
-    values: ["15.6\" HD", "—", "—", "21.5\" HD", "10.9\" HD"],
+    id: "terminal",
+    name: "Terminal",
+    shortDescription: "A compact card machine with a built-in receipt printer.",
+    visual: "pos-terminal",
+    rows: {
+      "Accepted payments": "Contactless, Chip, Magstripe",
+      Power: "Battery or wall outlet",
+      "Internet connection": "Wi-Fi or Ethernet",
+      "Additional devices": "No additional device required",
+      Price: "$299 or $27/mo over 12 months",
+    },
   },
   {
-    label: "Warranty",
-    values: ["2 years", "1 year", "1 year", "2 years", "1 year"],
+    id: "register",
+    name: "Register",
+    shortDescription: "A complete point-of-sale system built for busy counters.",
+    visual: "pos-terminal",
+    rows: {
+      "Accepted payments": "Contactless, Chip, Magstripe",
+      Power: "Wall outlet",
+      "Internet connection": "Wi-Fi or Ethernet",
+      "Additional devices": "No additional device required",
+      Price: "$899 or $44/mo over 24 months",
+    },
   },
   {
-    label: "Recommended Use",
-    values: ["Counter / Bar", "Counter", "Counter / Stockroom", "Kitchen", "Tableside / Mobile"],
+    id: "kitchen",
+    name: "Kitchen Display",
+    shortDescription: "Real-time orders for a seamless kitchen flow.",
+    visual: "kitchen-display",
+    rows: {
+      "Accepted payments": "—",
+      Power: "Wall outlet",
+      "Internet connection": "Wi-Fi or Ethernet",
+      "Additional devices": "No additional device required",
+      Price: "$349 or $32/mo over 12 months",
+    },
+  },
+  {
+    id: "scanner",
+    name: "Scanner",
+    shortDescription: "A portable scanner for inventory and checkout.",
+    visual: "barcode-scanner",
+    rows: {
+      "Accepted payments": "—",
+      Power: "USB powered",
+      "Internet connection": "Via your POS",
+      "Additional devices": "Connects via USB or Bluetooth",
+      Price: "$59",
+    },
+  },
+  {
+    id: "tablet",
+    name: "Tablet",
+    shortDescription: "A flexible tablet POS for tableside and counter service.",
+    visual: "customer-display",
+    rows: {
+      "Accepted payments": "Contactless, Chip",
+      Power: "Battery — cordless use",
+      "Internet connection": "Wi-Fi",
+      "Additional devices": "Requires compatible tablet",
+      Price: "$149 or $14/mo over 12 months",
+    },
   },
 ];
 
-export const GALLERY_ITEMS = [
-  { id: "pos-front", label: "POS Terminal — Front", angle: "front" },
-  { id: "pos-side", label: "POS Terminal — Side", angle: "side" },
-  { id: "printer", label: "Receipt Printer", angle: "front" },
-  { id: "scanner", label: "Barcode Scanner", angle: "side" },
-  { id: "kitchen", label: "Kitchen Display", angle: "front" },
-  { id: "workstation", label: "Full Workstation", angle: "hero" },
+export const COMPARE_ROW_LABELS = [
+  "Accepted payments",
+  "Power",
+  "Internet connection",
+  "Additional devices",
+  "Price",
 ] as const;
 
-export const TESTIMONIALS = [
+export const ACCESSORIES = [
   {
-    quote:
-      "We replaced our entire counter setup with Chefgaa hardware. Setup took an afternoon, and our staff was comfortable by dinner service.",
-    name: "Priya Sharma",
-    role: "Owner, Spice Route Kitchen",
-    location: "Austin, TX",
+    id: "counter-kit",
+    title: "Counter Kit",
+    description: "POS terminal, receipt printer, and cash drawer — everything for your front counter.",
+    price: "From $1,099",
+    visual: "pos-terminal" as const,
   },
   {
-    quote:
-      "The kitchen display alone cut our ticket times by 20%. Everything talks to everything — no more missed modifiers.",
-    name: "Marcus Chen",
-    role: "GM, Harbor & Vine",
-    location: "San Francisco, CA",
-  },
-  {
-    quote:
-      "Tableside ordering with the handheld changed our service model. Guests love it, and turnover is up without feeling rushed.",
-    name: "Elena Rodriguez",
-    role: "Operations Director, Casa Norte Group",
-    location: "Miami, FL",
+    id: "kitchen-kit",
+    title: "Kitchen Kit",
+    description: "Kitchen display with mounting hardware and station labels.",
+    price: "From $449",
+    visual: "kitchen-display" as const,
   },
 ];
 
-export const SOFTWARE_MODULES = [
-  "POS",
-  "Inventory",
-  "Online Ordering",
-  "Kitchen Display",
-  "CRM",
-  "Loyalty",
-  "Analytics",
+export const PEACE_OF_MIND = [
+  {
+    title: "No surprise fees",
+    description: "No long-term contracts required.",
+    icon: Shield,
+  },
+  {
+    title: "Limited warranties",
+    description: "And free 30-day returns.",
+    icon: RefreshCw,
+  },
+  {
+    title: "Carbon-neutral shipping",
+    description: "And more sustainability initiatives.",
+    icon: Truck,
+  },
+  {
+    title: "Process payments securely",
+    description: "Even when offline.",
+    icon: Wifi,
+  },
+];
+
+export const USE_CASES = [
+  {
+    title: "Turn tables, keep orders flowing",
+    description: "Run your restaurant smoothly with Chefgaa for Restaurants.",
+    link: "Explore Chefgaa for Restaurants",
+    gradient: "from-[#fff4f0] via-[#f8f9fa] to-[#f0f7ff]",
+  },
+  {
+    title: "Simplify your day-to-day",
+    description: "A complete retail POS system for modern operators.",
+    link: "Explore Chefgaa for Retail",
+    gradient: "from-[#f0f7ff] via-[#f8f9fa] to-[#fff8f0]",
+  },
+  {
+    title: "Manage staff and payments",
+    description: "Appointments, payments, and insights with ease.",
+    link: "Explore Chefgaa for Services",
+    gradient: "from-[#f5f0ff] via-[#f8f9fa] to-[#f0faf5]",
+  },
+];
+
+export const RESOURCE_CARDS = [
+  {
+    title: "Chat with us",
+    description: "Connect with our customer support team for help whenever you need it.",
+    link: "Get connected",
+    to: "/contact",
+  },
+  {
+    title: "Find a partner",
+    description: "Want Chefgaa hardware today? Find authorized partners near you.",
+    link: "See partners",
+    to: "/contact",
+  },
 ];

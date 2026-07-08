@@ -1,26 +1,23 @@
-import { HardwareHero, HardwareCategories } from "../components/hardware/HardwareHero";
-import { FeaturedHardware } from "../components/hardware/FeaturedHardware";
-import { HardwareEcosystem } from "../components/hardware/HardwareEcosystem";
-import { WhyHardware } from "../components/hardware/WhyHardware";
-import { ProductComparison } from "../components/hardware/ProductComparison";
-import { HardwareGallery } from "../components/hardware/HardwareGallery";
-import { SoftwareHardware } from "../components/hardware/SoftwareHardware";
-import { CustomerSuccess } from "../components/hardware/CustomerSuccess";
-import { HardwareCTA } from "../components/hardware/HardwareCTA";
+import { HardwareHero } from "../components/hardware/HardwareHero";
+import { HardwareCompare } from "../components/hardware/HardwareCompare";
+import {
+  HardwareMobileFeature,
+  HardwareAccessories,
+  HardwarePeaceOfMind,
+  HardwareUseCases,
+  HardwareResources,
+} from "../components/hardware/HardwareSquareSections";
 
 export function Hardware() {
   return (
     <>
       <HardwareHero />
-      <HardwareCategories />
-      <FeaturedHardware />
-      <HardwareEcosystem />
-      <WhyHardware />
-      <ProductComparison />
-      <HardwareGallery />
-      <SoftwareHardware />
-      <CustomerSuccess />
-      <HardwareCTA />
+      <HardwareCompare />
+      <HardwareMobileFeature />
+      <HardwareAccessories />
+      <HardwarePeaceOfMind />
+      <HardwareUseCases />
+      <HardwareResources />
     </>
   );
 }
