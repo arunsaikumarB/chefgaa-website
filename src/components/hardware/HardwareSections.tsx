@@ -27,7 +27,6 @@ import {
   ProductVisual,
   hwType,
 } from "./HardwareUI";
-import { HardwareNav } from "./HardwareNav";
 
 const CENTER = { x: 50, y: 50 };
 
@@ -45,61 +44,11 @@ function curve(sx: number, sy: number, ex: number, ey: number) {
   return `M ${sx} ${sy} C ${mx - dy * 0.14} ${my + dx * 0.14}, ${mx + dy * 0.07} ${my - dx * 0.07}, ${ex} ${ey}`;
 }
 
-/* ── 1. Hero ───────────────────────────────────────────── */
-
-export function HeroSection() {
-  return (
-    <section className="relative overflow-hidden bg-white pt-32 pb-20 md:pt-40 md:pb-24">
-      <div className="mx-auto max-w-[1600px] px-6 text-center md:px-10 lg:px-20">
-        <div className="mx-auto max-w-[1440px]">
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <span className="inline-flex rounded-full border border-black/[0.06] bg-[#F5F6F8] px-6 py-2 text-[16px] font-semibold uppercase tracking-[0.12em] text-[#ED3C18]">
-              Chefgaa Hardware
-            </span>
-            <h1 className={`mx-auto mt-10 max-w-[960px] ${hwType.hero}`}>
-              Hardware built for modern restaurants.
-            </h1>
-            <p className={`mx-auto mt-8 max-w-[720px] ${hwType.body}`}>
-              Every Chefgaa device works together as one intelligent ecosystem—fast, reliable, and built to scale with your business.
-            </p>
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
-              <HwPrimaryBtn>Explore Hardware</HwPrimaryBtn>
-              <HwGhostBtn>Request Demo</HwGhostBtn>
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="relative mt-20 md:mt-24"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div
-              className="pointer-events-none absolute left-1/2 top-1/2 h-[min(560px,65vw)] w-[min(560px,65vw)] -translate-x-1/2 -translate-y-1/2 rounded-full"
-              style={{
-                background:
-                  "radial-gradient(circle, rgba(250,144,64,0.18) 0%, rgba(237,60,24,0.05) 45%, transparent 70%)",
-                filter: "blur(50px)",
-              }}
-            />
-            <ProductVisual product="workstation" size="hero" />
-          </motion.div>
-        </div>
-      </div>
-      <HardwareNav />
-    </section>
-  );
-}
-
-/* ── 2. Featured ───────────────────────────────────────── */
+/* ── 1. Featured ───────────────────────────────────────── */
 
 export function FeaturedSection() {
   return (
-    <HwShell id="register">
+    <HwShell id="register" className="!pt-24">
       <HwReveal>
         <div className="overflow-hidden rounded-[32px] bg-[#F5F6F8]">
           <div className="grid items-center lg:grid-cols-2">

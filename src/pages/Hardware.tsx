@@ -1,5 +1,5 @@
+import { HardwareNav } from "../components/hardware/HardwareNav";
 import {
-  HeroSection,
   FeaturedSection,
   ProductGridSection,
   EcosystemSection,
@@ -17,7 +17,7 @@ import {
 export function Hardware() {
   return (
     <>
-      <HeroSection />
+      <HardwareNav />
       <FeaturedSection />
       <ProductGridSection />
       <EcosystemSection />
