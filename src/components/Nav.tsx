@@ -13,6 +13,7 @@ const featureLinks = [
 
 const mainLinks = [
   { to: "/", label: "Home", end: true },
+  { to: "/hardware", label: "Hardware" },
   { to: "/pricing", label: "Pricing" },
   { to: "/about", label: "About Us" },
   { to: "/contact", label: "Contact Us" },

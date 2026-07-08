@@ -4,6 +4,7 @@ const columns = [
   {
     heading: "Product",
     links: [
+      { to: "/hardware", label: "Hardware" },
       { to: "/online-ordering", label: "Online Ordering" },
       { to: "/customized-website", label: "Customized Website" },
       { to: "/table-reservation", label: "Table Reservation" },

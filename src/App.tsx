@@ -8,6 +8,7 @@ import { CateringServices } from "./pages/CateringServices";
 import { Pricing } from "./pages/Pricing";
 import { About } from "./pages/About";
 import { Contact } from "./pages/Contact";
+import { Hardware } from "./pages/Hardware";
 import { NotFound } from "./pages/NotFound";
 
 export default function App() {
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/table-reservation" element={<TableReservation />} />
         <Route path="/catering-services" element={<CateringServices />} />
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/hardware" element={<Hardware />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="*" element={<NotFound />} />
