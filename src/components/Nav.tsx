@@ -3,13 +3,9 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Globe } from "lucide-react";
 import { ChefgaaLogo } from "./ChefgaaLogo";
-
-const featureLinks = [
-  { to: "/online-ordering", label: "Online Ordering" },
-  { to: "/customized-website", label: "Website" },
-  { to: "/table-reservation", label: "Reservations" },
-  { to: "/catering-services", label: "Catering" },
-];
+import { FeaturesMegaMenu } from "./nav/FeaturesMegaMenu";
+import { FeaturesMobileAccordion } from "./nav/FeaturesMobileAccordion";
+import { FEATURE_MENU_FLAT } from "./nav/featuresMenuData";
 
 const mainLinks = [
   { to: "/", label: "Home", end: true },
@@ -59,7 +55,13 @@ export function Nav() {
   const isHome = location.pathname === "/";
   const isSolid = scrolled || menuOpen || !isHome;
   const variant: NavVariant = isSolid ? "solid" : "overlay";
-  const featuresActive = featureLinks.some((link) => location.pathname === link.to);
+  const featuresActive = FEATURE_MENU_FLAT.some((item) => {
+    if (item.to.includes("#")) {
+      const [path, hash] = item.to.split("#");
+      return location.pathname === path && location.hash === `#${hash}`;
+    }
+    return location.pathname === item.to;
+  });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -138,6 +140,9 @@ export function Nav() {
                 aria-expanded={featuresOpen}
                 aria-haspopup="menu"
                 onClick={() => setFeaturesOpen((open) => !open)}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") setFeaturesOpen(false);
+                }}
                 className={featuresTriggerClass(featuresActive || featuresOpen, variant)}
               >
                 Features
@@ -149,29 +154,7 @@ export function Nav() {
               </button>
               <AnimatePresence>
                 {featuresOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 6 }}
-                    transition={{ duration: 0.18 }}
-                    className="absolute left-0 top-full z-50 mt-2 min-w-[200px] rounded-2xl border border-hairline/80 bg-paper py-2 shadow-[0_12px_40px_rgba(0,0,0,0.08)]"
-                    role="menu"
-                  >
-                    {featureLinks.map((link) => (
-                      <NavLink
-                        key={link.to}
-                        to={link.to}
-                        role="menuitem"
-                        className={({ isActive }) =>
-                          `block px-4 py-2.5 text-[14px] transition-colors hover:bg-canvas ${
-                            isActive ? "font-medium text-brand" : "text-primary-ink"
-                          }`
-                        }
-                      >
-                        {link.label}
-                      </NavLink>
-                    ))}
-                  </motion.div>
+                  <FeaturesMegaMenu onClose={() => setFeaturesOpen(false)} />
                 )}
               </AnimatePresence>
             </li>
@@ -317,22 +300,7 @@ export function Nav() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.22 }}
               >
-                <p className="pt-4 text-[12px] font-medium uppercase tracking-[0.12em] text-mid-gray">
-                  Features
-                </p>
-                {featureLinks.map((link) => (
-                  <NavLink
-                    key={link.to}
-                    to={link.to}
-                    className={({ isActive }) =>
-                      `block border-b border-hairline py-3 text-[22px] font-semibold ${
-                        isActive ? "text-brand" : "text-primary-ink"
-                      }`
-                    }
-                  >
-                    {link.label}
-                  </NavLink>
-                ))}
+                <FeaturesMobileAccordion onNavigate={() => setMenuOpen(false)} />
               </motion.li>
             </ul>
 
