@@ -13,7 +13,7 @@ export function GlowPlatform({ visible, breathing = false }: GlowPlatformProps) 
       className="pointer-events-none absolute left-1/2 top-[58%] -translate-x-1/2 -translate-y-1/2"
       initial={{ scale: 0, opacity: 0 }}
       animate={visible ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-      transition={{ type: "spring", stiffness: 120, damping: 20, duration: 0.8 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       aria-hidden="true"
     >
       <motion.div

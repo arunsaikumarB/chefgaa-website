@@ -1,7 +1,6 @@
-import { forwardRef, type ReactNode, type Ref } from "react";
+import { forwardRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { anchorClassForZone } from "./connectionPaths";
-import type { EcosystemFeature, IconAnimation } from "./features";
+import type { EcosystemFeature } from "./features";
 
 type FeatureCardProps = {
   feature: EcosystemFeature;
@@ -10,52 +9,14 @@ type FeatureCardProps = {
   dimmed: boolean;
   onHover: (id: string | null) => void;
   align?: "left" | "right" | "center";
-  anchorRef?: Ref<HTMLSpanElement>;
 };
 
-function HoverIconAnimation({
-  animation,
-  active,
-  children,
-}: {
-  animation: IconAnimation;
-  active: boolean;
-  children: ReactNode;
-}) {
-  const reduce = useReducedMotion();
-  if (!active || reduce) return <>{children}</>;
-
-  const variants: Record<IconAnimation, object> = {
-    "brain-pulse": { scale: [1, 1.1, 1] },
-    "megaphone-wiggle": { rotate: [-5, 5, 0] },
-    "cube-rotate": { rotate: [0, 12, 0] },
-    "globe-rotate": { rotate: [0, 10, -10, 0] },
-    "calendar-flip": { rotateX: [0, 15, 0] },
-    steam: { y: [0, -3, 0] },
-    "users-pulse": { scale: [1, 1.08, 1] },
-    "badge-shine": { scale: [1, 1.08, 1] },
-    "phone-float": { y: [0, -3, 0] },
-    "card-flip": { rotateY: [0, 12, 0] },
-    "bars-animate": { y: [0, -2, 0] },
-    "cart-slide": { x: [0, 3, 0] },
-    default: { scale: 1 },
-  };
-
-  return (
-    <motion.div
-      animate={variants[animation] as { scale?: number | number[]; rotate?: number[]; rotateY?: number[]; rotateX?: number[]; y?: number[]; x?: number[] }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-    >
-      {children}
-    </motion.div>
-  );
-}
+const REVEAL_EASE = [0.22, 1, 0.36, 1] as const;
+const HOVER_EASE = [0.22, 1, 0.36, 1] as const;
 
 export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
-  function FeatureCard(
-    { feature, visible, highlighted, dimmed, onHover, align = "left", anchorRef },
-    ref
-  ) {
+  function FeatureCard({ feature, visible, highlighted, dimmed, onHover, align = "left" }, ref) {
+    const reduce = useReducedMotion();
     const Icon = feature.icon;
 
     return (
@@ -65,46 +26,48 @@ export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
         role="article"
         aria-label={feature.title}
         tabIndex={0}
-        className={`pointer-events-auto relative w-full max-w-[400px] min-w-[320px] min-h-[132px] rounded-[28px] border border-black/[0.05] bg-paper px-7 py-6 ${
+        className={`pointer-events-auto w-full max-w-[400px] min-w-[320px] min-h-[132px] rounded-[28px] border border-black/[0.05] bg-paper px-7 py-6 will-change-transform ${
           align === "right" ? "ml-auto" : align === "center" ? "mx-auto" : ""
         }`}
         style={{
           boxShadow: highlighted
-            ? "0 24px 56px rgba(0,0,0,0.11)"
+            ? "0 20px 48px rgba(0,0,0,0.12)"
             : "0 12px 40px rgba(0,0,0,0.06)",
-          willChange: "transform, opacity",
+          transform: "translateZ(0)",
         }}
-        initial={false}
+        initial={{ opacity: 0, y: 20, scale: 0.96 }}
         animate={{
-          opacity: visible ? (dimmed ? 0.6 : 1) : 0,
-          scale: visible ? (highlighted ? 1.04 : 1) : 0.9,
-          y: visible ? (highlighted ? -10 : 0) : 20,
+          opacity: visible ? (dimmed ? 0.65 : 1) : 0,
+          y: visible ? (highlighted ? -6 : 0) : 20,
+          scale: visible ? (highlighted ? 1.02 : 1) : 0.96,
         }}
-        transition={{
-          opacity: { duration: 0.35 },
-          scale: { type: "spring", stiffness: 400, damping: 28 },
-          y: { type: "spring", stiffness: 400, damping: 28 },
-        }}
+        transition={
+          reduce
+            ? { duration: 0 }
+            : {
+                opacity: { duration: visible && !highlighted ? 0.5 : 0.25, ease: REVEAL_EASE },
+                y: { duration: highlighted ? 0.25 : 0.5, ease: highlighted ? HOVER_EASE : REVEAL_EASE },
+                scale: { duration: highlighted ? 0.25 : 0.5, ease: highlighted ? HOVER_EASE : REVEAL_EASE },
+              }
+        }
         onMouseEnter={() => onHover(feature.id)}
         onMouseLeave={() => onHover(null)}
         onFocus={() => onHover(feature.id)}
         onBlur={() => onHover(null)}
       >
-        <span
-          ref={anchorRef}
-          data-connection-anchor={feature.id}
-          className={`pointer-events-none absolute h-px w-px ${anchorClassForZone(feature.zone)}`}
-          aria-hidden="true"
-        />
         <div className="flex items-start gap-5">
-          <HoverIconAnimation animation={feature.iconAnimation} active={highlighted}>
-            <div
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[16px]"
-              style={{ backgroundColor: `${feature.accent}15`, color: feature.accent }}
-            >
-              <Icon size={26} strokeWidth={1.7} aria-hidden="true" />
-            </div>
-          </HoverIconAnimation>
+          <motion.div
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[16px]"
+            style={{
+              backgroundColor: `${feature.accent}15`,
+              color: feature.accent,
+              transform: "translateZ(0)",
+            }}
+            animate={{ scale: highlighted ? 1.05 : 1 }}
+            transition={{ duration: 0.25, ease: HOVER_EASE }}
+          >
+            <Icon size={26} strokeWidth={1.7} aria-hidden="true" />
+          </motion.div>
           <div className="min-w-0 flex-1 pt-1">
             <h3 className="font-sf-pro-display text-[18px] font-semibold leading-snug text-[#111111]">
               {feature.title}
