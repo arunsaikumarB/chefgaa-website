@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useInView } from "react-intersection-observer";
@@ -9,6 +9,7 @@ import { GlowPlatform } from "./GlowPlatform";
 import { ConnectionLines } from "./ConnectionLines";
 import { FeatureCard } from "./FeatureCard";
 import { FloatingMetrics } from "./FloatingMetrics";
+import { useConnectionLayout } from "./useConnectionLayout";
 import {
   ANIMATION_ORDER,
   ECOSYSTEM_FEATURES,
@@ -23,8 +24,17 @@ export default function EcosystemSection() {
   const headerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const posRef = useRef<HTMLDivElement>(null);
+  const hubAnchorRef = useRef<HTMLSpanElement>(null);
+  const cardAnchorRefs = useRef<Record<string, HTMLElement | null>>({});
   const reduce = useReducedMotion();
   const hasAnimated = useRef(false);
+
+  const setCardAnchorRef = useCallback(
+    (id: string) => (el: HTMLSpanElement | null) => {
+      cardAnchorRefs.current[id] = el;
+    },
+    []
+  );
 
   const [posVisible, setPosVisible] = useState(false);
   const [platformVisible, setPlatformVisible] = useState(false);
@@ -37,6 +47,28 @@ export default function EcosystemSection() {
   const [floating, setFloating] = useState(false);
 
   const { ref: inViewRef, inView } = useInView({ threshold: 0.4, triggerOnce: true });
+
+  const layoutDeps = useMemo(
+    () => [hoveredId, cardVisible, posVisible, platformVisible],
+    [hoveredId, cardVisible, posVisible, platformVisible]
+  );
+
+  const { layout, paths, remeasure } = useConnectionLayout(canvasRef, hubAnchorRef, cardAnchorRefs, {
+    enabled: inView,
+    deps: layoutDeps,
+  });
+
+  useEffect(() => {
+    if (!hoveredId) return;
+    let frame = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      remeasure();
+      if (now - start < 500) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [hoveredId, remeasure]);
 
   const setRefs = useCallback(
     (node: HTMLElement | null) => {
@@ -187,6 +219,9 @@ export default function EcosystemSection() {
         className="relative z-10 mx-auto mt-2 hidden w-full min-h-[88vh] px-6 md:block lg:px-12 xl:px-16"
       >
         <ConnectionLines
+          paths={paths}
+          width={layout.width}
+          height={layout.height}
           lineProgress={lineProgress}
           highlightedId={hoveredId}
           pulseId={pulseId}
@@ -204,6 +239,7 @@ export default function EcosystemSection() {
               highlighted={hoveredId === f.id}
               onHover={setHoveredId}
               align="center"
+              anchorRef={setCardAnchorRef(f.id)}
             />
           ))}
         </div>
@@ -220,6 +256,7 @@ export default function EcosystemSection() {
                 highlighted={hoveredId === f.id}
                 onHover={setHoveredId}
                 align="left"
+                anchorRef={setCardAnchorRef(f.id)}
               />
             ))}
           </div>
@@ -228,6 +265,12 @@ export default function EcosystemSection() {
             className="relative flex shrink-0 items-center justify-center self-center"
             ref={posRef}
           >
+            <span
+              ref={hubAnchorRef}
+              data-connection-hub
+              className="pointer-events-none absolute left-1/2 top-1/2 z-20 h-px w-px -translate-x-1/2 -translate-y-1/2"
+              aria-hidden="true"
+            />
             <GlowPlatform visible={platformVisible} breathing={sequenceComplete} />
             <AnimatedPOS
               assemble={posVisible ? 1 : 0}
@@ -246,6 +289,7 @@ export default function EcosystemSection() {
                 highlighted={hoveredId === f.id}
                 onHover={setHoveredId}
                 align="right"
+                anchorRef={setCardAnchorRef(f.id)}
               />
             ))}
           </div>
@@ -261,6 +305,7 @@ export default function EcosystemSection() {
               dimmed={anyHovered && hoveredId !== f.id}
               highlighted={hoveredId === f.id}
               onHover={setHoveredId}
+              anchorRef={setCardAnchorRef(f.id)}
             />
           ))}
           {featuresByZone("bottom-right").map((f) => (
@@ -271,6 +316,7 @@ export default function EcosystemSection() {
               dimmed={anyHovered && hoveredId !== f.id}
               highlighted={hoveredId === f.id}
               onHover={setHoveredId}
+              anchorRef={setCardAnchorRef(f.id)}
             />
           ))}
         </div>

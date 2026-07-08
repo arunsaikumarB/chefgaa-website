@@ -1,5 +1,6 @@
-import { forwardRef, type ReactNode } from "react";
+import { forwardRef, type ReactNode, type Ref } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { anchorClassForZone } from "./connectionPaths";
 import type { EcosystemFeature, IconAnimation } from "./features";
 
 type FeatureCardProps = {
@@ -9,6 +10,7 @@ type FeatureCardProps = {
   dimmed: boolean;
   onHover: (id: string | null) => void;
   align?: "left" | "right" | "center";
+  anchorRef?: Ref<HTMLSpanElement>;
 };
 
 function HoverIconAnimation({
@@ -50,7 +52,10 @@ function HoverIconAnimation({
 }
 
 export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
-  function FeatureCard({ feature, visible, highlighted, dimmed, onHover, align = "left" }, ref) {
+  function FeatureCard(
+    { feature, visible, highlighted, dimmed, onHover, align = "left", anchorRef },
+    ref
+  ) {
     const Icon = feature.icon;
 
     return (
@@ -60,7 +65,7 @@ export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
         role="article"
         aria-label={feature.title}
         tabIndex={0}
-        className={`pointer-events-auto w-full max-w-[400px] min-w-[320px] min-h-[132px] rounded-[28px] border border-black/[0.05] bg-paper px-7 py-6 ${
+        className={`pointer-events-auto relative w-full max-w-[400px] min-w-[320px] min-h-[132px] rounded-[28px] border border-black/[0.05] bg-paper px-7 py-6 ${
           align === "right" ? "ml-auto" : align === "center" ? "mx-auto" : ""
         }`}
         style={{
@@ -85,6 +90,12 @@ export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
         onFocus={() => onHover(feature.id)}
         onBlur={() => onHover(null)}
       >
+        <span
+          ref={anchorRef}
+          data-connection-anchor={feature.id}
+          className={`pointer-events-none absolute h-px w-px ${anchorClassForZone(feature.zone)}`}
+          aria-hidden="true"
+        />
         <div className="flex items-start gap-5">
           <HoverIconAnimation animation={feature.iconAnimation} active={highlighted}>
             <div

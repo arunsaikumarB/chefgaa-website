@@ -1,8 +1,11 @@
 import { useEffect, useRef } from "react";
 import { useReducedMotion } from "framer-motion";
-import { ANIMATION_ORDER, SVG_CENTER, SVG_VIEWBOX, buildCurvePath, getFeature } from "./features";
+import { ANIMATION_ORDER, getFeature } from "./features";
 
 type ConnectionLinesProps = {
+  paths: Record<string, string>;
+  width: number;
+  height: number;
   lineProgress: Record<string, number>;
   highlightedId: string | null;
   pulseId: string | null;
@@ -10,6 +13,9 @@ type ConnectionLinesProps = {
 };
 
 export function ConnectionLines({
+  paths,
+  width,
+  height,
   lineProgress,
   highlightedId,
   pulseId,
@@ -17,10 +23,12 @@ export function ConnectionLines({
 }: ConnectionLinesProps) {
   const reduce = useReducedMotion();
 
+  if (width < 1 || height < 1) return null;
+
   return (
     <svg
       className="pointer-events-none absolute inset-0 h-full w-full"
-      viewBox={`0 0 ${SVG_VIEWBOX.width} ${SVG_VIEWBOX.height}`}
+      viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="none"
       aria-hidden="true"
     >
@@ -36,33 +44,84 @@ export function ConnectionLines({
 
       {ANIMATION_ORDER.map((id) => {
         const feat = getFeature(id);
-        if (!feat) return null;
-        const pathD = buildCurvePath(SVG_CENTER.x, SVG_CENTER.y, feat.svg.x, feat.svg.y);
+        const pathD = paths[id];
+        if (!feat || !pathD) return null;
+
         const progress = lineProgress[id] ?? 0;
-        const lit = highlightedId === id || pulseId === id;
+        const hovered = highlightedId === id;
+        const pulsing = pulseId === id;
+        const lit = hovered || pulsing;
 
         return (
           <g key={id}>
-            <path d={pathD} fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth={1.2} strokeLinecap="round" />
             <path
               d={pathD}
               fill="none"
-              stroke={feat.accent}
-              strokeWidth={lit ? 2 : 1.2}
-              strokeOpacity={lit ? 0.5 : 0.25}
+              stroke="rgba(0,0,0,0.05)"
+              strokeWidth={1.2}
+              strokeLinecap="round"
+            />
+            <path
+              d={pathD}
+              fill="none"
+              stroke={hovered ? "#ff6e14" : feat.accent}
+              strokeWidth={lit ? 2.2 : 1.2}
+              strokeOpacity={lit ? 0.65 : 0.25}
               strokeLinecap="round"
               pathLength={1}
               strokeDasharray={1}
               strokeDashoffset={1 - progress}
               filter={lit ? "url(#eco-glow)" : undefined}
             />
-            {showParticles && progress >= 1 && !reduce && (
+            {hovered && progress >= 1 && !reduce && (
+              <HubPulse pathD={pathD} active={hovered} />
+            )}
+            {showParticles && progress >= 1 && !reduce && !hovered && (
               <PathParticle pathD={pathD} color={feat.accent} id={id} />
             )}
           </g>
         );
       })}
     </svg>
+  );
+}
+
+function HubPulse({ pathD, active }: { pathD: string; active: boolean }) {
+  const circleRef = useRef<SVGCircleElement>(null);
+  const pathRef = useRef<SVGPathElement>(null);
+  const raf = useRef(0);
+
+  useEffect(() => {
+    const path = pathRef.current;
+    const circle = circleRef.current;
+    if (!path || !circle || !active) return;
+
+    let start: number | null = null;
+    const duration = 900;
+
+    const tick = (ts: number) => {
+      if (!active) return;
+      if (start === null) start = ts;
+      const elapsed = (ts - start) % duration;
+      const t = elapsed / duration;
+      const length = path.getTotalLength();
+      const pt = path.getPointAtLength(t * length);
+      circle.setAttribute("cx", String(pt.x));
+      circle.setAttribute("cy", String(pt.y));
+      raf.current = requestAnimationFrame(tick);
+    };
+
+    raf.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf.current);
+  }, [pathD, active]);
+
+  if (!active) return null;
+
+  return (
+    <g>
+      <path ref={pathRef} d={pathD} fill="none" stroke="none" />
+      <circle ref={circleRef} r={4.5} fill="#ff6e14" opacity={0.95} filter="url(#eco-glow)" />
+    </g>
   );
 }
 
