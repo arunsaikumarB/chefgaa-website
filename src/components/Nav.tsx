@@ -5,7 +5,7 @@ import { ChevronDown, Globe } from "lucide-react";
 import { ChefgaaLogo } from "./ChefgaaLogo";
 import { FeaturesMegaMenu } from "./nav/FeaturesMegaMenu";
 import { FeaturesMobileAccordion } from "./nav/FeaturesMobileAccordion";
-import { FEATURE_MENU_FLAT } from "./nav/featuresMenuData";
+import { FEATURE_MENU_ITEMS } from "./nav/featuresMenuData";
 
 const mainLinks = [
   { to: "/", label: "Home", end: true },
@@ -55,7 +55,7 @@ export function Nav() {
   const isHome = location.pathname === "/";
   const isSolid = scrolled || menuOpen || !isHome;
   const variant: NavVariant = isSolid ? "solid" : "overlay";
-  const featuresActive = FEATURE_MENU_FLAT.some((item) => {
+  const featuresActive = FEATURE_MENU_ITEMS.some((item) => {
     if (item.to.includes("#")) {
       const [path, hash] = item.to.split("#");
       return location.pathname === path && location.hash === `#${hash}`;

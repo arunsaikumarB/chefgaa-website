@@ -2,7 +2,7 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import { FEATURE_MENU_CATEGORIES } from "./featuresMenuData";
+import { FEATURE_MENU_ITEMS } from "./featuresMenuData";
 
 type FeaturesMobileAccordionProps = {
   onNavigate?: () => void;
@@ -36,41 +36,34 @@ export function FeaturesMobileAccordion({ onNavigate }: FeaturesMobileAccordionP
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden pb-4"
           >
-            <div className="space-y-8">
-              {FEATURE_MENU_CATEGORIES.map((category) => (
-                <section key={category.id}>
-                  <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.12em] text-[#666666]">
-                    {category.label}
-                  </p>
-                  <div className="space-y-3">
-                    {category.items.map((item) => {
-                      const Icon = item.icon;
-                      return (
-                        <NavLink
-                          key={item.id}
-                          to={item.to}
-                          onClick={onNavigate}
-                          className={({ isActive }) =>
-                            `flex items-start gap-4 rounded-[20px] p-4 transition-colors ${
-                              isActive ? "bg-[rgba(237,60,24,0.06)]" : "hover:bg-canvas"
-                            }`
-                          }
-                        >
-                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[rgba(237,60,24,0.08)]">
-                            <Icon size={24} strokeWidth={1.75} className="text-brand" />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-[18px] font-semibold text-primary-ink">{item.title}</p>
-                            <p className="mt-1 text-[14px] leading-[1.5] text-[#666666]">
-                              {item.description}
-                            </p>
-                          </div>
-                        </NavLink>
-                      );
-                    })}
-                  </div>
-                </section>
-              ))}
+            <p className="mb-4 text-[12px] font-bold uppercase tracking-[0.12em] text-[#111111]">
+              Features
+            </p>
+            <div className="grid grid-cols-1 gap-3">
+              {FEATURE_MENU_ITEMS.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.id}
+                    to={item.to}
+                    onClick={onNavigate}
+                    className={({ isActive }) =>
+                      `group flex items-center gap-3.5 rounded-2xl p-4 transition-all duration-[250ms] hover:bg-[#FFF7F3] ${
+                        isActive ? "bg-[#FFF7F3]" : ""
+                      }`
+                    }
+                  >
+                    <Icon
+                      size={24}
+                      strokeWidth={1.75}
+                      className="shrink-0 text-brand transition-transform duration-[250ms] group-hover:translate-x-[3px]"
+                    />
+                    <span className="text-[18px] font-semibold text-[#222222] transition-colors duration-[250ms] group-hover:text-brand">
+                      {item.title}
+                    </span>
+                  </NavLink>
+                );
+              })}
             </div>
           </motion.div>
         )}
