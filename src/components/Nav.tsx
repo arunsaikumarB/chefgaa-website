@@ -79,15 +79,19 @@ export function Nav() {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300 ${
+        className={`fixed inset-x-0 top-0 z-50 border-b transition-[height,background-color,border-color,backdrop-filter] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           scrolled || menuOpen
-            ? "border-hairline/60 bg-faded-surface/90 backdrop-blur-[20px]"
-            : "border-transparent bg-paper"
+            ? "h-[var(--site-nav-height-scrolled)] border-hairline/60 bg-faded-surface/90 backdrop-blur-[20px]"
+            : "h-[var(--site-nav-height)] border-transparent bg-paper"
         }`}
       >
-        <nav className="mx-auto flex h-14 max-w-[1280px] items-center justify-between gap-6 px-5 md:px-8 lg:px-10">
-          <Link to="/" className="shrink-0" aria-label="Chefgaa home">
-            <ChefgaaLogo showWordmark={false} />
+        <nav className="mx-auto flex h-full max-w-[1280px] items-center justify-between gap-8 px-5 md:gap-10 md:px-8 lg:px-10">
+          <Link
+            to="/"
+            className="flex h-full shrink-0 items-center py-3 md:py-4"
+            aria-label="Chefgaa home"
+          >
+            <ChefgaaLogo showWordmark={false} compact={scrolled && !menuOpen} />
           </Link>
 
           <ul className="hidden items-center gap-1 lg:flex">
@@ -252,7 +256,7 @@ export function Nav() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-40 flex flex-col bg-paper px-6 pt-24 pb-10 lg:hidden"
+            className="fixed inset-0 z-40 flex flex-col bg-paper px-6 pt-[calc(var(--site-nav-height)+1.5rem)] pb-10 lg:hidden"
           >
             <ul className="flex flex-col gap-1">
               {mainLinks.map((link, i) => (

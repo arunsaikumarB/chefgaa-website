@@ -10,6 +10,8 @@ type ChefgaaLogoProps = {
   animateIn?: boolean;
   /** Logo height in pixels at md breakpoint */
   size?: "nav" | "hero";
+  /** Slightly smaller mark when the header is compact (e.g. on scroll) */
+  compact?: boolean;
 };
 
 export function ChefgaaLogo({
@@ -17,6 +19,7 @@ export function ChefgaaLogo({
   showWordmark = true,
   animateIn = false,
   size = "nav",
+  compact = false,
 }: ChefgaaLogoProps) {
   const markRef = useRef<HTMLImageElement>(null);
 
@@ -34,7 +37,15 @@ export function ChefgaaLogo({
     });
   }, [animateIn]);
 
-  const heightClass = size === "hero" ? "h-11 md:h-14" : "h-8 md:h-9";
+  const heightClass =
+    size === "hero"
+      ? "h-11 md:h-14"
+      : compact
+        ? "h-9 sm:h-10 md:h-12"
+        : "h-10 sm:h-12 md:h-14";
+
+  const intrinsicHeight = size === "hero" ? 56 : compact ? 48 : 56;
+  const intrinsicWidth = Math.round(intrinsicHeight * (1024 / 260));
 
   return (
     <span className={`inline-flex items-center gap-3 ${className}`}>
@@ -42,9 +53,9 @@ export function ChefgaaLogo({
         ref={markRef}
         src="/chefgaa-logo.png"
         alt="Chefgaa"
-        className={`${heightClass} w-auto object-contain object-left`}
-        width={size === "hero" ? 180 : 120}
-        height={size === "hero" ? 56 : 36}
+        className={`${heightClass} w-auto max-w-none object-contain object-left transition-[height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]`}
+        width={size === "hero" ? 220 : intrinsicWidth}
+        height={intrinsicHeight}
         decoding="async"
       />
       {showWordmark && (

@@ -15,9 +15,9 @@ export const hwType = {
   eyebrow: "text-[16px] font-semibold uppercase tracking-[0.12em] text-[#ED3C18]",
 } as const;
 
-/** Clears fixed global nav (56px) + sticky hardware category nav (~88px) */
-export const HW_SCROLL_OFFSET = "scroll-mt-[9.5rem]";
-export const HW_NAV_SCROLL_PADDING = 152;
+/** Clears fixed global nav (96px) + sticky hardware category nav (~88px) */
+export const HW_SCROLL_OFFSET = "scroll-mt-[11.5rem]";
+export const HW_NAV_SCROLL_PADDING = 184;
 
 /* ── Layout ─────────────────────────────────────────────── */
 

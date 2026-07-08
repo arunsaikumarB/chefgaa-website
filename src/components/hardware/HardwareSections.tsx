@@ -301,7 +301,7 @@ export function ComparisonSection() {
 
       <div className="mt-14 overflow-x-auto">
         <div className="min-w-[880px]">
-          <div className="sticky top-[7.5rem] z-10 grid grid-cols-5 gap-8 rounded-[32px] bg-[#F5F6F8]/95 py-8 backdrop-blur-md">
+          <div className="sticky top-[11.5rem] z-10 grid grid-cols-5 gap-8 rounded-[32px] bg-[#F5F6F8]/95 py-8 backdrop-blur-md">
             <div aria-hidden="true" />
             {COMPARE_COLUMNS.map((name, i) => (
               <div key={name} className="text-center">

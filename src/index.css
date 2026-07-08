@@ -95,5 +95,5 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-top: 3.5rem; /* clear fixed nav (h-14) */
+  padding-top: var(--site-nav-height);
 }

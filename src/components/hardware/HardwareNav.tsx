@@ -40,7 +40,7 @@ export function HardwareNav() {
 
   return (
     <nav
-      className="sticky top-14 z-40 border-b border-black/[0.05] bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)]"
+      className="sticky top-[var(--site-nav-height)] z-40 border-b border-black/[0.05] bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)] transition-[top] duration-300"
       aria-label="Hardware categories"
     >
       <div className="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-20">

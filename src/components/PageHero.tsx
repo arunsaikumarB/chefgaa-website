@@ -23,7 +23,7 @@ export function PageHero({
 }: PageHeroProps) {
   const bgClass = bg === "gray" ? "bg-canvas" : "bg-paper";
   return (
-    <section className={`relative overflow-hidden ${bgClass} pt-[108px] pb-16 md:pt-[164px] md:pb-[120px]`}>
+    <section className={`relative overflow-hidden ${bgClass} pt-[calc(var(--site-nav-height)+2rem)] pb-16 md:pt-[calc(var(--site-nav-height)+4.25rem)] md:pb-[120px]`}>
       {bg === "gradient" && <BrandMeshGradient intensity={0.22} />}
       <div className="relative z-10 mx-auto w-full max-w-[1000px] px-6 md:px-10">
         <motion.div
