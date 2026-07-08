@@ -17,6 +17,9 @@ export const hwType = {
 
 /* ── Layout ─────────────────────────────────────────────── */
 
+/** Offset for fixed global nav (56px) + sticky hardware category bar (~100px) */
+export const HW_SCROLL_OFFSET = "scroll-mt-[9.75rem]";
+
 export function HwShell({
   id,
   children,
@@ -27,7 +30,7 @@ export function HwShell({
   className?: string;
 }) {
   return (
-    <section id={id} className={`${className} pt-[120px] pb-[140px]`}>
+    <section id={id} className={`${className} ${id ? HW_SCROLL_OFFSET : ""} pt-[120px] pb-[140px]`}>
       <div className="mx-auto w-full max-w-[1600px] px-6 md:px-10 lg:px-20">
         <div className="mx-auto w-full max-w-[1440px]">{children}</div>
       </div>
@@ -69,10 +72,10 @@ export function HwReveal({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
     </motion.div>
@@ -123,20 +126,22 @@ export function HwProductCard({
   children,
   className = "",
   id,
+  compact = false,
 }: {
   children: ReactNode;
   className?: string;
   id?: string;
+  compact?: boolean;
 }) {
   return (
-    <motion.article
+    <article
       id={id}
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className={`flex h-full flex-col rounded-[32px] bg-white p-10 shadow-[0_20px_60px_rgba(0,0,0,0.06)] transition-shadow duration-350 hover:shadow-[0_24px_72px_rgba(0,0,0,0.09)] ${className}`}
+      className={`relative z-0 flex h-full flex-col rounded-[32px] bg-white shadow-[0_20px_60px_rgba(0,0,0,0.06)] transition-all duration-350 hover:-translate-y-1 hover:shadow-[0_24px_72px_rgba(0,0,0,0.09)] ${
+        compact ? "p-8" : "p-10"
+      } ${id ? HW_SCROLL_OFFSET : ""} ${className}`}
     >
       {children}
-    </motion.article>
+    </article>
   );
 }
 
@@ -150,14 +155,12 @@ export function HwFeatureCard({
   className?: string;
 }) {
   return (
-    <motion.article
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className={`flex h-full flex-col rounded-[32px] p-10 transition-shadow duration-350 hover:shadow-[0_24px_72px_rgba(0,0,0,0.06)] ${className}`}
+    <article
+      className={`relative z-0 flex h-full flex-col rounded-[32px] p-10 transition-all duration-350 hover:-translate-y-1 hover:shadow-[0_24px_72px_rgba(0,0,0,0.06)] ${className}`}
       style={{ backgroundColor: tint }}
     >
       {children}
-    </motion.article>
+    </article>
   );
 }
 
@@ -172,9 +175,9 @@ export function HwIconBox({ children }: { children: ReactNode }) {
 /* ── Product visual ─────────────────────────────────────── */
 
 const VISUAL_HEIGHTS = {
-  sm: "h-[160px]",
-  md: "h-[200px]",
-  lg: "h-[280px]",
+  sm: "h-[140px]",
+  md: "h-[180px]",
+  lg: "h-[220px]",
   xl: "h-[360px]",
   hero: "h-[min(480px,55vh)] md:h-[min(560px,60vh)]",
 } as const;

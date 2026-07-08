@@ -1,8 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { NAV_CATEGORIES } from "./data";
+
+/** Global nav (56px) + hardware category bar height */
+const SCROLL_OFFSET = 156;
+
+function scrollToSection(id: string) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const top = el.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
+  window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+}
 
 export function HardwareNav() {
   const [active, setActive] = useState("register");
+  const navRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ids = NAV_CATEGORIES.map((c) => c.href.replace("#", ""));
@@ -13,7 +24,7 @@ export function HardwareNav() {
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
         if (visible[0]?.target.id) setActive(visible[0].target.id);
       },
-      { rootMargin: "-30% 0px -55% 0px", threshold: [0, 0.25, 0.5] }
+      { rootMargin: "-40% 0px -50% 0px", threshold: [0, 0.15, 0.35] }
     );
     ids.forEach((id) => {
       const el = document.getElementById(id);
@@ -22,8 +33,19 @@ export function HardwareNav() {
     return () => obs.disconnect();
   }, []);
 
+  const handleClick = (e: MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const id = href.replace("#", "");
+    setActive(id);
+    scrollToSection(id);
+    window.history.replaceState(null, "", href);
+  };
+
   return (
-    <div className="sticky top-14 z-40 border-b border-black/[0.05] bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)]">
+    <div
+      ref={navRef}
+      className="sticky top-14 z-50 border-b border-black/[0.06] bg-white shadow-[0_4px_16px_rgba(0,0,0,0.04)]"
+    >
       <nav aria-label="Hardware categories">
         <div className="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-20">
           <ul className="scrollbar-none flex gap-2 overflow-x-auto py-4 md:justify-center md:gap-4">
@@ -35,6 +57,7 @@ export function HardwareNav() {
                 <li key={cat.id} className="shrink-0">
                   <a
                     href={cat.href}
+                    onClick={(e) => handleClick(e, cat.href)}
                     className={`flex flex-col items-center gap-2 rounded-2xl px-4 py-3 transition-colors md:px-6 ${
                       isActive ? "text-[#ED3C18]" : "text-[#444444] hover:text-[#111111]"
                     }`}

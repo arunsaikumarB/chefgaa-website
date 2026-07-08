@@ -26,6 +26,7 @@ import {
   HwSectionIntro,
   ProductVisual,
   hwType,
+  HW_SCROLL_OFFSET,
 } from "./HardwareUI";
 
 const CENTER = { x: 50, y: 50 };
@@ -50,7 +51,7 @@ export function FeaturedSection() {
   return (
     <section
       id="register"
-      className="relative z-0 scroll-mt-[9.5rem] bg-white pb-[140px] pt-12"
+      className={`relative z-0 ${HW_SCROLL_OFFSET} bg-white pb-[140px] pt-12`}
     >
       <div className="mx-auto w-full max-w-[1600px] px-6 md:px-10 lg:px-20">
         <div className="mx-auto w-full max-w-[1440px]">
@@ -107,24 +108,31 @@ export function ProductGridSection() {
         />
       </HwReveal>
 
-      <div className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2">
+      <div className="mt-14 grid grid-cols-1 gap-x-10 gap-y-12 md:grid-cols-2">
         {GRID_PRODUCTS.map((p, i) => (
-          <HwReveal key={p.id} delay={i * 0.06} className="h-full">
-            <HwProductCard id={p.anchor}>
-              <ProductVisual product={p.visual} size="lg" />
-              <h3 className={`mt-6 ${hwType.cardTitle}`}>{p.name}</h3>
+          <HwReveal key={p.id} delay={i * 0.04} className="h-full">
+            <HwProductCard
+              id={p.id === "register" ? undefined : p.anchor}
+              compact
+            >
+              <div className="overflow-hidden rounded-[24px] bg-[#F5F6F8]/60 px-6 py-4">
+                <ProductVisual product={p.visual} size="md" />
+              </div>
+              <h3 className="mt-6 font-sf-pro-display text-[24px] font-bold leading-[1.6] tracking-[-0.02em] text-[#111111] md:text-[28px]">
+                {p.name}
+              </h3>
               <p className={`mt-4 ${hwType.body}`}>{p.description}</p>
-              <ul className="mt-6 flex flex-wrap gap-2">
+              <ul className="mt-5 flex flex-wrap gap-2">
                 {p.specs.map((s) => (
                   <li
                     key={s}
-                    className="rounded-full bg-[#F5F6F8] px-4 py-2 text-[16px] leading-[1.6] text-[#444444]"
+                    className="rounded-full bg-[#F5F6F8] px-3 py-1.5 text-[14px] leading-[1.6] text-[#444444]"
                   >
                     {s}
                   </li>
                 ))}
               </ul>
-              <div className="mt-6 flex flex-wrap items-center gap-6">
+              <div className="mt-6 flex flex-wrap items-center gap-5">
                 <HwLink>Learn More</HwLink>
                 <HwLink>Request Demo</HwLink>
               </div>

@@ -16,7 +16,7 @@ import {
 
 export function Hardware() {
   return (
-    <div className="isolate bg-white pt-14">
+    <div className="isolate bg-white pt-14 [scroll-padding-top:9.75rem]">
       <HardwareNav />
       <FeaturedSection />
       <ProductGridSection />
