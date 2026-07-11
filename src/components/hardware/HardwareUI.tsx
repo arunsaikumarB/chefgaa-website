@@ -253,6 +253,19 @@ export function ProductVisual({
     );
   }
 
+  if (product === "display-stand") {
+    return (
+      <div className={`w-full ${className}`}>
+        <Suspense fallback={null}>
+          <HardwareModelViewer
+            src="/models/mobile_stand.glb"
+            title="Customer Display Stand"
+          />
+        </Suspense>
+      </div>
+    );
+  }
+
   const heightKey = size === "xl" && product === "workstation" ? "hero" : size;
 
   return (

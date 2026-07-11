@@ -6,7 +6,6 @@ import {
   Wallet,
   ChefHat,
   Tv,
-  Smartphone,
   Tablet,
   Package,
   Laptop,
@@ -16,11 +15,13 @@ import {
   Wifi,
   CreditCard,
   TrendingUp,
+  Dock,
 } from "lucide-react";
 
 export type ProductId =
   | "register"
   | "terminal"
+  | "display-stand"
   | "handheld"
   | "kitchen-display"
   | "barcode-scanner"
@@ -39,7 +40,7 @@ export const NAV_CATEGORIES: {
 }[] = [
   { id: "register", label: "Register", icon: Monitor, href: "#register" },
   { id: "terminal", label: "Terminal", icon: Tablet, href: "#terminal" },
-  { id: "handheld", label: "Handheld", icon: Smartphone, href: "#handheld" },
+  { id: "stand", label: "Stand", icon: Dock, href: "#display-stand" },
   { id: "kitchen", label: "Kitchen Display", icon: ChefHat, href: "#kitchen-display" },
   { id: "scanner", label: "Barcode Scanner", icon: ScanLine, href: "#barcode-scanner" },
   { id: "printer", label: "Receipt Printer", icon: Printer, href: "#receipt-printer" },
@@ -74,12 +75,13 @@ export const GRID_PRODUCTS: {
     visual: "terminal",
   },
   {
-    id: "handheld",
-    anchor: "handheld",
-    name: "Chefgaa Handheld",
-    description: "Tableside ordering and payments that move with your team.",
-    specs: ["Built-in scanner", "Contactless payments", "8+ hour battery"],
-    visual: "handheld",
+    id: "display-stand",
+    anchor: "display-stand",
+    name: "Customer Display Stand",
+    description:
+      "Elegant customer-facing display stand for order confirmation, digital receipts, loyalty, tipping, and customer interactions.",
+    specs: ["Adjustable viewing angle", "Tablet compatible", "Stable aluminum base"],
+    visual: "display-stand",
   },
   {
     id: "kitchen-display",
