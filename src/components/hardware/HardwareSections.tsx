@@ -5,8 +5,6 @@ import { Check, ChevronDown } from "lucide-react";
 import {
   FEATURED,
   GRID_PRODUCTS,
-  COMPARE_COLUMNS,
-  COMPARE_ROWS,
   WHY_ITEMS,
   STORIES,
   HARDWARE_FAQ,
@@ -25,6 +23,8 @@ import {
   hwType,
   HW_SCROLL_OFFSET,
 } from "./HardwareUI";
+
+export { ComparisonSection } from "./CompareSection";
 
 const HardwareModelViewer = lazy(() => import("./HardwareModelViewer"));
 
@@ -191,63 +191,6 @@ export function ProductGridSection() {
             </HwReveal>
           </div>
         ))}
-      </div>
-    </HwShell>
-  );
-}
-
-/* ── 4. Comparison ─────────────────────────────────────── */
-
-export function ComparisonSection() {
-  const visuals: ("register" | "terminal" | "handheld" | "kitchen-display")[] = [
-    "register",
-    "terminal",
-    "handheld",
-    "kitchen-display",
-  ];
-
-  return (
-    <HwShell className="bg-[#F5F6F8]">
-      <HwReveal>
-        <HwSectionIntro title="Compare devices" />
-      </HwReveal>
-
-      <div className="mt-[80px] overflow-x-auto">
-        <div className="min-w-[880px]">
-          <div className="sticky top-[11.5rem] z-10 grid grid-cols-5 gap-[24px] rounded-[28px] bg-[#F5F6F8]/95 py-[24px] backdrop-blur-md md:gap-[32px] md:py-[32px]">
-            <div aria-hidden="true" />
-            {COMPARE_COLUMNS.map((name, i) => (
-              <div key={name} className="text-center">
-                <div className="flex h-[140px] items-center justify-center md:h-[160px]">
-                  <ProductVisual product={visuals[i]} size="sm" />
-                </div>
-                <p className={`mt-[16px] ${hwType.cardTitle} text-[22px] md:text-[26px]`}>{name}</p>
-              </div>
-            ))}
-          </div>
-
-          {COMPARE_ROWS.map((row, ri) => (
-            <motion.div
-              key={row.label}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.5, delay: ri * 0.05, ease: [0.22, 1, 0.36, 1] }}
-              className={`grid grid-cols-5 items-center gap-[24px] rounded-[12px] py-[28px] transition-colors duration-200 hover:bg-[#EEEEF0] md:gap-[32px] md:py-[32px] ${
-                ri < COMPARE_ROWS.length - 1 ? "border-b border-black/[0.05]" : ""
-              }`}
-            >
-              <p className="text-[14px] font-semibold uppercase tracking-[0.06em] leading-[1.4] text-[#666666] md:text-[15px]">
-                {row.label}
-              </p>
-              {row.values.map((val, vi) => (
-                <p key={vi} className="text-center text-[15px] leading-[1.5] text-[#444444] md:text-[16px]">
-                  {val}
-                </p>
-              ))}
-            </motion.div>
-          ))}
-        </div>
       </div>
     </HwShell>
   );

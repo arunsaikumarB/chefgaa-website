@@ -311,84 +311,89 @@ export function ProductVisual({
   product,
   className = "",
   size = "md",
+  interactive = true,
 }: {
   product: VisualId;
   className?: string;
   size?: "sm" | "md" | "lg" | "xl" | "hero";
+  /** When false, always render lightweight CSS product mocks (compare headers). */
+  interactive?: boolean;
   /** @deprecated hover-only lift is applied automatically */
   floating?: boolean;
 }) {
-  // Sketchfab viewer fills the image area for these products only
-  if (product === "receipt-printer") {
-    return (
-      <div className={`w-full ${className}`}>
-        <ReceiptPrinterViewer />
-      </div>
-    );
-  }
+  // Sketchfab / GLB viewers for catalogue cards only
+  if (interactive) {
+    if (product === "receipt-printer") {
+      return (
+        <div className={`w-full ${className}`}>
+          <ReceiptPrinterViewer />
+        </div>
+      );
+    }
 
-  if (product === "barcode-scanner") {
-    return (
-      <div className={`w-full ${className}`}>
-        <ReceiptPrinterViewer
-          modelId="31fdf834a70b42b084c7041870252488"
-          title="Barcode Scanner"
-        />
-      </div>
-    );
-  }
-
-  if (product === "cash-drawer") {
-    return (
-      <div className={`w-full ${className}`}>
-        <ReceiptPrinterViewer
-          modelId="61f07e0842134434a07426891f904353"
-          title="Cash Register Drawer for POS System open"
-        />
-      </div>
-    );
-  }
-
-  if (product === "customer-display") {
-    return (
-      <div className={`w-full ${className}`}>
-        <ReceiptPrinterViewer
-          modelId="d0753b3a481f45999426dab7dc5870ab"
-          title="Galaxy Tab S9+"
-        />
-      </div>
-    );
-  }
-
-  if (product === "kitchen-display") {
-    return (
-      <div className={`w-full ${className}`}>
-        <Suspense fallback={null}>
-          <HardwareModelViewer
-            src="/models/tv_screen.glb"
-            title="Kitchen Display"
-            frame="raised"
+    if (product === "barcode-scanner") {
+      return (
+        <div className={`w-full ${className}`}>
+          <ReceiptPrinterViewer
+            modelId="31fdf834a70b42b084c7041870252488"
+            title="Barcode Scanner"
           />
-        </Suspense>
-      </div>
-    );
-  }
+        </div>
+      );
+    }
 
-  if (product === "display-stand") {
-    return (
-      <div className={`w-full ${className}`}>
-        <Suspense fallback={null}>
-          <HardwareModelViewer
-            src="/models/mobile_stand.glb"
-            title="Customer Display Stand"
+    if (product === "cash-drawer") {
+      return (
+        <div className={`w-full ${className}`}>
+          <ReceiptPrinterViewer
+            modelId="61f07e0842134434a07426891f904353"
+            title="Cash Register Drawer for POS System open"
           />
-        </Suspense>
-      </div>
-    );
+        </div>
+      );
+    }
+
+    if (product === "customer-display") {
+      return (
+        <div className={`w-full ${className}`}>
+          <ReceiptPrinterViewer
+            modelId="d0753b3a481f45999426dab7dc5870ab"
+            title="Galaxy Tab S9+"
+          />
+        </div>
+      );
+    }
+
+    if (product === "kitchen-display") {
+      return (
+        <div className={`w-full ${className}`}>
+          <Suspense fallback={null}>
+            <HardwareModelViewer
+              src="/models/tv_screen.glb"
+              title="Kitchen Display"
+              frame="raised"
+            />
+          </Suspense>
+        </div>
+      );
+    }
+
+    if (product === "display-stand") {
+      return (
+        <div className={`w-full ${className}`}>
+          <Suspense fallback={null}>
+            <HardwareModelViewer
+              src="/models/mobile_stand.glb"
+              title="Customer Display Stand"
+            />
+          </Suspense>
+        </div>
+      );
+    }
   }
 
   const heightKey = size === "xl" && product === "workstation" ? "hero" : size;
-  const useCatalogueWell = size === "md" || size === "lg";
+  const useCatalogueWell = interactive && (size === "md" || size === "lg");
 
   if (useCatalogueWell) {
     return (
@@ -419,9 +424,10 @@ function DeviceRender({ product, size }: { product: VisualId; size: string }) {
   if (product === "kitchen-display") return <KitchenVisual size={size} />;
   if (product === "barcode-scanner") return <ScannerVisual size={size} />;
   if (product === "receipt-printer") return <PrinterVisual size={size} />;
-  if (product === "customer-display") return <DisplayVisual size={size} />;
+  if (product === "customer-display" || product === "display-stand") return <DisplayVisual size={size} />;
   if (product === "cash-drawer") return <DrawerVisual size={size} />;
   if (product === "tablet") return <TabletVisual size={size} />;
+  if (product === "register") return <TerminalVisual size={size} />;
   return <TerminalVisual size={size} />;
 }
 

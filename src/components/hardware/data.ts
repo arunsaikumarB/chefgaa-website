@@ -141,20 +141,311 @@ export const FEATURED = {
   visual: "register" as VisualId,
 };
 
-export const COMPARE_COLUMNS = ["Register", "Terminal", "Handheld", "Kitchen Display"] as const;
+export type CompareCell =
+  | { kind: "check" }
+  | { kind: "dash" }
+  | { kind: "infinity" }
+  | { kind: "optional" }
+  | { kind: "text"; value: string };
 
-export const COMPARE_ROWS: { label: string; values: [string, string, string, string] }[] = [
-  { label: "Screen", values: ['15.6" HD touch', '5.5" touch', '6.5" touch', '21.5" HD'] },
-  { label: "Printer", values: ["Optional", "Built-in", "—", "—"] },
-  { label: "Scanner Support", values: ["USB / Bluetooth", "Built-in", "Built-in", "—"] },
-  { label: "Payments", values: ["All methods", "All methods", "Contactless & chip", "—"] },
-  { label: "Battery", values: ["—", "All-day", "All-day", "—"] },
-  { label: "Connectivity", values: ["Wi-Fi, Ethernet", "Wi-Fi, Ethernet", "Wi-Fi", "Wi-Fi, Ethernet"] },
-  { label: "OS", values: ["Chefgaa OS", "Chefgaa OS", "Chefgaa OS", "Chefgaa OS"] },
-  { label: "Offline Mode", values: ["Yes", "Yes", "Yes", "—"] },
-  { label: "Recommended Business", values: ["Full-service", "Counter / Cafe", "Tableside", "Kitchen"] },
-  { label: "Warranty", values: ["2 years", "2 years", "1 year", "2 years"] },
+export type CompareDevice = {
+  id: string;
+  name: string;
+  tagline: string;
+  visual: VisualId;
+};
+
+export type CompareGroup = {
+  id: string;
+  label: string;
+  rows: { label: string; values: CompareCell[] }[];
+};
+
+export const COMPARE_DEVICES: CompareDevice[] = [
+  {
+    id: "register",
+    name: "Register",
+    tagline: "Complete countertop POS",
+    visual: "register",
+  },
+  {
+    id: "terminal",
+    name: "Terminal",
+    tagline: "Built-in printer POS",
+    visual: "terminal",
+  },
+  {
+    id: "stand",
+    name: "Stand",
+    tagline: "Customer Display Stand",
+    visual: "display-stand",
+  },
+  {
+    id: "kitchen",
+    name: "Kitchen Display",
+    tagline: "Kitchen Order Screen",
+    visual: "kitchen-display",
+  },
+  {
+    id: "scanner",
+    name: "Barcode Scanner",
+    tagline: "Fast inventory scanning",
+    visual: "barcode-scanner",
+  },
+  {
+    id: "printer",
+    name: "Receipt Printer",
+    tagline: "Thermal printing",
+    visual: "receipt-printer",
+  },
+  {
+    id: "drawer",
+    name: "Cash Drawer",
+    tagline: "Secure cash management",
+    visual: "cash-drawer",
+  },
+  {
+    id: "display",
+    name: "Customer Display",
+    tagline: "Customer-facing display",
+    visual: "customer-display",
+  },
 ];
+
+const yes = { kind: "check" } as const;
+const no = { kind: "dash" } as const;
+const unlimited = { kind: "infinity" } as const;
+const optional = { kind: "optional" } as const;
+const t = (value: string): CompareCell => ({ kind: "text", value });
+
+export const COMPARE_GROUPS: CompareGroup[] = [
+  {
+    id: "general",
+    label: "General",
+    rows: [
+      {
+        label: "Device",
+        values: [
+          t("Countertop POS"),
+          t("Compact POS"),
+          t("Display stand"),
+          t("Kitchen screen"),
+          t("Scanner"),
+          t("Printer"),
+          t("Cash drawer"),
+          t("Customer display"),
+        ],
+      },
+      {
+        label: "Recommended Business",
+        values: [
+          t("Full-service"),
+          t("Counter / Cafe"),
+          t("Checkout"),
+          t("Kitchen"),
+          t("Retail / Inventory"),
+          t("Any service"),
+          t("Cash operations"),
+          t("Checkout"),
+        ],
+      },
+      {
+        label: "Operating System",
+        values: [
+          t("Chefgaa OS"),
+          t("Chefgaa OS"),
+          t("—"),
+          t("Chefgaa OS"),
+          t("—"),
+          t("—"),
+          t("—"),
+          t("Chefgaa OS"),
+        ],
+      },
+    ],
+  },
+  {
+    id: "display",
+    label: "Display",
+    rows: [
+      {
+        label: "Screen Size",
+        values: [
+          t('15.6" HD'),
+          t('5.5"'),
+          t("Tablet ready"),
+          t('21.5" HD'),
+          no,
+          no,
+          no,
+          t('10" portrait'),
+        ],
+      },
+      {
+        label: "Resolution",
+        values: [
+          t("1920 × 1080"),
+          t("1280 × 720"),
+          t("Device native"),
+          t("1920 × 1080"),
+          no,
+          no,
+          no,
+          t("1280 × 800"),
+        ],
+      },
+      {
+        label: "Touch Support",
+        values: [yes, yes, t("Via tablet"), yes, no, no, no, yes],
+      },
+    ],
+  },
+  {
+    id: "performance",
+    label: "Performance",
+    rows: [
+      {
+        label: "Processor",
+        values: [
+          t("Octa-core"),
+          t("Quad-core"),
+          t("—"),
+          t("Dedicated SoC"),
+          t("Embedded"),
+          t("Thermal engine"),
+          t("—"),
+          t("Quad-core"),
+        ],
+      },
+      {
+        label: "Offline Mode",
+        values: [yes, yes, no, no, no, no, no, no],
+      },
+      {
+        label: "Response Time",
+        values: [
+          t("Sub-second"),
+          t("Sub-second"),
+          t("Instant"),
+          t("Real-time"),
+          t("Instant scan"),
+          t("200mm/s"),
+          t("Auto-open"),
+          t("Instant"),
+        ],
+      },
+    ],
+  },
+  {
+    id: "connectivity",
+    label: "Connectivity",
+    rows: [
+      {
+        label: "Wi-Fi",
+        values: [yes, yes, no, yes, optional, optional, no, yes],
+      },
+      {
+        label: "Ethernet",
+        values: [yes, yes, no, yes, optional, yes, no, optional],
+      },
+      {
+        label: "Bluetooth / USB",
+        values: [yes, yes, yes, optional, yes, yes, yes, yes],
+      },
+    ],
+  },
+  {
+    id: "payments",
+    label: "Payments",
+    rows: [
+      {
+        label: "Card Support",
+        values: [yes, yes, no, no, no, no, no, yes],
+      },
+      {
+        label: "Tap to Pay",
+        values: [yes, yes, no, no, no, no, no, yes],
+      },
+      {
+        label: "Cash Support",
+        values: [yes, optional, no, no, no, no, yes, no],
+      },
+    ],
+  },
+  {
+    id: "power",
+    label: "Power",
+    rows: [
+      {
+        label: "Battery",
+        values: [no, t("All-day"), no, no, optional, no, no, no],
+      },
+      {
+        label: "Power Supply",
+        values: [
+          t("AC / PoE"),
+          t("AC / Battery"),
+          t("Passive"),
+          t("AC"),
+          t("USB / Battery"),
+          t("AC / USB"),
+          t("POS trigger"),
+          t("USB"),
+        ],
+      },
+    ],
+  },
+  {
+    id: "compatibility",
+    label: "Compatibility",
+    rows: [
+      {
+        label: "Chefgaa OS Integration",
+        values: [yes, yes, yes, yes, yes, yes, yes, yes],
+      },
+      {
+        label: "Mount Options",
+        values: [
+          t("Counter / Stand"),
+          t("Counter"),
+          t("Adjustable"),
+          t("Wall / Arm"),
+          t("Hands-free stand"),
+          t("Counter"),
+          t("Under counter"),
+          t("Portrait mount"),
+        ],
+      },
+      {
+        label: "Multi-location",
+        values: [unlimited, unlimited, unlimited, unlimited, unlimited, unlimited, unlimited, unlimited],
+      },
+    ],
+  },
+  {
+    id: "warranty",
+    label: "Warranty",
+    rows: [
+      {
+        label: "Warranty Period",
+        values: [
+          t("2 years"),
+          t("1 year"),
+          t("1 year"),
+          t("2 years"),
+          t("1 year"),
+          t("1 year"),
+          t("1 year"),
+          t("1 year"),
+        ],
+      },
+    ],
+  },
+];
+
+/** @deprecated kept for any legacy references — use COMPARE_DEVICES / COMPARE_GROUPS */
+export const COMPARE_COLUMNS = ["Register", "Terminal", "Handheld", "Kitchen Display"] as const;
+export const COMPARE_ROWS: { label: string; values: [string, string, string, string] }[] = [];
 
 export const WHY_ITEMS = [
   { title: "Lightning Fast", description: "Sub-second transactions keep your line moving during the rush.", icon: Zap, tint: "#FFF4F0" },
