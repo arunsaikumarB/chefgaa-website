@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check } from "lucide-react";
 import {
@@ -27,6 +27,8 @@ import {
   hwType,
   HW_SCROLL_OFFSET,
 } from "./HardwareUI";
+
+const HardwareModelViewer = lazy(() => import("./HardwareModelViewer"));
 
 function curve(sx: number, sy: number, ex: number, ey: number) {
   const mx = (sx + ex) / 2;
@@ -65,14 +67,16 @@ export function FeaturedSection() {
                 <HwLink>Learn more</HwLink>
               </div>
             </div>
-            <div className="relative flex min-h-[400px] items-center justify-center p-[40px] md:min-h-[520px] md:p-[56px]">
-              <div
-                className="absolute inset-[24px] rounded-[32px]"
-                style={{
-                  background: "radial-gradient(circle at 50% 60%, rgba(250,144,64,0.12) 0%, transparent 65%)",
-                }}
-              />
-              <ProductVisual product={FEATURED.visual} size="xl" />
+
+            {/* Right side: premium product stage only — no overlays or extra UI */}
+            <div className="p-[24px] md:p-[32px] lg:p-[40px]">
+              <Suspense fallback={null}>
+                <HardwareModelViewer
+                  src="/models/pos_machine.glb"
+                  title="Chefgaa Register"
+                  variant="stage"
+                />
+              </Suspense>
             </div>
           </div>
         </div>
