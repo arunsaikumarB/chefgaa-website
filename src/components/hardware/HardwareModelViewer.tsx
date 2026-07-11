@@ -10,9 +10,9 @@ import {
 } from "@react-three/drei";
 import { hwViewerWellClass } from "./viewerShell";
 
-const IDLE_RESUME_MS = 3500;
-const AUTO_ROTATE_SPEED = 0.3;
-const STAGE_AUTO_ROTATE_SPEED = 0.18;
+const IDLE_RESUME_MS = 3000;
+const AUTO_ROTATE_SPEED = 0.15;
+const STAGE_AUTO_ROTATE_SPEED = 0.15;
 
 type ViewerVariant = "well" | "stage";
 
@@ -25,7 +25,7 @@ type HardwareModelViewerProps = {
 };
 
 const STAGE_SHELL =
-  "relative flex h-[400px] w-full items-center justify-center overflow-hidden rounded-[36px] border border-black/[0.04] bg-[#F5F6F8] p-[28px] shadow-[0_25px_70px_rgba(0,0,0,0.06)] md:h-[480px] md:p-[36px] lg:h-[560px] lg:p-[40px]";
+  "relative flex h-[400px] w-full items-center justify-center overflow-hidden rounded-[36px] border border-black/[0.04] bg-[#F5F6F8] p-[28px] shadow-[0_25px_70px_rgba(0,0,0,0.06)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.01] hover:border-black/[0.08] hover:shadow-[0_28px_80px_rgba(0,0,0,0.08)] md:h-[480px] md:p-[36px] lg:h-[560px] lg:p-[40px]";
 
 function Model({
   src,
@@ -215,6 +215,8 @@ export function HardwareModelViewer({
       className={
         variant === "stage" ? STAGE_SHELL : `${hwViewerWellClass} shrink-0`
       }
+      onPointerEnter={handleInteractStart}
+      onPointerLeave={handleInteractEnd}
     >
       <div
         className={`relative h-full w-full transition-all duration-[1200ms] ease-out ${

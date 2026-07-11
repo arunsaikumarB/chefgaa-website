@@ -1,7 +1,7 @@
 import { lazy, Suspense, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import {
   FEATURED,
   GRID_PRODUCTS,
@@ -171,7 +171,7 @@ export function ProductGridSection() {
       <div className="mt-[80px] grid grid-cols-1 gap-[32px] md:grid-cols-2 md:gap-[40px] md:items-stretch">
         {GRID_PRODUCTS.map((p, i) => (
           <div key={p.id} id={p.anchor} className={`h-full ${HW_SCROLL_OFFSET}`}>
-            <HwReveal delay={i * 0.06} className="h-full">
+            <HwReveal delay={i * 0.08} className="h-full" variant="card">
               <HwProductCard>
                 <ProductVisual product={p.visual} size="md" />
                 <h3 className={`mt-[24px] ${hwType.cardTitle}`}>{p.name}</h3>
@@ -227,9 +227,13 @@ export function ComparisonSection() {
           </div>
 
           {COMPARE_ROWS.map((row, ri) => (
-            <div
+            <motion.div
               key={row.label}
-              className={`grid grid-cols-5 items-center gap-[24px] py-[28px] md:gap-[32px] md:py-[32px] ${
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.5, delay: ri * 0.05, ease: [0.22, 1, 0.36, 1] }}
+              className={`grid grid-cols-5 items-center gap-[24px] rounded-[12px] py-[28px] transition-colors duration-200 hover:bg-[#EEEEF0] md:gap-[32px] md:py-[32px] ${
                 ri < COMPARE_ROWS.length - 1 ? "border-b border-black/[0.05]" : ""
               }`}
             >
@@ -241,7 +245,7 @@ export function ComparisonSection() {
                   {val}
                 </p>
               ))}
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -289,7 +293,7 @@ export function WhySection() {
         {WHY_ITEMS.map((item, i) => {
           const Icon = item.icon;
           return (
-            <HwReveal key={item.title} delay={i * 0.05} className="h-full">
+            <HwReveal key={item.title} delay={i * 0.08} className="h-full" variant="card">
               <HwFeatureCard tint={item.tint}>
                 <HwIconBox>
                   <Icon size={28} className="text-[#ED3C18]" strokeWidth={1.75} />
@@ -316,7 +320,7 @@ export function StoriesSection() {
 
       <div className="mt-[80px] grid grid-cols-1 gap-[32px] md:grid-cols-3">
         {STORIES.map((s, i) => (
-          <HwReveal key={s.name} delay={i * 0.06} className="h-full">
+          <HwReveal key={s.name} delay={i * 0.08} className="h-full" variant="card">
             <article className="flex h-full flex-col overflow-hidden rounded-[28px] bg-white text-left shadow-[0_16px_48px_rgba(0,0,0,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_64px_rgba(0,0,0,0.08)]">
               <div className={`h-[180px] bg-gradient-to-br ${s.gradient}`} aria-hidden="true" />
               <div className="flex flex-1 flex-col p-[32px] md:p-[36px]">
@@ -362,13 +366,13 @@ export function FaqSection() {
                 <span className="font-sf-pro-display text-[18px] font-semibold leading-[1.6] text-[#111111] md:text-[21px]">
                   {item.question}
                 </span>
-                <span
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F5F6F8] text-[24px] text-[#666666] transition-transform duration-300 ${
-                    isOpen ? "rotate-45" : ""
-                  }`}
+                <motion.span
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F5F6F8] text-[#666666]"
+                  animate={{ rotate: isOpen ? 180 : 0 }}
+                  transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  +
-                </span>
+                  <ChevronDown size={20} strokeWidth={2} aria-hidden="true" />
+                </motion.span>
               </button>
               <AnimatePresence initial={false}>
                 {isOpen && (
@@ -376,7 +380,7 @@ export function FaqSection() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                     className="overflow-hidden"
                   >
                     <p className={`pb-8 ${hwType.body}`}>{item.answer}</p>

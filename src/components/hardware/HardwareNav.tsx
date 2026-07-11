@@ -1,4 +1,5 @@
 import { useEffect, useState, type MouseEvent } from "react";
+import { motion } from "framer-motion";
 import { NAV_CATEGORIES } from "./data";
 import { HW_NAV_SCROLL_PADDING } from "./HardwareUI";
 
@@ -24,7 +25,7 @@ export function HardwareNav() {
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
         if (visible[0]?.target.id) setActive(visible[0].target.id);
       },
-      { rootMargin: "-40% 0px -50% 0px", threshold: [0, 0.25, 0.5] }
+      { rootMargin: "-40% 0px -50% 0px", threshold: [0, 0.25, 0.5] },
     );
     ids.forEach((id) => {
       const el = document.getElementById(id);
@@ -54,15 +55,29 @@ export function HardwareNav() {
                 <a
                   href={cat.href}
                   onClick={(e) => handleNavClick(e, cat.href)}
-                  className={`flex flex-col items-center gap-2 rounded-2xl px-4 py-3 transition-colors md:px-6 ${
-                    isActive ? "text-[#ED3C18]" : "text-[#444444] hover:text-[#111111]"
+                  className={`group relative flex flex-col items-center gap-2 rounded-2xl px-4 py-3 transition-colors duration-250 md:px-6 ${
+                    isActive ? "text-[#ED3C18]" : "text-[#444444] hover:text-[#ED3C18]"
                   }`}
                 >
-                  <Icon size={28} strokeWidth={1.5} aria-hidden="true" />
-                  <span className="whitespace-nowrap text-[16px] font-medium leading-[1.6]">{cat.label}</span>
-                  {isActive && (
-                    <span className="h-0.5 w-8 rounded-full bg-[#ED3C18]" aria-hidden="true" />
-                  )}
+                  <Icon
+                    size={28}
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                    className="transition-transform duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-[2px]"
+                  />
+                  <span className="whitespace-nowrap text-[16px] font-medium leading-[1.6]">
+                    {cat.label}
+                  </span>
+                  <span className="relative mt-0.5 h-0.5 w-8" aria-hidden="true">
+                    <span className="absolute left-1/2 top-0 h-0.5 w-0 -translate-x-1/2 rounded-full bg-[#ED3C18] opacity-0 transition-all duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-8 group-hover:opacity-100" />
+                    {isActive && (
+                      <motion.span
+                        layoutId="hardware-nav-underline"
+                        className="absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-full bg-[#ED3C18]"
+                        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                      />
+                    )}
+                  </span>
                 </a>
               </li>
             );

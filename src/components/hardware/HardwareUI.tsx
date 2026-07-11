@@ -1,6 +1,11 @@
-import type { ReactNode } from "react";
-import { lazy, Suspense } from "react";
-import { motion } from "framer-motion";
+﻿import type { MouseEvent, ReactNode, RefObject } from "react";
+import { lazy, Suspense, useCallback, useRef, useState } from "react";
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+} from "framer-motion";
 import { Link } from "react-router-dom";
 import type { VisualId } from "./data";
 import { ReceiptPrinterViewer } from "./ReceiptPrinterViewer";
@@ -8,7 +13,9 @@ import { hwCardShadow, hwCardShadowHover, hwViewerWellClass } from "./viewerShel
 
 const HardwareModelViewer = lazy(() => import("./HardwareModelViewer"));
 
-/* ── Design tokens (8pt grid) ───────────────────────────── */
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+/* â”€â”€ Design tokens (8pt grid) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 export const hwType = {
   hero: "font-sf-pro-display text-[40px] font-bold leading-[1.6] tracking-[-0.03em] text-[#111111] md:text-[56px] lg:text-[72px]",
@@ -19,14 +26,18 @@ export const hwType = {
   body: "text-[18px] leading-[1.6] text-[#666666]",
   caption: "text-[16px] leading-[1.6] text-[#666666]",
   eyebrow: "text-[16px] font-semibold uppercase tracking-[0.12em] text-[#ED3C18]",
-  chip: "inline-flex h-[36px] items-center rounded-full bg-[#F3F4F6] px-[16px] text-[14px] leading-none text-[#444444]",
+  chip: "inline-flex h-[36px] items-center rounded-full bg-[#F3F4F6] px-[16px] text-[14px] leading-none text-[#444444] transition-colors duration-200 hover:bg-[#E8EAED]",
 } as const;
 
 /** Clears fixed global nav (96px) + sticky hardware category nav (~88px) */
 export const HW_SCROLL_OFFSET = "scroll-mt-[11.5rem]";
 export const HW_NAV_SCROLL_PADDING = 184;
 
-/* ── Layout ─────────────────────────────────────────────── */
+function isCoarsePointer() {
+  return typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+}
+
+/* â”€â”€ Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 export function HwShell({
   id,
@@ -75,34 +86,50 @@ export function HwReveal({
   children,
   delay = 0,
   className = "",
+  variant = "section",
 }: {
   children: ReactNode;
   delay?: number;
   className?: string;
+  variant?: "section" | "card";
 }) {
+  const reduce = useReducedMotion();
+
+  const initial = reduce
+    ? { opacity: 0 }
+    : variant === "card"
+      ? { opacity: 0, y: 30, scale: 0.98 }
+      : { opacity: 0, y: 40 };
+
+  const animate = reduce
+    ? { opacity: 1 }
+    : variant === "card"
+      ? { opacity: 1, y: 0, scale: 1 }
+      : { opacity: 1, y: 0 };
+
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
+      initial={initial}
+      whileInView={animate}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.8, delay, ease: EASE }}
     >
       {children}
     </motion.div>
   );
 }
 
-/* ── Buttons ────────────────────────────────────────────── */
+/* â”€â”€ Buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 const btnBase =
-  "inline-flex h-[52px] items-center justify-center rounded-full px-[28px] text-[16px] font-semibold leading-none transition-all duration-300";
+  "inline-flex h-[52px] items-center justify-center rounded-full px-[28px] text-[16px] font-semibold leading-none transition-all duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] active:scale-[0.97]";
 
 export function HwPrimaryBtn({ children, to = "/contact" }: { children: ReactNode; to?: string }) {
   return (
     <Link
       to={to}
-      className={`${btnBase} bg-[#ED3C18] !text-white hover:scale-[1.02] hover:opacity-95`}
+      className={`${btnBase} bg-[#ED3C18] !text-white hover:shadow-[0_10px_25px_rgba(255,92,53,0.25)] hover:opacity-95`}
     >
       {children}
     </Link>
@@ -113,7 +140,7 @@ export function HwGhostBtn({ children, to = "/contact" }: { children: ReactNode;
   return (
     <Link
       to={to}
-      className={`${btnBase} border border-[#111111] text-[#111111] hover:scale-[1.02] hover:bg-[#111111] hover:!text-white`}
+      className={`${btnBase} border border-[#111111] text-[#111111] hover:bg-[#111111] hover:!text-white hover:shadow-[0_10px_25px_rgba(0,0,0,0.12)]`}
     >
       {children}
     </Link>
@@ -124,14 +151,14 @@ export function HwLink({ children, to = "/contact" }: { children: ReactNode; to?
   return (
     <Link
       to={to}
-      className="group relative inline-flex h-[48px] items-center text-[16px] font-semibold leading-none text-[#ED3C18] after:absolute after:bottom-[14px] after:left-0 after:h-px after:w-0 after:bg-[#ED3C18] after:transition-all after:duration-300 hover:after:w-full"
+      className="group relative inline-flex h-[48px] items-center text-[16px] font-semibold leading-none text-[#ED3C18] transition-transform duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] after:absolute after:bottom-[14px] after:left-0 after:h-px after:w-0 after:bg-[#ED3C18] after:transition-all after:duration-300 hover:after:w-full"
     >
       {children}
     </Link>
   );
 }
 
-/* ── Product card ───────────────────────────────────────── */
+/* â”€â”€ Product card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 export function HwProductCard({
   children,
@@ -140,17 +167,55 @@ export function HwProductCard({
   children: ReactNode;
   className?: string;
 }) {
+  const reduce = useReducedMotion();
+  const ref = useRef<HTMLElement>(null);
+  const [hovered, setHovered] = useState(false);
+
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+  const springX = useSpring(rotateX, { stiffness: 180, damping: 22, mass: 0.4 });
+  const springY = useSpring(rotateY, { stiffness: 180, damping: 22, mass: 0.4 });
+
+  const handleMove = useCallback(
+    (e: MouseEvent<HTMLElement>) => {
+      if (reduce || isCoarsePointer() || !ref.current) return;
+      const rect = ref.current.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width - 0.5;
+      const py = (e.clientY - rect.top) / rect.height - 0.5;
+      rotateX.set(py * -8);
+      rotateY.set(px * 8);
+    },
+    [reduce, rotateX, rotateY],
+  );
+
+  const resetTilt = useCallback(() => {
+    rotateX.set(0);
+    rotateY.set(0);
+    setHovered(false);
+  }, [rotateX, rotateY]);
+
   return (
     <motion.article
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className={`flex h-full flex-col rounded-[28px] border border-black/[0.04] bg-white p-[32px] text-left transition-shadow duration-300 ${className}`}
-      style={{ boxShadow: hwCardShadow }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = hwCardShadowHover;
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = hwCardShadow;
+      ref={ref as RefObject<HTMLElement>}
+      onMouseMove={handleMove}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={resetTilt}
+      whileHover={
+        reduce
+          ? undefined
+          : {
+              y: -8,
+              scale: 1.015,
+              borderColor: "rgba(0,0,0,0.09)",
+            }
+      }
+      transition={{ duration: 0.3, ease: EASE }}
+      className={`flex h-full flex-col rounded-[28px] border border-black/[0.04] bg-white p-[32px] text-left will-change-transform ${className}`}
+      style={{
+        boxShadow: hovered ? hwCardShadowHover : hwCardShadow,
+        rotateX: reduce ? 0 : springX,
+        rotateY: reduce ? 0 : springY,
+        transformPerspective: 1200,
       }}
     >
       {children}
@@ -167,11 +232,13 @@ export function HwFeatureCard({
   tint: string;
   className?: string;
 }) {
+  const reduce = useReducedMotion();
+
   return (
     <motion.article
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className={`flex h-full flex-col rounded-[28px] p-[32px] text-left transition-shadow duration-300 ${className}`}
+      whileHover={reduce ? undefined : { y: -8, scale: 1.015 }}
+      transition={{ duration: 0.3, ease: EASE }}
+      className={`flex h-full flex-col rounded-[28px] p-[32px] text-left will-change-transform ${className}`}
       style={{ backgroundColor: tint, boxShadow: hwCardShadow }}
     >
       {children}
@@ -181,7 +248,7 @@ export function HwFeatureCard({
 
 export function HwIconBox({ children }: { children: ReactNode }) {
   return (
-    <div className="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-[16px] bg-white shadow-sm">
+    <div className="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-[16px] bg-white shadow-sm transition-transform duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-[2px]">
       {children}
     </div>
   );
@@ -197,6 +264,40 @@ export function HwViewerWell({
   return <div className={`${hwViewerWellClass} ${className}`}>{children}</div>;
 }
 
+export function HwFadeImage({
+  src,
+  alt,
+  className = "",
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+}) {
+  const reduce = useReducedMotion();
+  const [ready, setReady] = useState(false);
+
+  return (
+    <motion.img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      onLoad={() => setReady(true)}
+      initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.98 }}
+      animate={
+        ready
+          ? reduce
+            ? { opacity: 1 }
+            : { opacity: 1, scale: 1 }
+          : reduce
+            ? { opacity: 0 }
+            : { opacity: 0, scale: 0.98 }
+      }
+      transition={{ duration: 0.4, ease: EASE }}
+      className={className}
+    />
+  );
+}
+
 /* ── Product visual ─────────────────────────────────────── */
 
 const VISUAL_HEIGHTS = {
@@ -206,7 +307,6 @@ const VISUAL_HEIGHTS = {
   xl: "h-[360px]",
   hero: "h-[min(480px,55vh)] md:h-[min(560px,60vh)]",
 } as const;
-
 export function ProductVisual({
   product,
   className = "",
@@ -342,11 +442,10 @@ function WorkstationVisual({ size }: { size: string }) {
           filter: "blur(40px)",
         }}
       />
-      <img
+      <HwFadeImage
         src="/ecosystem/pos-hardware.png"
         alt="Chefgaa restaurant workstation"
         className={`relative z-10 object-contain drop-shadow-[0_32px_64px_rgba(0,0,0,0.1)] ${h}`}
-        loading="lazy"
       />
     </div>
   );
