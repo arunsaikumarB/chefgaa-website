@@ -99,7 +99,13 @@ export function ProductGridSection() {
             <HwReveal delay={i * 0.06} className="h-full">
               <HwProductCard>
                 <ProductVisual product={p.visual} size="md" />
-                <h3 className="mt-[28px] font-sf-pro-display text-[24px] font-bold leading-[1.25] tracking-[-0.02em] text-[#111111] md:text-[28px]">
+                <h3
+                  className={`font-sf-pro-display text-[24px] font-bold leading-[1.25] tracking-[-0.02em] text-[#111111] md:text-[28px] ${
+                    p.id === "kitchen-display" || p.id === "display-stand"
+                      ? "mt-[24px]"
+                      : "mt-[28px]"
+                  }`}
+                >
                   {p.name}
                 </h3>
                 <p className={`mt-[12px] ${hwType.body}`}>{p.description}</p>

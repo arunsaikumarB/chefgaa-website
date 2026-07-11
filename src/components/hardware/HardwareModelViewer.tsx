@@ -15,14 +15,22 @@ type HardwareModelViewerProps = {
   /** Public path to a local GLB, e.g. `/models/tv_screen.glb` */
   src: string;
   title?: string;
+  /**
+   * Framing bias inside the shared viewer container.
+   * - default: perfectly centered (Customer Display Stand)
+   * - raised: centered horizontally, slightly higher (Kitchen Display)
+   */
+  frame?: "default" | "raised";
 };
 
 function Model({
   src,
   onReady,
+  frame,
 }: {
   src: string;
   onReady: () => void;
+  frame: "default" | "raised";
 }) {
   const { scene } = useGLTF(src);
 
@@ -31,9 +39,11 @@ function Model({
   }, [scene, onReady]);
 
   return (
-    <Center>
-      <primitive object={scene} />
-    </Center>
+    <group position={[0, frame === "raised" ? 0.12 : 0, 0]}>
+      <Center>
+        <primitive object={scene} />
+      </Center>
+    </group>
   );
 }
 
@@ -43,12 +53,14 @@ function SceneContent({
   autoRotate,
   onInteractStart,
   onInteractEnd,
+  frame,
 }: {
   src: string;
   onReady: () => void;
   autoRotate: boolean;
   onInteractStart: () => void;
   onInteractEnd: () => void;
+  frame: "default" | "raised";
 }) {
   return (
     <>
@@ -58,8 +70,8 @@ function SceneContent({
       <Environment preset="studio" />
 
       <Suspense fallback={null}>
-        <Bounds fit clip observe margin={1.25}>
-          <Model src={src} onReady={onReady} />
+        <Bounds fit clip observe margin={1.35}>
+          <Model src={src} onReady={onReady} frame={frame} />
         </Bounds>
       </Suspense>
 
@@ -84,10 +96,12 @@ function SceneContent({
 
 /**
  * Reusable local-GLB product viewer for hardware cards (R3F / Three.js).
+ * Renders inside a shared premium display container to match the Hardware page.
  */
 export function HardwareModelViewer({
   src,
   title = "Hardware product",
+  frame = "default",
 }: HardwareModelViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const idleTimerRef = useRef<number | null>(null);
@@ -158,37 +172,40 @@ export function HardwareModelViewer({
       ref={containerRef}
       role="img"
       aria-label={title}
-      className="relative flex h-[240px] w-full items-center justify-center overflow-hidden rounded-[20px] bg-transparent md:h-[300px] lg:h-[340px]"
+      className="relative flex h-[240px] w-full items-center justify-center overflow-hidden rounded-[28px] border border-black/[0.04] bg-[#F7F7F7] p-[16px] md:h-[280px] md:p-[20px] lg:h-[320px] lg:p-[24px]"
     >
-      {!loaded && (
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[20px]"
-        >
-          <div className="h-full w-full animate-pulse bg-gradient-to-b from-[#F3F3F3] to-[#E8E8E8]" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="h-[72px] w-[96px] rounded-[12px] bg-white/70 shadow-sm" />
+      <div className="relative h-full w-full">
+        {!loaded && (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[16px]"
+          >
+            <div className="h-full w-full animate-pulse bg-gradient-to-b from-[#F0F0F0] to-[#E6E6E6]" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="h-[72px] w-[96px] rounded-[12px] bg-white/70 shadow-sm" />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {shouldLoad && (
-        <Canvas
-          dpr={[1, 1.75]}
-          gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-          camera={{ fov: 35, near: 0.1, far: 100, position: [0, 0.4, 2.6] }}
-          style={{ width: "100%", height: "100%", background: "transparent" }}
-          frameloop="always"
-        >
-          <SceneContent
-            src={src}
-            onReady={handleReady}
-            autoRotate={autoRotate}
-            onInteractStart={handleInteractStart}
-            onInteractEnd={handleInteractEnd}
-          />
-        </Canvas>
-      )}
+        {shouldLoad && (
+          <Canvas
+            dpr={[1, 1.75]}
+            gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+            camera={{ fov: 35, near: 0.1, far: 100, position: [0, 0.4, 2.6] }}
+            style={{ width: "100%", height: "100%", background: "transparent" }}
+            frameloop="always"
+          >
+            <SceneContent
+              src={src}
+              onReady={handleReady}
+              autoRotate={autoRotate}
+              onInteractStart={handleInteractStart}
+              onInteractEnd={handleInteractEnd}
+              frame={frame}
+            />
+          </Canvas>
+        )}
+      </div>
     </div>
   );
 }
