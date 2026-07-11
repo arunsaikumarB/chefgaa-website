@@ -176,22 +176,26 @@ export function ProductGridSection() {
         />
       </HwReveal>
 
-      <div className="mt-[80px] grid grid-cols-1 gap-[32px] md:grid-cols-2 md:gap-[40px] md:items-stretch">
+      <div className="mt-[80px] grid grid-cols-1 items-stretch gap-x-[40px] gap-y-[28px] md:grid-cols-2 md:gap-x-[48px] md:gap-y-[32px]">
         {GRID_PRODUCTS.map((p, i) => (
-          <div key={p.id} id={p.anchor} className={`h-full ${HW_SCROLL_OFFSET}`}>
+          <div key={p.id} id={p.anchor} className={`h-full max-h-[740px] ${HW_SCROLL_OFFSET}`}>
             <HwReveal delay={i * 0.08} className="h-full" variant="card">
-              <HwProductCard>
+              <HwProductCard className="max-h-[740px]">
                 <ProductVisual product={p.visual} size="md" />
-                <h3 className={`mt-[24px] ${hwType.cardTitle}`}>{p.name}</h3>
-                <p className={`mt-[12px] min-h-[86px] ${hwType.body}`}>{p.description}</p>
-                <ul className="mt-[20px] flex min-h-[36px] flex-wrap gap-[8px]">
-                  {p.specs.map((s) => (
+                <h3 className="mt-[24px] h-[70px] overflow-hidden font-sf-pro-display text-[28px] font-bold leading-[1.25] tracking-[-0.02em] text-[#111111] line-clamp-2">
+                  {p.name}
+                </h3>
+                <p className="mt-[12px] h-[86px] overflow-hidden text-[18px] leading-[1.6] text-[#666666] line-clamp-3">
+                  {p.description}
+                </p>
+                <ul className="mt-[20px] flex h-[36px] flex-wrap gap-[8px] overflow-hidden">
+                  {p.specs.slice(0, 3).map((s) => (
                     <li key={s} className={hwType.chip}>
                       {s}
                     </li>
                   ))}
                 </ul>
-                <div className="mt-auto flex flex-wrap items-center gap-[24px] pt-[24px]">
+                <div className="mt-auto flex flex-wrap items-center gap-[24px] pt-[20px]">
                   <HwLink>Learn More</HwLink>
                   <HwLink>Request Demo</HwLink>
                 </div>

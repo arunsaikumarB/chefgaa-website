@@ -220,7 +220,7 @@ export function HwProductCard({
             }
       }
       transition={{ duration: 0.3, ease: EASE }}
-      className={`flex h-full flex-col rounded-[28px] border border-black/[0.04] bg-white p-[32px] text-left will-change-transform ${className}`}
+      className={`flex h-full max-h-[740px] flex-col rounded-[28px] border border-black/[0.04] bg-white p-[28px] text-left will-change-transform md:p-[32px] ${className}`}
       style={{
         boxShadow: hovered ? hwCardShadowHover : hwCardShadow,
         rotateX: reduce ? 0 : springX,
