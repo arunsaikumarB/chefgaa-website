@@ -195,11 +195,22 @@ export function ProductVisual({
   /** @deprecated hover-only lift is applied automatically */
   floating?: boolean;
 }) {
-  // Receipt Printer — Sketchfab viewer fills the image area only
+  // Sketchfab viewer fills the image area for these products only
   if (product === "receipt-printer") {
     return (
       <div className={`w-full ${className}`}>
         <ReceiptPrinterViewer />
+      </div>
+    );
+  }
+
+  if (product === "barcode-scanner") {
+    return (
+      <div className={`w-full ${className}`}>
+        <ReceiptPrinterViewer
+          modelId="31fdf834a70b42b084c7041870252488"
+          title="Barcode Scanner"
+        />
       </div>
     );
   }

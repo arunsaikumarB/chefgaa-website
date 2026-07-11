@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-const EMBED_SRC =
-  "https://sketchfab.com/models/4daf4e22d9d34b949d0ae7cbf3902983/embed" +
+const EMBED_PARAMS =
   "?autostart=1" +
   "&ui_controls=0" +
   "&ui_infos=0" +
@@ -16,10 +15,27 @@ const EMBED_SRC =
   "&ui_theme=dark" +
   "&autospin=0.15";
 
+const DEFAULT_MODEL_ID = "4daf4e22d9d34b949d0ae7cbf3902983";
+const DEFAULT_TITLE = "POS receipt printer";
+
+function buildEmbedSrc(modelId: string) {
+  return `https://sketchfab.com/models/${modelId}/embed${EMBED_PARAMS}`;
+}
+
+type ReceiptPrinterViewerProps = {
+  /** Sketchfab model id — defaults to the Receipt Printer model */
+  modelId?: string;
+  /** iframe title for accessibility */
+  title?: string;
+};
+
 /**
- * Premium Sketchfab 3D viewer for the Receipt Printer card image area only.
+ * Premium Sketchfab 3D viewer used by hardware product cards (image area only).
  */
-export function ReceiptPrinterViewer() {
+export function ReceiptPrinterViewer({
+  modelId = DEFAULT_MODEL_ID,
+  title = DEFAULT_TITLE,
+}: ReceiptPrinterViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [shouldLoad, setShouldLoad] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -42,6 +58,11 @@ export function ReceiptPrinterViewer() {
     return () => observer.disconnect();
   }, []);
 
+  // Reset skeleton when the model changes
+  useEffect(() => {
+    setLoaded(false);
+  }, [modelId]);
+
   return (
     <div
       ref={containerRef}
@@ -61,8 +82,8 @@ export function ReceiptPrinterViewer() {
 
       {shouldLoad && (
         <iframe
-          title="POS receipt printer"
-          src={EMBED_SRC}
+          title={title}
+          src={buildEmbedSrc(modelId)}
           loading="lazy"
           allowFullScreen
           allow="autoplay; fullscreen; xr-spatial-tracking"
