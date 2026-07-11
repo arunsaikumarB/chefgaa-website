@@ -1,8 +1,11 @@
 import type { ReactNode } from "react";
+import { lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import type { VisualId } from "./data";
 import { ReceiptPrinterViewer } from "./ReceiptPrinterViewer";
+
+const HardwareModelViewer = lazy(() => import("./HardwareModelViewer"));
 
 /* ── Design tokens (8pt grid) ───────────────────────────── */
 
@@ -233,6 +236,19 @@ export function ProductVisual({
           modelId="d0753b3a481f45999426dab7dc5870ab"
           title="Galaxy Tab S9+"
         />
+      </div>
+    );
+  }
+
+  if (product === "kitchen-display") {
+    return (
+      <div className={`w-full ${className}`}>
+        <Suspense fallback={null}>
+          <HardwareModelViewer
+            src="/models/tv_screen.glb"
+            title="Kitchen Display"
+          />
+        </Suspense>
       </div>
     );
   }
