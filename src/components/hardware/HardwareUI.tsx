@@ -247,6 +247,7 @@ export function ProductVisual({
           <HardwareModelViewer
             src="/models/tv_screen.glb"
             title="Kitchen Display"
+            frame="raised"
           />
         </Suspense>
       </div>
