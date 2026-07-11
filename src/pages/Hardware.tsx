@@ -4,8 +4,6 @@ import {
   ComparisonSection,
   ContactlessSection,
   WhySection,
-  SoftwareSection,
-  GallerySection,
   StoriesSection,
   FaqSection,
   CtaSection,
@@ -21,8 +19,6 @@ export function Hardware() {
       <ComparisonSection />
       <ContactlessSection />
       <WhySection />
-      <SoftwareSection />
-      <GallerySection />
       <StoriesSection />
       <FaqSection />
       <CtaSection />

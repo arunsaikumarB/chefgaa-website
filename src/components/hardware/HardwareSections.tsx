@@ -7,8 +7,6 @@ import {
   COMPARE_COLUMNS,
   COMPARE_ROWS,
   WHY_ITEMS,
-  SOFTWARE_MODULES,
-  GALLERY,
   STORIES,
   HARDWARE_FAQ,
 } from "./data";
@@ -28,14 +26,6 @@ import {
 } from "./HardwareUI";
 
 const HardwareModelViewer = lazy(() => import("./HardwareModelViewer"));
-
-function curve(sx: number, sy: number, ex: number, ey: number) {
-  const mx = (sx + ex) / 2;
-  const my = (sy + ey) / 2;
-  const dx = ex - sx;
-  const dy = ey - sy;
-  return `M ${sx} ${sy} C ${mx - dy * 0.14} ${my + dx * 0.14}, ${mx + dy * 0.07} ${my - dx * 0.07}, ${ex} ${ey}`;
-}
 
 /* ── 1. Featured ───────────────────────────────────────── */
 
@@ -239,117 +229,6 @@ export function WhySection() {
             </HwReveal>
           );
         })}
-      </div>
-    </HwShell>
-  );
-}
-
-/* ── 9. Software + Hardware ────────────────────────────── */
-
-export function SoftwareSection() {
-  const [hovered, setHovered] = useState<string | null>(null);
-  const modules = [
-    { id: "pos", label: "POS", x: 82, y: 20 },
-    { id: "inventory", label: "Inventory", x: 90, y: 40 },
-    { id: "kitchen", label: "Kitchen Display", x: 85, y: 62 },
-    { id: "online", label: "Online Ordering", x: 70, y: 82 },
-    { id: "reservations", label: "Reservations", x: 50, y: 90 },
-    { id: "crm", label: "CRM", x: 30, y: 82 },
-    { id: "loyalty", label: "Loyalty", x: 15, y: 62 },
-    { id: "marketing", label: "Marketing", x: 10, y: 40 },
-    { id: "analytics", label: "Analytics", x: 18, y: 20 },
-  ];
-  const cx = 50;
-  const cy = 48;
-
-  return (
-    <HwShell className="bg-[#F5F6F8]">
-      <div className="grid items-center gap-16 lg:grid-cols-2 lg:gap-24">
-        <HwReveal>
-          <div className="relative flex min-h-[440px] items-center justify-center rounded-[32px] bg-white p-10">
-            <svg
-              className="absolute inset-0 h-full w-full p-8"
-              viewBox="0 0 100 100"
-              preserveAspectRatio="xMidYMid meet"
-              aria-hidden="true"
-            >
-              {modules.map((m) => (
-                <path
-                  key={m.id}
-                  d={curve(cx, cy, m.x, m.y)}
-                  fill="none"
-                  stroke={hovered === m.id ? "#ED3C18" : "#FA9040"}
-                  strokeWidth={hovered === m.id ? 0.5 : 0.3}
-                  strokeOpacity={hovered === m.id ? 0.6 : 0.25}
-                  strokeLinecap="round"
-                />
-              ))}
-            </svg>
-            <ProductVisual product="workstation" size="lg" />
-            {modules.map((m) => (
-              <button
-                key={m.id}
-                type="button"
-                className="absolute rounded-full border border-black/[0.06] bg-white px-4 py-2 text-[16px] font-medium leading-[1.6] text-[#444444] shadow-sm transition-colors hover:text-[#ED3C18]"
-                style={{ left: `${m.x}%`, top: `${m.y}%`, transform: "translate(-50%,-50%)" }}
-                onMouseEnter={() => setHovered(m.id)}
-                onMouseLeave={() => setHovered(null)}
-              >
-                {m.label}
-              </button>
-            ))}
-          </div>
-        </HwReveal>
-
-        <HwReveal delay={0.1} className="flex flex-col justify-center">
-          <h2 className={hwType.sectionTitle}>Software + hardware, deeply integrated.</h2>
-          <p className={`mt-6 ${hwType.body}`}>
-            Every Chefgaa hardware device is deeply integrated with {SOFTWARE_MODULES.join(", ")}.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-2">
-            {SOFTWARE_MODULES.map((mod) => (
-              <span
-                key={mod}
-                className="rounded-full border border-black/[0.06] bg-white px-4 py-2 text-[16px] font-medium leading-[1.6] text-[#444444]"
-              >
-                {mod}
-              </span>
-            ))}
-          </div>
-          <div className="mt-10">
-            <HwPrimaryBtn>Explore the Ecosystem</HwPrimaryBtn>
-          </div>
-        </HwReveal>
-      </div>
-    </HwShell>
-  );
-}
-
-/* ── 10. Gallery ─────────────────────────────────────────── */
-
-export function GallerySection() {
-  return (
-    <HwShell>
-      <HwReveal>
-        <HwSectionIntro title="Built for real restaurants" />
-      </HwReveal>
-
-      <div className="mt-14 columns-1 gap-8 sm:columns-2 lg:columns-3">
-        {GALLERY.map((item, i) => (
-          <HwReveal key={item.id} delay={i * 0.05} className="mb-8 break-inside-avoid">
-            <figure
-              className={`overflow-hidden rounded-[32px] bg-gradient-to-br from-[#FFF4F0] via-[#F5F6F8] to-[#F0F7FF] ${
-                item.aspect === "tall" ? "h-96" : item.aspect === "wide" ? "h-64" : "h-72"
-              }`}
-            >
-              <figcaption className="flex h-full flex-col justify-end p-10">
-                <span className="font-sf-pro-display text-[24px] font-bold leading-[1.6] text-[#111111]">
-                  {item.label}
-                </span>
-              </figcaption>
-            </figure>
-          </HwReveal>
-        ))}
       </div>
     </HwShell>
   );

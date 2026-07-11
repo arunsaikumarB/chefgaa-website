@@ -165,26 +165,6 @@ export const WHY_ITEMS = [
   { title: "Built to Scale", description: "From one location to hundreds — grow without replacing hardware.", icon: TrendingUp, tint: "#F5F6F8" },
 ];
 
-export const SOFTWARE_MODULES = [
-  "POS",
-  "Inventory",
-  "Kitchen Display",
-  "Online Ordering",
-  "Reservations",
-  "CRM",
-  "Loyalty",
-  "Marketing",
-  "Analytics",
-];
-
-export const GALLERY = [
-  { id: "cashier", label: "Restaurant cashier", aspect: "tall" },
-  { id: "kitchen", label: "Kitchen line", aspect: "wide" },
-  { id: "handheld", label: "Waiter handheld", aspect: "square" },
-  { id: "drive-thru", label: "Drive-thru window", aspect: "wide" },
-  { id: "ordering", label: "Customer ordering", aspect: "tall" },
-] as const;
-
 export const STORIES = [
   {
     quote: "We replaced our entire counter in one afternoon. By dinner service, the team was already faster than before.",
