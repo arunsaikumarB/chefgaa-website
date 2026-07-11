@@ -226,6 +226,17 @@ export function ProductVisual({
     );
   }
 
+  if (product === "customer-display") {
+    return (
+      <div className={`w-full ${className}`}>
+        <ReceiptPrinterViewer
+          modelId="d0753b3a481f45999426dab7dc5870ab"
+          title="Galaxy Tab S9+"
+        />
+      </div>
+    );
+  }
+
   const heightKey = size === "xl" && product === "workstation" ? "hero" : size;
 
   return (
