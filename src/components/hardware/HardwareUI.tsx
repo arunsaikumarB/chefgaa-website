@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import type { VisualId } from "./data";
+import { ReceiptPrinterViewer } from "./ReceiptPrinterViewer";
 
 /* ── Design tokens (8pt grid) ───────────────────────────── */
 
@@ -194,6 +195,15 @@ export function ProductVisual({
   /** @deprecated hover-only lift is applied automatically */
   floating?: boolean;
 }) {
+  // Receipt Printer — Sketchfab viewer fills the image area only
+  if (product === "receipt-printer") {
+    return (
+      <div className={`w-full ${className}`}>
+        <ReceiptPrinterViewer />
+      </div>
+    );
+  }
+
   const heightKey = size === "xl" && product === "workstation" ? "hero" : size;
 
   return (
