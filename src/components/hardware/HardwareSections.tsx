@@ -1,4 +1,5 @@
 import { lazy, Suspense, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check } from "lucide-react";
 import {
@@ -29,36 +30,117 @@ const HardwareModelViewer = lazy(() => import("./HardwareModelViewer"));
 
 /* ── 1. Featured ───────────────────────────────────────── */
 
+const easeOut = [0.22, 1, 0.36, 1] as const;
+
 export function FeaturedSection() {
   return (
     <HwShell id="register">
-      <HwReveal>
-        <div className="overflow-hidden rounded-[32px] bg-[#F5F6F8]">
-          <div className="grid items-center lg:grid-cols-2">
-            <div className="p-[40px] md:p-[56px] lg:p-[64px]">
-              <p className={hwType.eyebrow}>{FEATURED.eyebrow}</p>
-              <h2 className={`mt-[24px] ${hwType.sectionTitle}`}>{FEATURED.headline}</h2>
-              <p className={`mt-[20px] ${hwType.body}`}>{FEATURED.description}</p>
-              <ul className="mt-[28px] space-y-[14px]">
-                {FEATURED.features.map((f) => (
-                  <li key={f} className="flex items-start gap-[12px] text-[18px] leading-[1.5] text-[#444444]">
-                    <Check size={20} className="mt-[2px] shrink-0 text-[#ED3C18]" strokeWidth={2.5} />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-[28px] text-[18px] leading-[1.5] text-[#111111]">
-                <span className="font-semibold">{FEATURED.price}</span>
-                <span className="text-[#666666]"> · {FEATURED.priceNote}</span>
-              </p>
-              <div className="mt-[28px] flex flex-wrap items-center gap-[24px]">
-                <HwPrimaryBtn>Request Demo</HwPrimaryBtn>
-                <HwLink>Learn more</HwLink>
-              </div>
-            </div>
+      <div className="min-h-0 overflow-hidden rounded-[36px] bg-[#F5F6F8] md:min-h-[620px] lg:min-h-[720px]">
+        <div className="grid h-full items-center lg:grid-cols-[minmax(0,0.45fr)_minmax(0,0.55fr)]">
+          {/* Left content */}
+          <div className="flex flex-col justify-center p-[32px] md:p-[60px] lg:p-[80px]">
+            <motion.p
+              className="text-[12px] font-semibold uppercase tracking-[0.25em] text-[#ED3C18]"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, ease: easeOut }}
+            >
+              {FEATURED.eyebrow}
+            </motion.p>
 
-            {/* Right side: premium product stage only — no overlays or extra UI */}
-            <div className="p-[24px] md:p-[32px] lg:p-[40px]">
+            <motion.h2
+              className="mt-[20px] max-w-[580px] font-sf-pro-display text-[36px] font-bold leading-[1.05] tracking-[-0.03em] text-[#111111] md:text-[48px] lg:text-[64px]"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.05, ease: easeOut }}
+            >
+              {FEATURED.headline}
+            </motion.h2>
+
+            <motion.p
+              className="mt-[24px] max-w-[560px] text-[18px] leading-[1.7] text-[#5B6472] md:text-[20px]"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.1, ease: easeOut }}
+            >
+              {FEATURED.description}
+            </motion.p>
+
+            <ul className="mt-[32px] space-y-[20px]">
+              {FEATURED.features.map((f, i) => (
+                <motion.li
+                  key={f}
+                  className="flex items-center gap-[14px] text-[18px] leading-[1.5] text-[#444444]"
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.16 + i * 0.08, ease: easeOut }}
+                >
+                  <span className="flex h-[28px] w-[28px] shrink-0 items-center justify-center rounded-full bg-[#ED3C18]/10">
+                    <Check size={16} className="text-[#ED3C18]" strokeWidth={2.75} />
+                  </span>
+                  {f}
+                </motion.li>
+              ))}
+            </ul>
+
+            <motion.p
+              className="mt-[32px] leading-[1.4] text-[#111111]"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.48, ease: easeOut }}
+            >
+              <span className="text-[28px] font-bold tracking-[-0.02em] md:text-[32px]">
+                {FEATURED.price}
+              </span>
+              <span className="ml-[10px] text-[18px] font-normal text-[#5B6472]">
+                · {FEATURED.priceNote}
+              </span>
+            </motion.p>
+
+            <div className="mt-[32px] flex flex-wrap items-center gap-[20px]">
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.55, ease: easeOut }}
+              >
+                <Link
+                  to="/contact"
+                  className="inline-flex h-[56px] items-center justify-center rounded-full bg-[#ED3C18] px-[32px] text-[16px] font-semibold leading-none !text-white transition-all duration-300 hover:scale-[1.02] hover:opacity-95"
+                >
+                  Request Demo
+                </Link>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.65, ease: easeOut }}
+              >
+                <Link
+                  to="/contact"
+                  className="inline-flex h-[56px] items-center justify-center rounded-full border border-[#111111] px-[32px] text-[16px] font-semibold leading-none text-[#111111] transition-all duration-300 hover:scale-[1.02] hover:bg-[#111111] hover:!text-white"
+                >
+                  Learn more
+                </Link>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Right product stage */}
+          <div className="flex items-center justify-center p-[32px] md:p-[60px] lg:p-[80px] lg:pl-[40px]">
+            <motion.div
+              className="w-full"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.15, ease: easeOut }}
+            >
               <Suspense fallback={null}>
                 <HardwareModelViewer
                   src="/models/pos_machine.glb"
@@ -66,10 +148,10 @@ export function FeaturedSection() {
                   variant="stage"
                 />
               </Suspense>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </HwReveal>
+      </div>
     </HwShell>
   );
 }

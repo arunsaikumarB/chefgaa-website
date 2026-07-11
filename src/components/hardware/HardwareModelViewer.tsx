@@ -12,6 +12,7 @@ import { hwViewerWellClass } from "./viewerShell";
 
 const IDLE_RESUME_MS = 3500;
 const AUTO_ROTATE_SPEED = 0.3;
+const STAGE_AUTO_ROTATE_SPEED = 0.18;
 
 type ViewerVariant = "well" | "stage";
 
@@ -24,19 +25,18 @@ type HardwareModelViewerProps = {
 };
 
 const STAGE_SHELL =
-  "relative flex h-[360px] w-full items-center justify-center overflow-hidden rounded-[32px] border border-black/[0.05] bg-[#F3F4F6] p-[24px] md:h-[440px] md:p-[32px] lg:h-[520px] lg:p-[40px]";
-
-const STAGE_SHADOW =
-  "0 24px 80px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.65)";
+  "relative flex h-[400px] w-full items-center justify-center overflow-hidden rounded-[36px] border border-black/[0.04] bg-[#F5F6F8] p-[28px] shadow-[0_25px_70px_rgba(0,0,0,0.06)] md:h-[480px] md:p-[36px] lg:h-[560px] lg:p-[40px]";
 
 function Model({
   src,
   onReady,
   frame,
+  variant,
 }: {
   src: string;
   onReady: () => void;
   frame: "default" | "raised";
+  variant: ViewerVariant;
 }) {
   const { scene } = useGLTF(src);
 
@@ -44,8 +44,10 @@ function Model({
     onReady();
   }, [scene, onReady]);
 
+  const y = frame === "raised" ? 0.12 : variant === "stage" ? -0.05 : 0;
+
   return (
-    <group position={[0, frame === "raised" ? 0.12 : 0, 0]}>
+    <group position={[0, y, 0]} rotation={variant === "stage" ? [0, 0.35, 0] : [0, 0, 0]}>
       <Center>
         <primitive object={scene} />
       </Center>
@@ -70,26 +72,43 @@ function SceneContent({
   frame: "default" | "raised";
   variant: ViewerVariant;
 }) {
-  const fitMargin = variant === "stage" ? 1.22 : 1.32;
+  // Stage ~80% occupancy; catalogue well ~70–75%
+  const fitMargin = variant === "stage" ? 1.12 : 1.32;
+  const spinSpeed =
+    variant === "stage" ? STAGE_AUTO_ROTATE_SPEED : AUTO_ROTATE_SPEED;
 
   return (
     <>
-      <ambientLight intensity={0.55} />
-      <directionalLight position={[4, 6, 3]} intensity={1.15} />
-      <directionalLight position={[-3, 2, -2]} intensity={0.35} />
+      {variant === "stage" ? (
+        <>
+          <ambientLight intensity={0.45} />
+          {/* Key */}
+          <directionalLight position={[5, 8, 4]} intensity={1.35} />
+          {/* Fill */}
+          <directionalLight position={[-5, 3, 2]} intensity={0.45} />
+          {/* Rim */}
+          <directionalLight position={[-2, 4, -6]} intensity={0.55} />
+        </>
+      ) : (
+        <>
+          <ambientLight intensity={0.55} />
+          <directionalLight position={[4, 6, 3]} intensity={1.15} />
+          <directionalLight position={[-3, 2, -2]} intensity={0.35} />
+        </>
+      )}
       <Environment preset="studio" />
 
       <Suspense fallback={null}>
         <Bounds fit clip observe margin={fitMargin}>
-          <Model src={src} onReady={onReady} frame={frame} />
+          <Model src={src} onReady={onReady} frame={frame} variant={variant} />
         </Bounds>
         {variant === "stage" && (
           <ContactShadows
-            position={[0, -1.05, 0]}
-            opacity={0.32}
-            scale={12}
-            blur={2.8}
-            far={5}
+            position={[0, -1.15, 0]}
+            opacity={0.38}
+            scale={14}
+            blur={2.6}
+            far={6}
             resolution={512}
             color="#000000"
           />
@@ -101,13 +120,13 @@ function SceneContent({
         enableDamping
         dampingFactor={0.08}
         autoRotate={autoRotate}
-        autoRotateSpeed={AUTO_ROTATE_SPEED}
+        autoRotateSpeed={spinSpeed}
         enablePan
         enableZoom
-        minDistance={variant === "stage" ? 1.4 : 1.1}
-        maxDistance={variant === "stage" ? 5.5 : 4.8}
-        minPolarAngle={Math.PI / 3.2}
-        maxPolarAngle={Math.PI / 1.65}
+        minDistance={variant === "stage" ? 1.2 : 1.1}
+        maxDistance={variant === "stage" ? 5.2 : 4.8}
+        minPolarAngle={Math.PI / 3.4}
+        maxPolarAngle={Math.PI / 1.7}
         onStart={onInteractStart}
         onEnd={onInteractEnd}
       />
@@ -196,13 +215,16 @@ export function HardwareModelViewer({
       className={
         variant === "stage" ? STAGE_SHELL : `${hwViewerWellClass} shrink-0`
       }
-      style={variant === "stage" ? { boxShadow: STAGE_SHADOW } : undefined}
     >
-      <div className="relative h-full w-full">
+      <div
+        className={`relative h-full w-full transition-all duration-[1200ms] ease-out ${
+          loaded ? "scale-100 opacity-100" : "scale-95 opacity-0"
+        }`}
+      >
         {!loaded && (
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[16px]"
+            className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[20px] opacity-100"
           >
             <div className="h-full w-full animate-pulse bg-[#EBEBEB]" />
             <div className="absolute inset-0 flex items-center justify-center">
@@ -216,10 +238,11 @@ export function HardwareModelViewer({
             dpr={[1, 1.75]}
             gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
             camera={{
-              fov: variant === "stage" ? 32 : 35,
+              fov: variant === "stage" ? 30 : 35,
               near: 0.1,
               far: 100,
-              position: [0, 0.45, variant === "stage" ? 3.1 : 2.6],
+              position:
+                variant === "stage" ? [1.15, 0.55, 2.65] : [0, 0.45, 2.6],
             }}
             style={{ width: "100%", height: "100%", background: "transparent" }}
             frameloop="always"
