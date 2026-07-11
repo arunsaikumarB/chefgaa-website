@@ -7,7 +7,6 @@ import {
   ChefHat,
   Tv,
   Tablet,
-  Package,
   Laptop,
   Zap,
   Shield,
@@ -47,7 +46,6 @@ export const NAV_CATEGORIES: {
   { id: "display", label: "Customer Display", icon: Tv, href: "#customer-display" },
   { id: "drawer", label: "Cash Drawer", icon: Wallet, href: "#cash-drawer" },
   { id: "tablet", label: "Tablet", icon: Laptop, href: "#tablet" },
-  { id: "accessories", label: "Accessories", icon: Package, href: "#kits" },
 ];
 
 export const GRID_PRODUCTS: {
@@ -156,37 +154,6 @@ export const COMPARE_ROWS: { label: string; values: [string, string, string, str
   { label: "Offline Mode", values: ["Yes", "Yes", "Yes", "—"] },
   { label: "Recommended Business", values: ["Full-service", "Counter / Cafe", "Tableside", "Kitchen"] },
   { label: "Warranty", values: ["2 years", "2 years", "1 year", "2 years"] },
-];
-
-export const KITS = [
-  {
-    id: "counter",
-    name: "Counter Kit",
-    includes: ["Register", "Receipt Printer", "Cash Drawer", "Customer Display"],
-    price: "From $1,299",
-    visual: "register" as VisualId,
-  },
-  {
-    id: "kitchen",
-    name: "Kitchen Kit",
-    includes: ["Kitchen Display", "Mounting hardware", "Station labels"],
-    price: "From $449",
-    visual: "kitchen-display" as VisualId,
-  },
-  {
-    id: "mobile",
-    name: "Mobile Ordering Kit",
-    includes: ["Handheld POS", "Charging dock", "Protective case"],
-    price: "From $499",
-    visual: "handheld" as VisualId,
-  },
-  {
-    id: "drive-thru",
-    name: "Drive-Thru Kit",
-    includes: ["Outdoor display", "Speaker system", "Handheld POS"],
-    price: "From $899",
-    visual: "terminal" as VisualId,
-  },
 ];
 
 export const WHY_ITEMS = [

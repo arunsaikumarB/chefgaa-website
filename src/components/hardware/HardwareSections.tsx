@@ -6,7 +6,6 @@ import {
   GRID_PRODUCTS,
   COMPARE_COLUMNS,
   COMPARE_ROWS,
-  KITS,
   WHY_ITEMS,
   SOFTWARE_MODULES,
   GALLERY,
@@ -211,38 +210,6 @@ export function ContactlessSection() {
             </div>
           </div>
         </HwReveal>
-      </div>
-    </HwShell>
-  );
-}
-
-/* ── 7. Kits ───────────────────────────────────────────── */
-
-export function KitsSection() {
-  return (
-    <HwShell id="kits" className="bg-[#F5F6F8]">
-      <HwReveal>
-        <HwSectionIntro
-          title="Hardware kits"
-          description="Start with everything you need — pre-configured and ready to deploy."
-          align="left"
-        />
-      </HwReveal>
-
-      <div className="mt-[56px] grid grid-cols-1 gap-[32px] md:grid-cols-2 md:gap-[40px]">
-        {KITS.map((kit, i) => (
-          <HwReveal key={kit.id} delay={i * 0.06} className="h-full">
-            <HwProductCard>
-              <ProductVisual product={kit.visual} size="lg" />
-              <h3 className={`mt-[28px] ${hwType.cardTitle}`}>{kit.name}</h3>
-              <p className={`mt-[12px] ${hwType.caption}`}>Includes: {kit.includes.join(" · ")}</p>
-              <p className="mt-[20px] text-[18px] font-semibold leading-[1.4] text-[#111111]">{kit.price}</p>
-              <div className="mt-auto pt-[28px]">
-                <HwPrimaryBtn>Request Demo</HwPrimaryBtn>
-              </div>
-            </HwProductCard>
-          </HwReveal>
-        ))}
       </div>
     </HwShell>
   );

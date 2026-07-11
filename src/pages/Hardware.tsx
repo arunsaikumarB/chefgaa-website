@@ -3,7 +3,6 @@ import {
   ProductGridSection,
   ComparisonSection,
   ContactlessSection,
-  KitsSection,
   WhySection,
   SoftwareSection,
   GallerySection,
@@ -21,7 +20,6 @@ export function Hardware() {
       <ProductGridSection />
       <ComparisonSection />
       <ContactlessSection />
-      <KitsSection />
       <WhySection />
       <SoftwareSection />
       <GallerySection />
