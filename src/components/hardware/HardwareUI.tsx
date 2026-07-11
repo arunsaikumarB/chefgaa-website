@@ -215,6 +215,17 @@ export function ProductVisual({
     );
   }
 
+  if (product === "cash-drawer") {
+    return (
+      <div className={`w-full ${className}`}>
+        <ReceiptPrinterViewer
+          modelId="61f07e0842134434a07426891f904353"
+          title="Cash Register Drawer for POS System open"
+        />
+      </div>
+    );
+  }
+
   const heightKey = size === "xl" && product === "workstation" ? "hero" : size;
 
   return (
