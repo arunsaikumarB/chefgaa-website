@@ -1,11 +1,8 @@
 import type { ReactNode } from "react";
-import { lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import type { VisualId } from "./data";
 import { ReceiptPrinterViewer } from "./ReceiptPrinterViewer";
-
-const HardwareModelViewer = lazy(() => import("./HardwareModelViewer"));
 
 /* ── Design tokens (8pt grid) ───────────────────────────── */
 
@@ -243,13 +240,11 @@ export function ProductVisual({
   if (product === "kitchen-display") {
     return (
       <div className={`w-full ${className}`}>
-        <Suspense fallback={null}>
-          <HardwareModelViewer
-            src="/models/tv_screen.glb"
-            title="Kitchen Display"
-            frame="raised"
-          />
-        </Suspense>
+        <ReceiptPrinterViewer
+          modelId="014e75456b4e465b9cecd1b136a0312b"
+          title="Led Tv"
+          variant="well"
+        />
       </div>
     );
   }
@@ -257,12 +252,11 @@ export function ProductVisual({
   if (product === "display-stand") {
     return (
       <div className={`w-full ${className}`}>
-        <Suspense fallback={null}>
-          <HardwareModelViewer
-            src="/models/mobile_stand.glb"
-            title="Customer Display Stand"
-          />
-        </Suspense>
+        <ReceiptPrinterViewer
+          modelId="e45762344a69450b872c83f6ff903520"
+          title="Mobile stand"
+          variant="well"
+        />
       </div>
     );
   }
