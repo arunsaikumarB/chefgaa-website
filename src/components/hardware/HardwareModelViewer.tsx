@@ -8,6 +8,7 @@ import {
   OrbitControls,
   useGLTF,
 } from "@react-three/drei";
+import { hwViewerWellClass } from "./viewerShell";
 
 const IDLE_RESUME_MS = 3500;
 const AUTO_ROTATE_SPEED = 0.3;
@@ -18,24 +19,12 @@ type HardwareModelViewerProps = {
   /** Public path to a local GLB, e.g. `/models/tv_screen.glb` */
   src: string;
   title?: string;
-  /**
-   * Framing bias inside the shared viewer container.
-   * - default: perfectly centered
-   * - raised: centered horizontally, slightly higher
-   */
   frame?: "default" | "raised";
-  /**
-   * - well: hardware card display well
-   * - stage: Apple-style featured product pedestal
-   */
   variant?: ViewerVariant;
 };
 
-const VARIANT_SHELL: Record<ViewerVariant, string> = {
-  well: "relative flex h-[240px] w-full items-center justify-center overflow-hidden rounded-[28px] border border-black/[0.04] bg-[#F7F7F7] p-[16px] md:h-[280px] md:p-[20px] lg:h-[320px] lg:p-[24px]",
-  stage:
-    "relative flex h-[360px] w-full items-center justify-center overflow-hidden rounded-[32px] border border-black/[0.05] bg-[#F3F4F6] p-[24px] md:h-[440px] md:p-[32px] lg:h-[520px] lg:p-[40px]",
-};
+const STAGE_SHELL =
+  "relative flex h-[360px] w-full items-center justify-center overflow-hidden rounded-[32px] border border-black/[0.05] bg-[#F3F4F6] p-[24px] md:h-[440px] md:p-[32px] lg:h-[520px] lg:p-[40px]";
 
 const STAGE_SHADOW =
   "0 24px 80px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.65)";
@@ -81,8 +70,7 @@ function SceneContent({
   frame: "default" | "raised";
   variant: ViewerVariant;
 }) {
-  // ~75–80% of the view: tighter margin on stage, more breathing room on card wells
-  const fitMargin = variant === "stage" ? 1.22 : 1.35;
+  const fitMargin = variant === "stage" ? 1.22 : 1.32;
 
   return (
     <>
@@ -205,14 +193,16 @@ export function HardwareModelViewer({
       ref={containerRef}
       role="img"
       aria-label={title}
-      className={VARIANT_SHELL[variant]}
+      className={
+        variant === "stage" ? STAGE_SHELL : `${hwViewerWellClass} shrink-0`
+      }
       style={variant === "stage" ? { boxShadow: STAGE_SHADOW } : undefined}
     >
       <div className="relative h-full w-full">
         {!loaded && (
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[20px]"
+            className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[16px]"
           >
             <div className="h-full w-full animate-pulse bg-[#EBEBEB]" />
             <div className="absolute inset-0 flex items-center justify-center">

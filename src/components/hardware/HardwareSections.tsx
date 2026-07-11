@@ -86,33 +86,22 @@ export function ProductGridSection() {
         />
       </HwReveal>
 
-      <div className="mt-[56px] grid grid-cols-1 gap-[32px] md:grid-cols-2 md:gap-[40px]">
+      <div className="mt-[80px] grid grid-cols-1 gap-[32px] md:grid-cols-2 md:gap-[40px] md:items-stretch">
         {GRID_PRODUCTS.map((p, i) => (
           <div key={p.id} id={p.anchor} className={`h-full ${HW_SCROLL_OFFSET}`}>
             <HwReveal delay={i * 0.06} className="h-full">
               <HwProductCard>
                 <ProductVisual product={p.visual} size="md" />
-                <h3
-                  className={`font-sf-pro-display text-[24px] font-bold leading-[1.25] tracking-[-0.02em] text-[#111111] md:text-[28px] ${
-                    p.id === "kitchen-display" || p.id === "display-stand"
-                      ? "mt-[24px]"
-                      : "mt-[28px]"
-                  }`}
-                >
-                  {p.name}
-                </h3>
-                <p className={`mt-[12px] ${hwType.body}`}>{p.description}</p>
-                <ul className="mt-[20px] flex flex-wrap gap-[8px]">
+                <h3 className={`mt-[24px] ${hwType.cardTitle}`}>{p.name}</h3>
+                <p className={`mt-[12px] min-h-[86px] ${hwType.body}`}>{p.description}</p>
+                <ul className="mt-[20px] flex min-h-[36px] flex-wrap gap-[8px]">
                   {p.specs.map((s) => (
-                    <li
-                      key={s}
-                      className="rounded-full bg-[#F5F6F8] px-[14px] py-[8px] text-[14px] leading-none text-[#444444]"
-                    >
+                    <li key={s} className={hwType.chip}>
                       {s}
                     </li>
                   ))}
                 </ul>
-                <div className="mt-auto flex flex-wrap items-center gap-[24px] pt-[28px]">
+                <div className="mt-auto flex flex-wrap items-center gap-[24px] pt-[24px]">
                   <HwLink>Learn More</HwLink>
                   <HwLink>Request Demo</HwLink>
                 </div>
@@ -141,7 +130,7 @@ export function ComparisonSection() {
         <HwSectionIntro title="Compare devices" />
       </HwReveal>
 
-      <div className="mt-[40px] overflow-x-auto md:mt-[48px]">
+      <div className="mt-[80px] overflow-x-auto">
         <div className="min-w-[880px]">
           <div className="sticky top-[11.5rem] z-10 grid grid-cols-5 gap-[24px] rounded-[28px] bg-[#F5F6F8]/95 py-[24px] backdrop-blur-md md:gap-[32px] md:py-[32px]">
             <div aria-hidden="true" />
@@ -214,7 +203,7 @@ export function WhySection() {
         <HwSectionIntro title="Why Chefgaa hardware" />
       </HwReveal>
 
-      <div className="mt-[56px] grid grid-cols-1 gap-[24px] sm:grid-cols-2 sm:gap-[32px] lg:grid-cols-3">
+      <div className="mt-[80px] grid grid-cols-1 gap-[24px] sm:grid-cols-2 sm:gap-[32px] lg:grid-cols-3">
         {WHY_ITEMS.map((item, i) => {
           const Icon = item.icon;
           return (
@@ -243,7 +232,7 @@ export function StoriesSection() {
         <HwSectionIntro title="Customer stories" />
       </HwReveal>
 
-      <div className="mt-[56px] grid grid-cols-1 gap-[32px] md:grid-cols-3">
+      <div className="mt-[80px] grid grid-cols-1 gap-[32px] md:grid-cols-3">
         {STORIES.map((s, i) => (
           <HwReveal key={s.name} delay={i * 0.06} className="h-full">
             <article className="flex h-full flex-col overflow-hidden rounded-[28px] bg-white text-left shadow-[0_16px_48px_rgba(0,0,0,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_64px_rgba(0,0,0,0.08)]">
@@ -277,7 +266,7 @@ export function FaqSection() {
         <HwSectionIntro title="Frequently asked questions" />
       </HwReveal>
 
-      <div className="mx-auto mt-14 max-w-[800px] border-t border-black/[0.06]">
+      <div className="mx-auto mt-[80px] max-w-[800px] border-t border-black/[0.06]">
         {HARDWARE_FAQ.map((item, i) => {
           const isOpen = open === i;
           return (

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { hwViewerWellClass } from "./viewerShell";
 
 const EMBED_PARAMS =
   "?autostart=1" +
@@ -58,42 +59,39 @@ export function ReceiptPrinterViewer({
     return () => observer.disconnect();
   }, []);
 
-  // Reset skeleton when the model changes
   useEffect(() => {
     setLoaded(false);
   }, [modelId]);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative flex h-[340px] w-full items-center justify-center overflow-hidden rounded-[20px] bg-transparent"
-    >
-      {!loaded && (
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 overflow-hidden rounded-[20px]"
-        >
-          <div className="h-full w-full animate-pulse bg-gradient-to-b from-[#F3F3F3] to-[#E8E8E8]" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="h-[72px] w-[96px] rounded-[12px] bg-white/70 shadow-sm" />
+    <div ref={containerRef} className={`${hwViewerWellClass} shrink-0`}>
+      <div className="relative h-full w-full">
+        {!loaded && (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[16px]"
+          >
+            <div className="h-full w-full animate-pulse bg-[#EBEBEB]" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="h-[72px] w-[96px] rounded-[12px] bg-white/70 shadow-sm" />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {shouldLoad && (
-        <iframe
-          title={title}
-          src={buildEmbedSrc(modelId)}
-          loading="lazy"
-          allowFullScreen
-          allow="autoplay; fullscreen; xr-spatial-tracking"
-          // Legacy fullscreen attrs required by Sketchfab embed
-          {...{ mozallowfullscreen: "true", webkitallowfullscreen: "true" }}
-          onLoad={() => setLoaded(true)}
-          className="h-full w-full border-0 bg-transparent"
-          style={{ width: "100%", height: "100%", border: "none" }}
-        />
-      )}
+        {shouldLoad && (
+          <iframe
+            title={title}
+            src={buildEmbedSrc(modelId)}
+            loading="lazy"
+            allowFullScreen
+            allow="autoplay; fullscreen; xr-spatial-tracking"
+            {...{ mozallowfullscreen: "true", webkitallowfullscreen: "true" }}
+            onLoad={() => setLoaded(true)}
+            className="h-full w-full border-0 bg-transparent"
+            style={{ width: "100%", height: "100%", border: "none" }}
+          />
+        )}
+      </div>
     </div>
   );
 }

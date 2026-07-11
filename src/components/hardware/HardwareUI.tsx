@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import type { VisualId } from "./data";
 import { ReceiptPrinterViewer } from "./ReceiptPrinterViewer";
+import { hwCardShadow, hwCardShadowHover, hwViewerWellClass } from "./viewerShell";
 
 const HardwareModelViewer = lazy(() => import("./HardwareModelViewer"));
 
@@ -13,10 +14,12 @@ export const hwType = {
   hero: "font-sf-pro-display text-[40px] font-bold leading-[1.6] tracking-[-0.03em] text-[#111111] md:text-[56px] lg:text-[72px]",
   sectionTitle:
     "font-sf-pro-display text-[36px] font-bold leading-[1.6] tracking-[-0.02em] text-[#111111] md:text-[48px]",
-  cardTitle: "font-sf-pro-display text-[32px] font-bold leading-[1.6] tracking-[-0.02em] text-[#111111]",
+  cardTitle:
+    "font-sf-pro-display text-[32px] font-bold leading-[1.25] tracking-[-0.02em] text-[#111111]",
   body: "text-[18px] leading-[1.6] text-[#666666]",
   caption: "text-[16px] leading-[1.6] text-[#666666]",
   eyebrow: "text-[16px] font-semibold uppercase tracking-[0.12em] text-[#ED3C18]",
+  chip: "inline-flex h-[36px] items-center rounded-full bg-[#F3F4F6] px-[16px] text-[14px] leading-none text-[#444444]",
 } as const;
 
 /** Clears fixed global nav (96px) + sticky hardware category nav (~88px) */
@@ -37,7 +40,7 @@ export function HwShell({
   return (
     <section
       id={id}
-      className={`${className} py-[72px] md:py-[96px] lg:py-[112px] ${id ? HW_SCROLL_OFFSET : ""}`}
+      className={`${className} py-[60px] ${id ? HW_SCROLL_OFFSET : ""}`}
     >
       <div className="mx-auto w-full max-w-[1600px] px-6 md:px-10 lg:px-20">
         <div className="mx-auto w-full max-w-[1440px]">{children}</div>
@@ -141,7 +144,14 @@ export function HwProductCard({
     <motion.article
       whileHover={{ y: -4 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className={`flex h-full flex-col rounded-[28px] border border-black/[0.04] bg-white p-[32px] text-left shadow-[0_16px_48px_rgba(0,0,0,0.05)] transition-shadow duration-300 hover:shadow-[0_24px_64px_rgba(0,0,0,0.08)] md:p-[40px] ${className}`}
+      className={`flex h-full flex-col rounded-[28px] border border-black/[0.04] bg-white p-[32px] text-left transition-shadow duration-300 ${className}`}
+      style={{ boxShadow: hwCardShadow }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = hwCardShadowHover;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = hwCardShadow;
+      }}
     >
       {children}
     </motion.article>
@@ -161,8 +171,8 @@ export function HwFeatureCard({
     <motion.article
       whileHover={{ y: -4 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className={`flex h-full flex-col rounded-[28px] p-[32px] text-left transition-shadow duration-300 hover:shadow-[0_24px_64px_rgba(0,0,0,0.06)] md:p-[40px] ${className}`}
-      style={{ backgroundColor: tint }}
+      className={`flex h-full flex-col rounded-[28px] p-[32px] text-left transition-shadow duration-300 ${className}`}
+      style={{ backgroundColor: tint, boxShadow: hwCardShadow }}
     >
       {children}
     </motion.article>
@@ -175,6 +185,16 @@ export function HwIconBox({ children }: { children: ReactNode }) {
       {children}
     </div>
   );
+}
+
+export function HwViewerWell({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return <div className={`${hwViewerWellClass} ${className}`}>{children}</div>;
 }
 
 /* ── Product visual ─────────────────────────────────────── */
@@ -268,6 +288,19 @@ export function ProductVisual({
   }
 
   const heightKey = size === "xl" && product === "workstation" ? "hero" : size;
+  const useCatalogueWell = size === "md" || size === "lg";
+
+  if (useCatalogueWell) {
+    return (
+      <div className={`w-full shrink-0 ${className}`}>
+        <HwViewerWell className="group/product">
+          <div className="flex h-[72%] w-[72%] max-h-full items-center justify-center transition-transform duration-350 group-hover/product:-translate-y-[3px]">
+            <DeviceRender product={product} size={size} />
+          </div>
+        </HwViewerWell>
+      </div>
+    );
+  }
 
   return (
     <div
