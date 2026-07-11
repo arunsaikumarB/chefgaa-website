@@ -7,8 +7,8 @@ import {
   type CompareCell,
 } from "./data";
 import { ProductVisual, HwReveal, hwType } from "./HardwareUI";
+import { HW_EASE } from "./viewerShell";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
 const CARD_W = 260;
 const LABEL_W = 200;
 const GAP = 16;
@@ -88,12 +88,15 @@ export function ComparisonSection() {
                     type="button"
                     onMouseEnter={() => setHoveredCol(i)}
                     onFocus={() => setHoveredCol(i)}
-                    whileHover={{ y: -8 }}
-                    transition={{ duration: 0.3, ease: EASE }}
-                    className={`flex h-full w-full flex-col items-center rounded-[24px] border bg-white p-[20px] text-center transition-[border-color,box-shadow,background-color] duration-200 ${
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    whileHover={{ y: -6 }}
+                    transition={{ duration: 0.3, delay: i * 0.05, ease: HW_EASE }}
+                    className={`flex h-full w-full flex-col items-center rounded-[24px] border bg-white p-[20px] text-center outline-none transition-[border-color,box-shadow,background-color] duration-200 focus-visible:ring-2 focus-visible:ring-[#ED3C18]/40 ${
                       active
                         ? "border-[#ED3C18] bg-[#FFF7F4] shadow-[0_20px_50px_rgba(237,60,24,0.12)]"
-                        : "border-black/[0.06] shadow-[0_12px_40px_rgba(0,0,0,0.06)]"
+                        : "border-black/[0.06] shadow-[0_16px_45px_rgba(0,0,0,0.06)]"
                     }`}
                   >
                     <div className="flex h-[120px] w-full items-center justify-center">
@@ -119,12 +122,12 @@ export function ComparisonSection() {
               {COMPARE_GROUPS.map((group, gi) => (
                 <div key={group.id}>
                   <div
-                    className="grid items-center bg-[#F5F6F8]"
+                    className="grid items-center bg-[#FAFAFA]"
                     style={{
                       gridTemplateColumns: `${LABEL_W}px repeat(${colCount}, ${CARD_W}px)`,
                     }}
                   >
-                    <div className="sticky left-0 z-10 bg-[#F5F6F8] px-[24px] py-[18px]">
+                    <div className="sticky left-0 z-10 bg-[#FAFAFA] px-[24px] py-[18px]">
                       <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#ED3C18]">
                         {group.label}
                       </p>
@@ -133,7 +136,7 @@ export function ComparisonSection() {
                       <div
                         key={`${group.id}-${d.id}`}
                         className={`h-full transition-colors duration-200 ${
-                          hoveredCol === i ? "bg-[#FFF7F4]" : "bg-[#F5F6F8]"
+                          hoveredCol === i ? "bg-[#FFF7F4]" : "bg-[#FAFAFA]"
                         }`}
                       />
                     ))}
@@ -153,7 +156,7 @@ export function ComparisonSection() {
                         transition={{
                           duration: 0.45,
                           delay: Math.min(globalIndex * 0.03, 0.4),
-                          ease: EASE,
+                          ease: HW_EASE,
                         }}
                         className="group/row grid min-h-[72px] items-center"
                         style={{
@@ -205,13 +208,13 @@ export function ComparisonSection() {
             <div className="mt-[32px] flex flex-wrap items-center justify-center gap-[16px]">
               <Link
                 to="/contact"
-                className="inline-flex h-[52px] items-center justify-center rounded-full bg-[#ED3C18] px-[28px] text-[16px] font-semibold leading-none !text-white transition-all duration-[220ms] hover:-translate-y-[2px] hover:shadow-[0_10px_25px_rgba(255,92,53,0.25)] active:scale-[0.97]"
+                className="inline-flex h-[52px] items-center justify-center rounded-full bg-[#ED3C18] px-[28px] text-[16px] font-semibold leading-none !text-white outline-none transition-all duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] hover:shadow-[0_10px_25px_rgba(255,92,53,0.25)] focus-visible:ring-2 focus-visible:ring-[#ED3C18]/40 active:scale-[0.97]"
               >
                 Request Demo
               </Link>
               <Link
                 to="/contact"
-                className="inline-flex h-[52px] items-center justify-center rounded-full border border-[#111111] px-[28px] text-[16px] font-semibold leading-none text-[#111111] transition-all duration-[220ms] hover:-translate-y-[2px] hover:bg-[#111111] hover:!text-white active:scale-[0.97]"
+                className="inline-flex h-[52px] items-center justify-center rounded-full border border-[#111111] px-[28px] text-[16px] font-semibold leading-none text-[#111111] outline-none transition-all duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] hover:bg-[#111111] hover:!text-white focus-visible:ring-2 focus-visible:ring-[#ED3C18]/40 active:scale-[0.97]"
               >
                 Contact Sales
               </Link>

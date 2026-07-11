@@ -87,7 +87,9 @@ export function ReceiptPrinterViewer({
             allow="autoplay; fullscreen; xr-spatial-tracking"
             {...{ mozallowfullscreen: "true", webkitallowfullscreen: "true" }}
             onLoad={() => setLoaded(true)}
-            className="h-full w-full border-0 bg-transparent"
+            className={`h-full w-full border-0 bg-transparent transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              loaded ? "scale-100 opacity-100" : "scale-[0.98] opacity-0"
+            }`}
             style={{ width: "100%", height: "100%", border: "none" }}
           />
         )}

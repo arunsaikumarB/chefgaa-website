@@ -9,13 +9,13 @@ import {
 import { Link } from "react-router-dom";
 import type { VisualId } from "./data";
 import { ReceiptPrinterViewer } from "./ReceiptPrinterViewer";
-import { hwCardShadow, hwCardShadowHover, hwViewerWellClass } from "./viewerShell";
+import { hwCardShadow, hwCardShadowHover, hwViewerWellClass, HW_EASE } from "./viewerShell";
 
 const HardwareModelViewer = lazy(() => import("./HardwareModelViewer"));
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+const EASE = HW_EASE;
 
-/* â”€â”€ Design tokens (8pt grid) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Design tokens (8pt grid) ───────────────────────────── */
 
 export const hwType = {
   hero: "font-sf-pro-display text-[40px] font-bold leading-[1.6] tracking-[-0.03em] text-[#111111] md:text-[56px] lg:text-[72px]",
@@ -37,7 +37,7 @@ function isCoarsePointer() {
   return typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
 }
 
-/* â”€â”€ Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Layout ─────────────────────────────────────────────── */
 
 export function HwShell({
   id,
@@ -123,7 +123,7 @@ export function HwReveal({
 /* â”€â”€ Buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 const btnBase =
-  "inline-flex h-[52px] items-center justify-center rounded-full px-[28px] text-[16px] font-semibold leading-none transition-all duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] active:scale-[0.97]";
+  "inline-flex h-[52px] items-center justify-center rounded-full px-[28px] text-[16px] font-semibold leading-none outline-none transition-all duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-[#ED3C18]/40 focus-visible:ring-offset-2";
 
 export function HwPrimaryBtn({ children, to = "/contact" }: { children: ReactNode; to?: string }) {
   return (
@@ -151,14 +151,14 @@ export function HwLink({ children, to = "/contact" }: { children: ReactNode; to?
   return (
     <Link
       to={to}
-      className="group relative inline-flex h-[48px] items-center text-[16px] font-semibold leading-none text-[#ED3C18] transition-transform duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] after:absolute after:bottom-[14px] after:left-0 after:h-px after:w-0 after:bg-[#ED3C18] after:transition-all after:duration-300 hover:after:w-full"
+      className="group relative inline-flex h-[48px] items-center text-[16px] font-semibold leading-none text-[#ED3C18] outline-none transition-transform duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] focus-visible:ring-2 focus-visible:ring-[#ED3C18]/40 focus-visible:ring-offset-2 after:absolute after:bottom-[14px] after:left-0 after:h-px after:w-0 after:bg-[#ED3C18] after:transition-all after:duration-300 hover:after:w-full"
     >
       {children}
     </Link>
   );
 }
 
-/* â”€â”€ Product card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Product card ───────────────────────────────────────── */
 
 export function HwProductCard({
   children,
@@ -169,26 +169,36 @@ export function HwProductCard({
 }) {
   const reduce = useReducedMotion();
   const ref = useRef<HTMLElement>(null);
+  const rafRef = useRef(0);
   const [hovered, setHovered] = useState(false);
 
   const rotateX = useMotionValue(0);
   const rotateY = useMotionValue(0);
-  const springX = useSpring(rotateX, { stiffness: 180, damping: 22, mass: 0.4 });
-  const springY = useSpring(rotateY, { stiffness: 180, damping: 22, mass: 0.4 });
+  const springX = useSpring(rotateX, { stiffness: 200, damping: 28, mass: 0.35 });
+  const springY = useSpring(rotateY, { stiffness: 200, damping: 28, mass: 0.35 });
 
   const handleMove = useCallback(
     (e: MouseEvent<HTMLElement>) => {
       if (reduce || isCoarsePointer() || !ref.current) return;
-      const rect = ref.current.getBoundingClientRect();
-      const px = (e.clientX - rect.left) / rect.width - 0.5;
-      const py = (e.clientY - rect.top) / rect.height - 0.5;
-      rotateX.set(py * -8);
-      rotateY.set(px * 8);
+      const { clientX, clientY } = e;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        rafRef.current = 0;
+        const el = ref.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const px = (clientX - rect.left) / rect.width - 0.5;
+        const py = (clientY - rect.top) / rect.height - 0.5;
+        // Max ~3°
+        rotateX.set(py * -6);
+        rotateY.set(px * 6);
+      });
     },
     [reduce, rotateX, rotateY],
   );
 
   const resetTilt = useCallback(() => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rotateX.set(0);
     rotateY.set(0);
     setHovered(false);
@@ -204,7 +214,7 @@ export function HwProductCard({
         reduce
           ? undefined
           : {
-              y: -8,
+              y: -6,
               scale: 1.015,
               borderColor: "rgba(0,0,0,0.09)",
             }
@@ -236,9 +246,9 @@ export function HwFeatureCard({
 
   return (
     <motion.article
-      whileHover={reduce ? undefined : { y: -8, scale: 1.015 }}
+      whileHover={reduce ? undefined : { y: -6, scale: 1.015 }}
       transition={{ duration: 0.3, ease: EASE }}
-      className={`flex h-full flex-col rounded-[28px] p-[32px] text-left will-change-transform ${className}`}
+      className={`group flex h-full flex-col rounded-[28px] p-[32px] text-left will-change-transform ${className}`}
       style={{ backgroundColor: tint, boxShadow: hwCardShadow }}
     >
       {children}

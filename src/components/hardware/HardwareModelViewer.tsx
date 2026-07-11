@@ -8,7 +8,7 @@ import {
   OrbitControls,
   useGLTF,
 } from "@react-three/drei";
-import { hwViewerWellClass } from "./viewerShell";
+import { hwViewerWellClass, hwStageShadow, hwStageShadowHover } from "./viewerShell";
 
 const IDLE_RESUME_MS = 3000;
 const AUTO_ROTATE_SPEED = 0.15;
@@ -25,7 +25,7 @@ type HardwareModelViewerProps = {
 };
 
 const STAGE_SHELL =
-  "relative flex h-[400px] w-full items-center justify-center overflow-hidden rounded-[36px] border border-black/[0.04] bg-[#F5F6F8] p-[28px] shadow-[0_25px_70px_rgba(0,0,0,0.06)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.01] hover:border-black/[0.08] hover:shadow-[0_28px_80px_rgba(0,0,0,0.08)] md:h-[480px] md:p-[36px] lg:h-[560px] lg:p-[40px]";
+  "relative flex h-[400px] w-full items-center justify-center overflow-hidden rounded-[36px] border border-black/[0.04] bg-[#F5F6F8] p-[28px] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.01] hover:border-black/[0.08] md:h-[480px] md:p-[36px] lg:h-[560px] lg:p-[40px]";
 
 function Model({
   src,
@@ -146,6 +146,7 @@ export function HardwareModelViewer({
   const containerRef = useRef<HTMLDivElement>(null);
   const idleTimerRef = useRef<number | null>(null);
   const [shouldLoad, setShouldLoad] = useState(false);
+  const [inView, setInView] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [autoRotate, setAutoRotate] = useState(true);
 
@@ -155,10 +156,9 @@ export function HardwareModelViewer({
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry?.isIntersecting) {
-          setShouldLoad(true);
-          observer.disconnect();
-        }
+        const visible = Boolean(entry?.isIntersecting);
+        setInView(visible);
+        if (visible) setShouldLoad(true);
       },
       { rootMargin: "200px 0px", threshold: 0.01 },
     );
@@ -215,12 +215,43 @@ export function HardwareModelViewer({
       className={
         variant === "stage" ? STAGE_SHELL : `${hwViewerWellClass} shrink-0`
       }
-      onPointerEnter={handleInteractStart}
-      onPointerLeave={handleInteractEnd}
+      style={
+        variant === "stage"
+          ? { boxShadow: loaded ? hwStageShadow : "0 10px 30px rgba(0,0,0,0.04)" }
+          : undefined
+      }
+      onPointerEnter={(e) => {
+        handleInteractStart();
+        if (variant === "stage") {
+          (e.currentTarget as HTMLElement).style.boxShadow = hwStageShadowHover;
+        }
+      }}
+      onPointerLeave={(e) => {
+        handleInteractEnd();
+        if (variant === "stage") {
+          (e.currentTarget as HTMLElement).style.boxShadow = hwStageShadow;
+        }
+      }}
     >
+      {variant === "stage" && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-[18%] bottom-[12%] top-[55%] rounded-full transition-opacity duration-1000"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, rgba(0,0,0,0.06) 0%, transparent 70%)",
+            opacity: loaded ? 1 : 0,
+            filter: "blur(18px)",
+          }}
+        />
+      )}
       <div
-        className={`relative h-full w-full transition-all duration-[1200ms] ease-out ${
-          loaded ? "scale-100 opacity-100" : "scale-95 opacity-0"
+        className={`relative h-full w-full transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          loaded
+            ? "scale-100 opacity-100"
+            : variant === "stage"
+              ? "scale-[0.94] opacity-0"
+              : "scale-95 opacity-0"
         }`}
       >
         {!loaded && (
@@ -247,12 +278,12 @@ export function HardwareModelViewer({
                 variant === "stage" ? [1.15, 0.55, 2.65] : [0, 0.45, 2.6],
             }}
             style={{ width: "100%", height: "100%", background: "transparent" }}
-            frameloop="always"
+            frameloop={inView ? "always" : "demand"}
           >
             <SceneContent
               src={src}
               onReady={handleReady}
-              autoRotate={autoRotate}
+              autoRotate={autoRotate && inView}
               onInteractStart={handleInteractStart}
               onInteractEnd={handleInteractEnd}
               frame={frame}

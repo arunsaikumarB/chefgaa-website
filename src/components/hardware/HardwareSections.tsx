@@ -111,7 +111,7 @@ export function FeaturedSection() {
               >
                 <Link
                   to="/contact"
-                  className="inline-flex h-[56px] items-center justify-center rounded-full bg-[#ED3C18] px-[32px] text-[16px] font-semibold leading-none !text-white transition-all duration-300 hover:scale-[1.02] hover:opacity-95"
+                  className="inline-flex h-[56px] items-center justify-center rounded-full bg-[#ED3C18] px-[32px] text-[16px] font-semibold leading-none !text-white outline-none transition-all duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] hover:shadow-[0_10px_25px_rgba(255,92,53,0.25)] focus-visible:ring-2 focus-visible:ring-[#ED3C18]/40 active:scale-[0.97]"
                 >
                   Request Demo
                 </Link>
@@ -124,7 +124,7 @@ export function FeaturedSection() {
               >
                 <Link
                   to="/contact"
-                  className="inline-flex h-[56px] items-center justify-center rounded-full border border-[#111111] px-[32px] text-[16px] font-semibold leading-none text-[#111111] transition-all duration-300 hover:scale-[1.02] hover:bg-[#111111] hover:!text-white"
+                  className="inline-flex h-[56px] items-center justify-center rounded-full border border-[#111111] px-[32px] text-[16px] font-semibold leading-none text-[#111111] outline-none transition-all duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] hover:bg-[#111111] hover:!text-white hover:shadow-[0_10px_25px_rgba(0,0,0,0.12)] focus-visible:ring-2 focus-visible:ring-[#ED3C18]/40 active:scale-[0.97]"
                 >
                   Learn more
                 </Link>
@@ -132,10 +132,18 @@ export function FeaturedSection() {
             </div>
           </div>
 
-          {/* Right product stage */}
-          <div className="flex items-center justify-center p-[32px] md:p-[60px] lg:p-[80px] lg:pl-[40px]">
+            {/* Right product stage */}
+          <div className="relative flex items-center justify-center p-[32px] md:p-[60px] lg:p-[80px] lg:pl-[40px]">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-[10%] rounded-full opacity-[0.03]"
+              style={{
+                background:
+                  "radial-gradient(circle at 50% 55%, #ED3C18 0%, transparent 65%)",
+              }}
+            />
             <motion.div
-              className="w-full"
+              className="relative w-full"
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -160,7 +168,7 @@ export function FeaturedSection() {
 
 export function ProductGridSection() {
   return (
-    <HwShell className="bg-[#F5F6F8]">
+    <HwShell className="bg-[#FAFAFA]">
       <HwReveal>
         <HwSectionIntro
           title="The complete hardware lineup"
@@ -200,7 +208,7 @@ export function ProductGridSection() {
 
 export function ContactlessSection() {
   return (
-    <HwShell>
+    <HwShell className="bg-[#FAFAFA]">
       <div className="grid items-center gap-16 lg:grid-cols-2 lg:gap-24">
         <HwReveal>
           <h2 className={hwType.sectionTitle}>Contactless payments, built in.</h2>
@@ -212,8 +220,16 @@ export function ContactlessSection() {
           </div>
         </HwReveal>
         <HwReveal delay={0.1}>
-          <div className="overflow-hidden rounded-[32px] bg-[#F5F6F8]">
-            <div className="flex min-h-[400px] items-center justify-center p-12 md:min-h-[480px]">
+          <div className="relative overflow-hidden rounded-[32px] bg-white">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-[15%] rounded-full opacity-[0.03]"
+              style={{
+                background:
+                  "radial-gradient(circle at 50% 50%, #ED3C18 0%, transparent 70%)",
+              }}
+            />
+            <div className="relative flex min-h-[400px] items-center justify-center p-12 md:min-h-[480px]">
               <ProductVisual product="handheld" size="xl" />
             </div>
           </div>
@@ -256,7 +272,7 @@ export function WhySection() {
 
 export function StoriesSection() {
   return (
-    <HwShell className="bg-[#F5F6F8]">
+    <HwShell className="bg-[#FAFAFA]">
       <HwReveal>
         <HwSectionIntro title="Customer stories" />
       </HwReveal>
@@ -264,7 +280,7 @@ export function StoriesSection() {
       <div className="mt-[80px] grid grid-cols-1 gap-[32px] md:grid-cols-3">
         {STORIES.map((s, i) => (
           <HwReveal key={s.name} delay={i * 0.08} className="h-full" variant="card">
-            <article className="flex h-full flex-col overflow-hidden rounded-[28px] bg-white text-left shadow-[0_16px_48px_rgba(0,0,0,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_64px_rgba(0,0,0,0.08)]">
+            <article className="flex h-full flex-col overflow-hidden rounded-[28px] bg-white text-left shadow-[0_16px_45px_rgba(0,0,0,0.06)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[6px] hover:scale-[1.015] hover:shadow-[0_22px_55px_rgba(0,0,0,0.09)]">
               <div className={`h-[180px] bg-gradient-to-br ${s.gradient}`} aria-hidden="true" />
               <div className="flex flex-1 flex-col p-[32px] md:p-[36px]">
                 <p className="text-[15px] font-semibold leading-[1.4] text-[#ED3C18]">{s.metric}</p>
@@ -303,7 +319,7 @@ export function FaqSection() {
               <button
                 type="button"
                 onClick={() => setOpen(isOpen ? null : i)}
-                className="flex w-full items-center justify-between gap-8 py-8 text-left"
+                className="flex w-full items-center justify-between gap-8 py-8 text-left outline-none transition-colors duration-200 hover:bg-[#FAFAFA] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#ED3C18]/40"
                 aria-expanded={isOpen}
               >
                 <span className="font-sf-pro-display text-[18px] font-semibold leading-[1.6] text-[#111111] md:text-[21px]">
@@ -312,7 +328,7 @@ export function FaqSection() {
                 <motion.span
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F5F6F8] text-[#666666]"
                   animate={{ rotate: isOpen ? 180 : 0 }}
-                  transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <ChevronDown size={20} strokeWidth={2} aria-hidden="true" />
                 </motion.span>
@@ -323,7 +339,7 @@ export function FaqSection() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                     className="overflow-hidden"
                   >
                     <p className={`pb-8 ${hwType.body}`}>{item.answer}</p>
@@ -342,13 +358,12 @@ export function FaqSection() {
 
 export function CtaSection() {
   return (
-    <section className="relative overflow-hidden bg-white pt-[120px] pb-[140px]">
+    <section className="relative overflow-hidden bg-[#FAFAFA] pt-[120px] pb-[140px]">
       <div
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.03]"
         style={{
           background:
-            "radial-gradient(circle, rgba(250,144,64,0.2) 0%, rgba(237,60,24,0.06) 50%, transparent 70%)",
-          filter: "blur(50px)",
+            "radial-gradient(circle, #ED3C18 0%, transparent 70%)",
         }}
       />
       <div className="relative z-10 mx-auto max-w-[720px] px-6 text-center md:px-20">
