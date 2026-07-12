@@ -8,7 +8,7 @@ import {
   OrbitControls,
   useGLTF,
 } from "@react-three/drei";
-import { hwViewerWellStandalone, hwStageShadow, hwStageShadowHover } from "./viewerShell";
+import { hwViewerWellStandalone } from "./viewerShell";
 
 const IDLE_RESUME_MS = 3000;
 const AUTO_ROTATE_SPEED = 0.15;
@@ -27,7 +27,7 @@ type HardwareModelViewerProps = {
 };
 
 const STAGE_SHELL =
-  "relative flex h-[320px] w-full items-center justify-center overflow-hidden rounded-[28px] border border-black/[0.04] bg-[#F5F6F8] p-[16px] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.01] hover:border-black/[0.08] md:h-[400px] md:p-[24px] lg:h-[480px]";
+  "relative flex h-[240px] w-full items-center justify-center overflow-hidden rounded-[20px] bg-transparent transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:h-[280px] lg:h-[320px]";
 
 function Model({
   src,
@@ -222,37 +222,26 @@ export function HardwareModelViewer({
             ? "relative h-full w-full overflow-hidden bg-transparent"
             : `${hwViewerWellStandalone} shrink-0`
       }
-      style={
-        variant === "stage"
-          ? { boxShadow: loaded ? hwStageShadow : "0 10px 30px rgba(0,0,0,0.04)" }
-          : undefined
-      }
-      onPointerEnter={(e) => {
+      style={undefined}
+      onPointerEnter={() => {
         handleInteractStart();
-        if (variant === "stage") {
-          (e.currentTarget as HTMLElement).style.boxShadow = hwStageShadowHover;
-        }
       }}
-      onPointerLeave={(e) => {
+      onPointerLeave={() => {
         handleInteractEnd();
-        if (variant === "stage") {
-          (e.currentTarget as HTMLElement).style.boxShadow = hwStageShadow;
-        }
       }}
     >
       {variant === "stage" && (
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-[18%] bottom-[12%] top-[55%] rounded-full transition-opacity duration-1000"
+          className="pointer-events-none absolute inset-x-[18%] bottom-[8%] top-[60%] rounded-full transition-opacity duration-1000"
           style={{
             background:
-              "radial-gradient(ellipse at center, rgba(0,0,0,0.06) 0%, transparent 70%)",
+              "radial-gradient(ellipse at center, rgba(0,0,0,0.07) 0%, transparent 70%)",
             opacity: loaded ? 1 : 0,
-            filter: "blur(18px)",
+            filter: "blur(14px)",
           }}
         />
-      )}
-      <div
+      )}      <div
         className={`relative h-full w-full transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
           loaded
             ? "scale-100 opacity-100"

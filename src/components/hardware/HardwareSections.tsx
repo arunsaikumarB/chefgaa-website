@@ -34,133 +34,129 @@ const easeOut = [0.22, 1, 0.36, 1] as const;
 
 export function FeaturedSection() {
   return (
-    <HwShell id="register">
-      <div className="min-h-0 overflow-hidden rounded-[28px] bg-[#F5F6F8]">
-        <div className="grid h-full items-center lg:grid-cols-[minmax(0,0.45fr)_minmax(0,0.55fr)]">
-          {/* Left content */}
-          <div className="flex flex-col justify-center p-[24px] md:p-[32px] lg:p-[40px]">
-            <motion.p
-              className="text-[12px] font-semibold uppercase tracking-[0.25em] text-[#ED3C18]"
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, ease: easeOut }}
-            >
-              {FEATURED.eyebrow}
-            </motion.p>
+    <section id="register" className={`bg-white pt-[32px] pb-[48px] ${HW_SCROLL_OFFSET}`}>
+      <div className="mx-auto w-full max-w-[1600px] px-6 md:px-10 lg:px-20">
+        <div className="mx-auto w-full max-w-[1440px]">
+          <div className="overflow-hidden rounded-[24px] bg-[#F5F6F8]">
+            <div className="grid items-center lg:grid-cols-[minmax(0,0.48fr)_minmax(0,0.52fr)]">
+              {/* Left content */}
+              <div className="flex flex-col justify-center p-[24px] md:p-[28px] lg:p-[36px] lg:pr-[24px]">
+                <motion.p
+                  className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#ED3C18]"
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: easeOut }}
+                >
+                  {FEATURED.eyebrow}
+                </motion.p>
 
-            <motion.h2
-              className="mt-[20px] max-w-[580px] font-sf-pro-display text-[36px] font-bold leading-[1.05] tracking-[-0.03em] text-[#111111] md:text-[48px] lg:text-[64px]"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.05, ease: easeOut }}
-            >
-              {FEATURED.headline}
-            </motion.h2>
-
-            <motion.p
-              className="mt-[24px] max-w-[560px] text-[18px] leading-[1.7] text-[#5B6472] md:text-[20px]"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.1, ease: easeOut }}
-            >
-              {FEATURED.description}
-            </motion.p>
-
-            <ul className="mt-[32px] space-y-[20px]">
-              {FEATURED.features.map((f, i) => (
-                <motion.li
-                  key={f}
-                  className="flex items-center gap-[14px] text-[18px] leading-[1.5] text-[#444444]"
+                <motion.h2
+                  className="mt-[12px] max-w-[520px] font-sf-pro-display text-[28px] font-bold leading-[1.1] tracking-[-0.03em] text-[#111111] md:text-[36px] lg:text-[44px]"
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.16 + i * 0.08, ease: easeOut }}
+                  transition={{ duration: 0.7, delay: 0.05, ease: easeOut }}
                 >
-                  <span className="flex h-[28px] w-[28px] shrink-0 items-center justify-center rounded-full bg-[#ED3C18]/10">
-                    <Check size={16} className="text-[#ED3C18]" strokeWidth={2.75} />
+                  {FEATURED.headline}
+                </motion.h2>
+
+                <motion.p
+                  className="mt-[12px] max-w-[480px] text-[15px] leading-[1.55] text-[#5B6472] md:text-[16px]"
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, delay: 0.1, ease: easeOut }}
+                >
+                  {FEATURED.description}
+                </motion.p>
+
+                <ul className="mt-[20px] space-y-[12px]">
+                  {FEATURED.features.map((f, i) => (
+                    <motion.li
+                      key={f}
+                      className="flex items-center gap-[10px] text-[15px] leading-[1.4] text-[#444444]"
+                      initial={{ opacity: 0, y: 12 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.14 + i * 0.06, ease: easeOut }}
+                    >
+                      <span className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-[#ED3C18]/10">
+                        <Check size={13} className="text-[#ED3C18]" strokeWidth={2.75} />
+                      </span>
+                      {f}
+                    </motion.li>
+                  ))}
+                </ul>
+
+                <motion.p
+                  className="mt-[20px] leading-[1.3] text-[#111111]"
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.4, ease: easeOut }}
+                >
+                  <span className="text-[22px] font-bold tracking-[-0.02em] md:text-[26px]">
+                    {FEATURED.price}
                   </span>
-                  {f}
-                </motion.li>
-              ))}
-            </ul>
+                  <span className="ml-[8px] text-[15px] font-normal text-[#5B6472]">
+                    · {FEATURED.priceNote}
+                  </span>
+                </motion.p>
 
-            <motion.p
-              className="mt-[32px] leading-[1.4] text-[#111111]"
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.48, ease: easeOut }}
-            >
-              <span className="text-[28px] font-bold tracking-[-0.02em] md:text-[32px]">
-                {FEATURED.price}
-              </span>
-              <span className="ml-[10px] text-[18px] font-normal text-[#5B6472]">
-                · {FEATURED.priceNote}
-              </span>
-            </motion.p>
+                <div className="mt-[20px] flex flex-wrap items-center gap-[12px]">
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.45, ease: easeOut }}
+                  >
+                    <Link
+                      to="/contact"
+                      className="inline-flex h-[44px] items-center justify-center rounded-full bg-[#ED3C18] px-[24px] text-[15px] font-semibold leading-none !text-white outline-none transition-all duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] hover:shadow-[0_10px_25px_rgba(255,92,53,0.25)] focus-visible:ring-2 focus-visible:ring-[#ED3C18]/40 active:scale-[0.97]"
+                    >
+                      Request Demo
+                    </Link>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.52, ease: easeOut }}
+                  >
+                    <Link
+                      to="/contact"
+                      className="inline-flex h-[44px] items-center justify-center rounded-full border border-[#111111] px-[24px] text-[15px] font-semibold leading-none text-[#111111] outline-none transition-all duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] hover:bg-[#111111] hover:!text-white focus-visible:ring-2 focus-visible:ring-[#ED3C18]/40 active:scale-[0.97]"
+                    >
+                      Learn more
+                    </Link>
+                  </motion.div>
+                </div>
+              </div>
 
-            <div className="mt-[32px] flex flex-wrap items-center gap-[20px]">
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.55, ease: easeOut }}
-              >
-                <Link
-                  to="/contact"
-                  className="inline-flex h-[56px] items-center justify-center rounded-full bg-[#ED3C18] px-[32px] text-[16px] font-semibold leading-none !text-white outline-none transition-all duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] hover:shadow-[0_10px_25px_rgba(255,92,53,0.25)] focus-visible:ring-2 focus-visible:ring-[#ED3C18]/40 active:scale-[0.97]"
+              {/* Right product — no nested grey box */}
+              <div className="relative flex items-center justify-center p-[20px] md:p-[24px] lg:p-[28px]">
+                <motion.div
+                  className="relative w-full max-w-[520px]"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, delay: 0.12, ease: easeOut }}
                 >
-                  Request Demo
-                </Link>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.65, ease: easeOut }}
-              >
-                <Link
-                  to="/contact"
-                  className="inline-flex h-[56px] items-center justify-center rounded-full border border-[#111111] px-[32px] text-[16px] font-semibold leading-none text-[#111111] outline-none transition-all duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] hover:bg-[#111111] hover:!text-white hover:shadow-[0_10px_25px_rgba(0,0,0,0.12)] focus-visible:ring-2 focus-visible:ring-[#ED3C18]/40 active:scale-[0.97]"
-                >
-                  Learn more
-                </Link>
-              </motion.div>
+                  <Suspense fallback={null}>
+                    <HardwareModelViewer
+                      src="/models/pos_machine.glb"
+                      title="Chefgaa Register"
+                      variant="stage"
+                    />
+                  </Suspense>
+                </motion.div>
+              </div>
             </div>
-          </div>
-
-            {/* Right product stage */}
-          <div className="relative flex items-center justify-center p-[24px] md:p-[32px] lg:p-[40px] lg:pl-[24px]">
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-[10%] rounded-full opacity-[0.03]"
-              style={{
-                background:
-                  "radial-gradient(circle at 50% 55%, #ED3C18 0%, transparent 65%)",
-              }}
-            />
-            <motion.div
-              className="relative w-full"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.15, ease: easeOut }}
-            >
-              <Suspense fallback={null}>
-                <HardwareModelViewer
-                  src="/models/pos_machine.glb"
-                  title="Chefgaa Register"
-                  variant="stage"
-                />
-              </Suspense>
-            </motion.div>
           </div>
         </div>
       </div>
-    </HwShell>
+    </section>
   );
 }
 
