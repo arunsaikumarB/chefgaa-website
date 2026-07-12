@@ -178,11 +178,7 @@ export function ProductGridSection() {
 
       <div className="mx-auto mt-[40px] grid w-full max-w-[1120px] grid-cols-1 items-stretch gap-[24px] md:grid-cols-2 md:gap-[32px]">
         {GRID_PRODUCTS.map((p, i) => (
-          <div
-            key={p.id}
-            id={p.id === "register" ? undefined : p.anchor}
-            className={`h-full ${p.id === "register" ? "" : HW_SCROLL_OFFSET}`}
-          >
+          <div key={p.id} id={p.anchor} className={`h-full ${HW_SCROLL_OFFSET}`}>
             <HwReveal delay={i * 0.05} className="h-full" variant="card">
               <HardwareCard product={p} />
             </HwReveal>

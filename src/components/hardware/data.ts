@@ -14,8 +14,6 @@ import {
   CreditCard,
   TrendingUp,
   Dock,
-  Battery,
-  WifiOff,
   Cable,
   Bluetooth,
   Hand,
@@ -55,7 +53,6 @@ export const NAV_CATEGORIES: {
   href: string;
 }[] = [
   { id: "register", label: "Register", icon: Monitor, href: "#register" },
-  { id: "terminal", label: "Terminal", icon: Tablet, href: "#terminal" },
   { id: "stand", label: "Stand", icon: Dock, href: "#display-stand" },
   { id: "kitchen", label: "Kitchen Display", icon: ChefHat, href: "#kitchen-display" },
   { id: "scanner", label: "Barcode Scanner", icon: ScanLine, href: "#barcode-scanner" },
@@ -72,30 +69,6 @@ export const GRID_PRODUCTS: {
   chips: HardwareChip[];
   visual: VisualId;
 }[] = [
-  {
-    id: "register",
-    anchor: "register",
-    name: "Chefgaa Register",
-    description: "A complete countertop POS built for high-volume restaurant service.",
-    chips: [
-      { label: '15.6" Touch Display', icon: Monitor },
-      { label: "Wi-Fi & Ethernet", icon: Wifi },
-      { label: "Integrated Payments", icon: CreditCard },
-    ],
-    visual: "register",
-  },
-  {
-    id: "terminal",
-    anchor: "terminal",
-    name: "Chefgaa Terminal",
-    description: "Compact all-in-one terminal with a built-in receipt printer.",
-    chips: [
-      { label: "Built-in Printer", icon: Printer },
-      { label: "All-day Battery", icon: Battery },
-      { label: "Offline Mode", icon: WifiOff },
-    ],
-    visual: "terminal",
-  },
   {
     id: "display-stand",
     anchor: "display-stand",
