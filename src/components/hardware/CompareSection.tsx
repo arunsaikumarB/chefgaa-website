@@ -53,7 +53,7 @@ export function ComparisonSection() {
   const tableMinWidth = LABEL_W + colCount * (CARD_W + GAP);
 
   return (
-    <section className="bg-white py-[140px]" aria-labelledby="compare-heading">
+    <section className="bg-white py-[72px]" aria-labelledby="compare-heading">
       <div className="mx-auto w-full max-w-[1440px] px-6 md:px-10 lg:px-20">
         <HwReveal>
           <div className="mx-auto max-w-[720px] text-center">
@@ -63,7 +63,7 @@ export function ComparisonSection() {
             >
               Compare Devices
             </h2>
-            <p className="mx-auto mt-[16px] mb-[80px] max-w-[560px] text-[18px] leading-[1.6] text-[#6B7280]">
+            <p className="mx-auto mt-[16px] mb-[32px] max-w-[560px] text-[18px] leading-[1.6] text-[#6B7280]">
               Compare every Chefgaa hardware device to find the right setup for your restaurant.
             </p>
           </div>
@@ -198,14 +198,14 @@ export function ComparisonSection() {
 
         {/* CTA */}
         <HwReveal>
-          <div className="mx-auto mt-[80px] max-w-[880px] rounded-[32px] bg-[#F8F8F8] px-[32px] py-[48px] text-center md:px-[56px] md:py-[56px]">
+          <div className="mx-auto mt-[32px] max-w-[880px] rounded-[24px] bg-[#F8F8F8] px-[24px] py-[32px] text-center md:px-[32px]">
             <h3 className="font-sf-pro-display text-[28px] font-bold leading-[1.25] tracking-[-0.02em] text-[#111111] md:text-[32px]">
               Still not sure which device is right for you?
             </h3>
-            <p className={`mx-auto mt-[16px] max-w-[520px] ${hwType.body}`}>
+            <p className={`mx-auto mt-[12px] max-w-[520px] ${hwType.body}`}>
               Our experts can help you choose the perfect setup.
             </p>
-            <div className="mt-[32px] flex flex-wrap items-center justify-center gap-[16px]">
+            <div className="mt-[24px] flex flex-wrap items-center justify-center gap-[16px]">
               <Link
                 to="/contact"
                 className="inline-flex h-[52px] items-center justify-center rounded-full bg-[#ED3C18] px-[28px] text-[16px] font-semibold leading-none !text-white outline-none transition-all duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] hover:shadow-[0_10px_25px_rgba(255,92,53,0.25)] focus-visible:ring-2 focus-visible:ring-[#ED3C18]/40 active:scale-[0.97]"

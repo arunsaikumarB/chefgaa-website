@@ -45,7 +45,8 @@
   --text-heading-lg: 80px;
   --text-display: 96px;
 
-  /* Spacing */
+  /* Spacing — pixel-named utilities (p-4 = 4px). Prefer explicit [Npx] in new code.
+     Hardware page uses src/components/hardware/spacing.ts exclusively. */
   --spacing-4: 4px;
   --spacing-8: 8px;
   --spacing-12: 12px;
@@ -58,6 +59,7 @@
   --spacing-44: 44px;
   --spacing-48: 48px;
   --spacing-52: 52px;
+  --spacing-72: 72px;
   --spacing-76: 76px;
   --spacing-80: 80px;
   --spacing-120: 120px;

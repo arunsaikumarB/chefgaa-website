@@ -35,10 +35,10 @@ const easeOut = [0.22, 1, 0.36, 1] as const;
 export function FeaturedSection() {
   return (
     <HwShell id="register">
-      <div className="min-h-0 overflow-hidden rounded-[36px] bg-[#F5F6F8] md:min-h-[620px] lg:min-h-[720px]">
+      <div className="min-h-0 overflow-hidden rounded-[28px] bg-[#F5F6F8]">
         <div className="grid h-full items-center lg:grid-cols-[minmax(0,0.45fr)_minmax(0,0.55fr)]">
           {/* Left content */}
-          <div className="flex flex-col justify-center p-[32px] md:p-[60px] lg:p-[80px]">
+          <div className="flex flex-col justify-center p-[24px] md:p-[32px] lg:p-[40px]">
             <motion.p
               className="text-[12px] font-semibold uppercase tracking-[0.25em] text-[#ED3C18]"
               initial={{ opacity: 0, y: 16 }}
@@ -133,7 +133,7 @@ export function FeaturedSection() {
           </div>
 
             {/* Right product stage */}
-          <div className="relative flex items-center justify-center p-[32px] md:p-[60px] lg:p-[80px] lg:pl-[40px]">
+          <div className="relative flex items-center justify-center p-[24px] md:p-[32px] lg:p-[40px] lg:pl-[24px]">
             <div
               aria-hidden
               className="pointer-events-none absolute inset-[10%] rounded-full opacity-[0.03]"
@@ -176,26 +176,26 @@ export function ProductGridSection() {
         />
       </HwReveal>
 
-      <div className="mt-[80px] grid grid-cols-1 items-stretch gap-x-[40px] gap-y-[28px] md:grid-cols-2 md:gap-x-[48px] md:gap-y-[32px]">
+      <div className="mt-[32px] grid grid-cols-1 items-stretch gap-x-[24px] gap-y-[24px] md:grid-cols-2 md:gap-x-[32px] md:gap-y-[24px]">
         {GRID_PRODUCTS.map((p, i) => (
-          <div key={p.id} id={p.anchor} className={`h-full max-h-[740px] ${HW_SCROLL_OFFSET}`}>
+          <div key={p.id} id={p.anchor} className={`h-full ${HW_SCROLL_OFFSET}`}>
             <HwReveal delay={i * 0.08} className="h-full" variant="card">
-              <HwProductCard className="max-h-[740px]">
+              <HwProductCard>
                 <ProductVisual product={p.visual} size="md" />
-                <h3 className="mt-[24px] h-[70px] overflow-hidden font-sf-pro-display text-[28px] font-bold leading-[1.25] tracking-[-0.02em] text-[#111111] line-clamp-2">
+                <h3 className="mt-[16px] h-[56px] overflow-hidden font-sf-pro-display text-[24px] font-bold leading-[1.15] tracking-[-0.02em] text-[#111111] line-clamp-2">
                   {p.name}
                 </h3>
-                <p className="mt-[12px] h-[86px] overflow-hidden text-[18px] leading-[1.6] text-[#666666] line-clamp-3">
+                <p className="mt-[12px] h-[72px] overflow-hidden text-[16px] leading-[1.5] text-[#666666] line-clamp-3">
                   {p.description}
                 </p>
-                <ul className="mt-[20px] flex h-[36px] flex-wrap gap-[8px] overflow-hidden">
+                <ul className="mt-[16px] flex h-[32px] flex-wrap gap-[8px] overflow-hidden">
                   {p.specs.slice(0, 3).map((s) => (
                     <li key={s} className={hwType.chip}>
                       {s}
                     </li>
                   ))}
                 </ul>
-                <div className="mt-auto flex flex-wrap items-center gap-[24px] pt-[20px]">
+                <div className="mt-auto flex flex-wrap items-center gap-[16px] pt-[20px]">
                   <HwLink>Learn More</HwLink>
                   <HwLink>Request Demo</HwLink>
                 </div>
@@ -252,7 +252,7 @@ export function WhySection() {
         <HwSectionIntro title="Why Chefgaa hardware" />
       </HwReveal>
 
-      <div className="mt-[80px] grid grid-cols-1 gap-[24px] sm:grid-cols-2 sm:gap-[32px] lg:grid-cols-3">
+      <div className="mt-[32px] grid grid-cols-1 gap-[24px] sm:grid-cols-2 lg:grid-cols-3">
         {WHY_ITEMS.map((item, i) => {
           const Icon = item.icon;
           return (
@@ -281,19 +281,19 @@ export function StoriesSection() {
         <HwSectionIntro title="Customer stories" />
       </HwReveal>
 
-      <div className="mt-[80px] grid grid-cols-1 gap-[32px] md:grid-cols-3">
+      <div className="mt-[32px] grid grid-cols-1 gap-[24px] md:grid-cols-3">
         {STORIES.map((s, i) => (
           <HwReveal key={s.name} delay={i * 0.08} className="h-full" variant="card">
-            <article className="flex h-full flex-col overflow-hidden rounded-[28px] bg-white text-left shadow-[0_16px_45px_rgba(0,0,0,0.06)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[6px] hover:scale-[1.015] hover:shadow-[0_22px_55px_rgba(0,0,0,0.09)]">
-              <div className={`h-[180px] bg-gradient-to-br ${s.gradient}`} aria-hidden="true" />
-              <div className="flex flex-1 flex-col p-[32px] md:p-[36px]">
+            <article className="flex h-full flex-col overflow-hidden rounded-[24px] bg-white text-left shadow-[0_16px_45px_rgba(0,0,0,0.06)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[6px] hover:scale-[1.015] hover:shadow-[0_22px_55px_rgba(0,0,0,0.09)]">
+              <div className={`h-[140px] bg-gradient-to-br ${s.gradient}`} aria-hidden="true" />
+              <div className="flex flex-1 flex-col p-[24px]">
                 <p className="text-[15px] font-semibold leading-[1.4] text-[#ED3C18]">{s.metric}</p>
-                <blockquote className={`mt-[14px] flex-1 ${hwType.body} text-[#444444]`}>
+                <blockquote className={`mt-[12px] flex-1 ${hwType.body} text-[#444444]`}>
                   &ldquo;{s.quote}&rdquo;
                 </blockquote>
-                <footer className="mt-[28px] border-t border-black/[0.05] pt-[24px]">
+                <footer className="mt-[24px] border-t border-black/[0.05] pt-[16px]">
                   <p className="text-[17px] font-semibold leading-[1.4] text-[#111111]">{s.name}</p>
-                  <p className={`mt-[6px] ${hwType.caption}`}>{s.role}</p>
+                  <p className={`mt-[8px] ${hwType.caption}`}>{s.role}</p>
                 </footer>
               </div>
             </article>
@@ -315,7 +315,7 @@ export function FaqSection() {
         <HwSectionIntro title="Frequently asked questions" />
       </HwReveal>
 
-      <div className="mx-auto mt-[80px] max-w-[800px] border-t border-black/[0.06]">
+      <div className="mx-auto mt-[32px] max-w-[800px] border-t border-black/[0.06]">
         {HARDWARE_FAQ.map((item, i) => {
           const isOpen = open === i;
           return (
@@ -362,9 +362,9 @@ export function FaqSection() {
 
 export function CtaSection() {
   return (
-    <section className="relative overflow-hidden bg-[#FAFAFA] pt-[120px] pb-[140px]">
+    <section className="relative overflow-hidden bg-[#FAFAFA] py-[72px]">
       <div
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.03]"
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[320px] w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.03]"
         style={{
           background:
             "radial-gradient(circle, #ED3C18 0%, transparent 70%)",
@@ -373,7 +373,7 @@ export function CtaSection() {
       <div className="relative z-10 mx-auto max-w-[720px] px-6 text-center md:px-20">
         <HwReveal>
           <h2 className={hwType.sectionTitle}>Ready to upgrade your restaurant?</h2>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
+          <div className="mt-[32px] flex flex-col items-center justify-center gap-[16px] sm:flex-row">
             <HwPrimaryBtn>Request Demo</HwPrimaryBtn>
             <HwGhostBtn>Talk to Sales</HwGhostBtn>
           </div>

@@ -26,7 +26,7 @@ export const hwType = {
   body: "text-[18px] leading-[1.6] text-[#666666]",
   caption: "text-[16px] leading-[1.6] text-[#666666]",
   eyebrow: "text-[16px] font-semibold uppercase tracking-[0.12em] text-[#ED3C18]",
-  chip: "inline-flex h-[36px] items-center rounded-full bg-[#F3F4F6] px-[16px] text-[14px] leading-none text-[#444444] transition-colors duration-200 hover:bg-[#E8EAED]",
+  chip: "inline-flex h-[32px] items-center rounded-full bg-[#F3F4F6] px-[12px] text-[13px] leading-none text-[#444444] transition-colors duration-200 hover:bg-[#E8EAED]",
 } as const;
 
 /** Clears fixed global nav (96px) + sticky hardware category nav (~88px) */
@@ -51,7 +51,7 @@ export function HwShell({
   return (
     <section
       id={id}
-      className={`${className} py-[60px] ${id ? HW_SCROLL_OFFSET : ""}`}
+      className={`${className} py-[72px] ${id ? HW_SCROLL_OFFSET : ""}`}
     >
       <div className="mx-auto w-full max-w-[1600px] px-6 md:px-10 lg:px-20">
         <div className="mx-auto w-full max-w-[1440px]">{children}</div>
@@ -74,7 +74,7 @@ export function HwSectionIntro({
     <div className={alignClass}>
       <h2 className={hwType.sectionTitle}>{title}</h2>
       {description && (
-        <p className={`mt-[20px] max-w-[640px] ${hwType.body} ${align === "center" ? "mx-auto" : ""}`}>
+        <p className={`mt-[16px] max-w-[640px] ${hwType.body} ${align === "center" ? "mx-auto" : ""}`}>
           {description}
         </p>
       )}
@@ -151,7 +151,7 @@ export function HwLink({ children, to = "/contact" }: { children: ReactNode; to?
   return (
     <Link
       to={to}
-      className="group relative inline-flex h-[48px] items-center text-[16px] font-semibold leading-none text-[#ED3C18] outline-none transition-transform duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] focus-visible:ring-2 focus-visible:ring-[#ED3C18]/40 focus-visible:ring-offset-2 after:absolute after:bottom-[14px] after:left-0 after:h-px after:w-0 after:bg-[#ED3C18] after:transition-all after:duration-300 hover:after:w-full"
+      className="group relative inline-flex h-[40px] items-center text-[15px] font-semibold leading-none text-[#ED3C18] outline-none transition-transform duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] focus-visible:ring-2 focus-visible:ring-[#ED3C18]/40 focus-visible:ring-offset-2 after:absolute after:bottom-[10px] after:left-0 after:h-px after:w-0 after:bg-[#ED3C18] after:transition-all after:duration-300 hover:after:w-full"
     >
       {children}
     </Link>
@@ -220,7 +220,7 @@ export function HwProductCard({
             }
       }
       transition={{ duration: 0.3, ease: EASE }}
-      className={`flex h-full max-h-[740px] flex-col rounded-[28px] border border-black/[0.04] bg-white p-[28px] text-left will-change-transform md:p-[32px] ${className}`}
+      className={`flex h-full flex-col rounded-[24px] border border-black/[0.04] bg-white p-[24px] text-left will-change-transform ${className}`}
       style={{
         boxShadow: hovered ? hwCardShadowHover : hwCardShadow,
         rotateX: reduce ? 0 : springX,
@@ -248,7 +248,7 @@ export function HwFeatureCard({
     <motion.article
       whileHover={reduce ? undefined : { y: -6, scale: 1.015 }}
       transition={{ duration: 0.3, ease: EASE }}
-      className={`group flex h-full flex-col rounded-[28px] p-[32px] text-left will-change-transform ${className}`}
+      className={`group flex h-full flex-col rounded-[24px] p-[24px] text-left will-change-transform ${className}`}
       style={{ backgroundColor: tint, boxShadow: hwCardShadow }}
     >
       {children}
@@ -409,7 +409,7 @@ export function ProductVisual({
     return (
       <div className={`w-full shrink-0 ${className}`}>
         <HwViewerWell className="group/product">
-          <div className="flex h-[72%] w-[72%] max-h-full items-center justify-center transition-transform duration-350 group-hover/product:-translate-y-[3px]">
+          <div className="flex h-[80%] w-[80%] max-h-full items-center justify-center transition-transform duration-350 group-hover/product:-translate-y-[3px]">
             <DeviceRender product={product} size={size} />
           </div>
         </HwViewerWell>

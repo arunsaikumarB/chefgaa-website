@@ -25,7 +25,7 @@ type HardwareModelViewerProps = {
 };
 
 const STAGE_SHELL =
-  "relative flex h-[400px] w-full items-center justify-center overflow-hidden rounded-[36px] border border-black/[0.04] bg-[#F5F6F8] p-[28px] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.01] hover:border-black/[0.08] md:h-[480px] md:p-[36px] lg:h-[560px] lg:p-[40px]";
+  "relative flex h-[320px] w-full items-center justify-center overflow-hidden rounded-[28px] border border-black/[0.04] bg-[#F5F6F8] p-[16px] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.01] hover:border-black/[0.08] md:h-[400px] md:p-[24px] lg:h-[480px]";
 
 function Model({
   src,
@@ -72,8 +72,8 @@ function SceneContent({
   frame: "default" | "raised";
   variant: ViewerVariant;
 }) {
-  // Stage ~80% occupancy; catalogue well ~70–75%
-  const fitMargin = variant === "stage" ? 1.12 : 1.32;
+  // Stage ~80% occupancy; catalogue well ~78%
+  const fitMargin = variant === "stage" ? 1.12 : 1.1;
   const spinSpeed =
     variant === "stage" ? STAGE_AUTO_ROTATE_SPEED : AUTO_ROTATE_SPEED;
 
