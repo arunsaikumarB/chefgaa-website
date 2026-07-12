@@ -7,7 +7,6 @@ import {
   ChefHat,
   Tv,
   Tablet,
-  Laptop,
   Zap,
   Shield,
   Cloud,
@@ -15,6 +14,19 @@ import {
   CreditCard,
   TrendingUp,
   Dock,
+  Battery,
+  WifiOff,
+  Cable,
+  Bluetooth,
+  Hand,
+  Scissors,
+  Usb,
+  Construction,
+  Bell,
+  Share2,
+  MoveVertical,
+  Smartphone,
+  Disc,
 } from "lucide-react";
 
 export type ProductId =
@@ -31,6 +43,11 @@ export type ProductId =
 
 export type VisualId = ProductId | "workstation" | "mobile-ordering";
 
+export type HardwareChip = {
+  label: string;
+  icon: LucideIcon;
+};
+
 export const NAV_CATEGORIES: {
   id: string;
   label: string;
@@ -45,7 +62,6 @@ export const NAV_CATEGORIES: {
   { id: "printer", label: "Receipt Printer", icon: Printer, href: "#receipt-printer" },
   { id: "display", label: "Customer Display", icon: Tv, href: "#customer-display" },
   { id: "drawer", label: "Cash Drawer", icon: Wallet, href: "#cash-drawer" },
-  { id: "tablet", label: "Tablet", icon: Laptop, href: "#tablet" },
 ];
 
 export const GRID_PRODUCTS: {
@@ -53,7 +69,7 @@ export const GRID_PRODUCTS: {
   anchor: string;
   name: string;
   description: string;
-  specs: string[];
+  chips: HardwareChip[];
   visual: VisualId;
 }[] = [
   {
@@ -61,7 +77,11 @@ export const GRID_PRODUCTS: {
     anchor: "register",
     name: "Chefgaa Register",
     description: "A complete countertop POS built for high-volume restaurant service.",
-    specs: ['15.6" touch display', "Wi-Fi & Ethernet", "Integrated payments"],
+    chips: [
+      { label: '15.6" Touch Display', icon: Monitor },
+      { label: "Wi-Fi & Ethernet", icon: Wifi },
+      { label: "Integrated Payments", icon: CreditCard },
+    ],
     visual: "register",
   },
   {
@@ -69,7 +89,11 @@ export const GRID_PRODUCTS: {
     anchor: "terminal",
     name: "Chefgaa Terminal",
     description: "Compact all-in-one terminal with a built-in receipt printer.",
-    specs: ["Built-in printer", "All-day battery", "Offline mode"],
+    chips: [
+      { label: "Built-in Printer", icon: Printer },
+      { label: "All-day Battery", icon: Battery },
+      { label: "Offline Mode", icon: WifiOff },
+    ],
     visual: "terminal",
   },
   {
@@ -77,8 +101,12 @@ export const GRID_PRODUCTS: {
     anchor: "display-stand",
     name: "Customer Display Stand",
     description:
-      "Elegant customer-facing display stand for order confirmation, digital receipts, loyalty, tipping, and customer interactions.",
-    specs: ["Adjustable viewing angle", "Tablet compatible", "Stable aluminum base"],
+      "Elegant customer-facing display for order confirmation, receipts, loyalty, and tipping.",
+    chips: [
+      { label: "Adjustable Angle", icon: MoveVertical },
+      { label: "Tablet Compatible", icon: Tablet },
+      { label: "Aluminum Base", icon: Disc },
+    ],
     visual: "display-stand",
   },
   {
@@ -86,7 +114,11 @@ export const GRID_PRODUCTS: {
     anchor: "kitchen-display",
     name: "Kitchen Display",
     description: "Real-time order routing for a seamless back-of-house flow.",
-    specs: ['21.5" HD display', "Multi-station routing", "Bump bar ready"],
+    chips: [
+      { label: '21.5" HD Display', icon: Monitor },
+      { label: "Multi-station Routing", icon: Share2 },
+      { label: "Bump Bar Ready", icon: Bell },
+    ],
     visual: "kitchen-display",
   },
   {
@@ -94,7 +126,11 @@ export const GRID_PRODUCTS: {
     anchor: "barcode-scanner",
     name: "Barcode Scanner",
     description: "Instant inventory scanning with live POS sync.",
-    specs: ["1D & 2D barcodes", "USB & Bluetooth", "Hands-free stand"],
+    chips: [
+      { label: "1D & 2D Barcodes", icon: ScanLine },
+      { label: "USB & Bluetooth", icon: Bluetooth },
+      { label: "Hands-free Stand", icon: Hand },
+    ],
     visual: "barcode-scanner",
   },
   {
@@ -102,7 +138,11 @@ export const GRID_PRODUCTS: {
     anchor: "receipt-printer",
     name: "Receipt Printer",
     description: "Fast, quiet thermal printing for every ticket.",
-    specs: ["200mm/s speed", "Auto-cutter", "Ethernet & USB"],
+    chips: [
+      { label: "200mm/s Speed", icon: Zap },
+      { label: "Auto-cutter", icon: Scissors },
+      { label: "Ethernet & USB", icon: Cable },
+    ],
     visual: "receipt-printer",
   },
   {
@@ -110,7 +150,11 @@ export const GRID_PRODUCTS: {
     anchor: "customer-display",
     name: "Customer Display",
     description: "Clear totals, tips, and payment prompts at checkout.",
-    specs: ['10" portrait display', "Tip selection", "USB powered"],
+    chips: [
+      { label: '10" Portrait Display', icon: Smartphone },
+      { label: "Tip Selection", icon: CreditCard },
+      { label: "USB Powered", icon: Usb },
+    ],
     visual: "customer-display",
   },
   {
@@ -118,7 +162,11 @@ export const GRID_PRODUCTS: {
     anchor: "cash-drawer",
     name: "Cash Drawer",
     description: "Secure cash management that opens with every sale.",
-    specs: ["Steel construction", "Auto-open trigger", "Removable tray"],
+    chips: [
+      { label: "Steel Construction", icon: Construction },
+      { label: "Auto-open Trigger", icon: Zap },
+      { label: "Removable Tray", icon: Wallet },
+    ],
     visual: "cash-drawer",
   },
 ];

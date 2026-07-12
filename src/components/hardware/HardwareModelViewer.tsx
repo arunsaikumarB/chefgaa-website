@@ -8,7 +8,7 @@ import {
   OrbitControls,
   useGLTF,
 } from "@react-three/drei";
-import { hwViewerWellClass, hwViewerWellStandalone, hwStageShadow, hwStageShadowHover } from "./viewerShell";
+import { hwViewerWellStandalone, hwStageShadow, hwStageShadowHover } from "./viewerShell";
 
 const IDLE_RESUME_MS = 3000;
 const AUTO_ROTATE_SPEED = 0.15;
@@ -219,7 +219,7 @@ export function HardwareModelViewer({
         variant === "stage"
           ? STAGE_SHELL
           : embedded
-            ? `${hwViewerWellClass} h-full w-full`
+            ? "relative h-full w-full overflow-hidden bg-transparent"
             : `${hwViewerWellStandalone} shrink-0`
       }
       style={

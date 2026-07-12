@@ -9,8 +9,8 @@ export const hwViewerWellClass =
 export const hwViewerWellStandalone =
   "relative flex h-[210px] w-full shrink-0 items-center justify-center overflow-hidden rounded-[20px] border border-black/[0.05] bg-[#F8F8F8]";
 
-export const hwCardShadow = "0 8px 24px rgba(0,0,0,0.06)";
-export const hwCardShadowHover = "0 12px 32px rgba(0,0,0,0.1)";
+export const hwCardShadow = "0 8px 30px rgba(0,0,0,0.06)";
+export const hwCardShadowHover = "0 12px 36px rgba(0,0,0,0.1)";
 
 export const hwStageShadow = "0 30px 80px rgba(0,0,0,0.08)";
 export const hwStageShadowHover = "0 34px 90px rgba(0,0,0,0.1)";

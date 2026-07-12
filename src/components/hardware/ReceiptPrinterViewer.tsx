@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { hwViewerWellClass, hwViewerWellStandalone } from "./viewerShell";
+import { hwViewerWellStandalone } from "./viewerShell";
 
 const EMBED_PARAMS =
   "?autostart=1" +
@@ -13,8 +13,9 @@ const EMBED_PARAMS =
   "&ui_inspector=0" +
   "&ui_hint=0" +
   "&ui_annotations=0" +
-  "&ui_theme=dark" +
-  "&autospin=0.15";
+  "&ui_theme=light" +
+  "&autospin=0.12" +
+  "&transparent=1";
 
 const DEFAULT_MODEL_ID = "4daf4e22d9d34b949d0ae7cbf3902983";
 const DEFAULT_TITLE = "POS receipt printer";
@@ -61,7 +62,9 @@ export function ReceiptPrinterViewer({
     setLoaded(false);
   }, [modelId]);
 
-  const shell = embedded ? hwViewerWellClass : `${hwViewerWellStandalone} shrink-0`;
+  const shell = embedded
+    ? "relative h-full w-full overflow-hidden bg-transparent"
+    : `${hwViewerWellStandalone} shrink-0`;
 
   return (
     <div ref={containerRef} className={shell}>
@@ -69,12 +72,9 @@ export function ReceiptPrinterViewer({
         {!loaded && (
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[16px]"
+            className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
           >
-            <div className="h-full w-full animate-pulse bg-[#EBEBEB]" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="h-[72px] w-[96px] rounded-[12px] bg-white/70 shadow-sm" />
-            </div>
+            <div className="h-[64px] w-[88px] animate-pulse rounded-[12px] bg-black/[0.04]" />
           </div>
         )}
 
@@ -87,8 +87,8 @@ export function ReceiptPrinterViewer({
             allow="autoplay; fullscreen; xr-spatial-tracking"
             {...{ mozallowfullscreen: "true", webkitallowfullscreen: "true" }}
             onLoad={() => setLoaded(true)}
-            className={`h-full w-full border-0 bg-transparent transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-              loaded ? "scale-100 opacity-100" : "scale-[0.98] opacity-0"
+            className={`h-full w-full border-0 bg-transparent transition-opacity duration-500 ${
+              loaded ? "opacity-100" : "opacity-0"
             }`}
             style={{ width: "100%", height: "100%", border: "none" }}
           />
