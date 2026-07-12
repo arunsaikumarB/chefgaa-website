@@ -15,7 +15,6 @@ import {
   HwPrimaryBtn,
   HwGhostBtn,
   HwLink,
-  HwProductCard,
   HwFeatureCard,
   HwIconBox,
   HwSectionIntro,
@@ -23,6 +22,7 @@ import {
   hwType,
   HW_SCROLL_OFFSET,
 } from "./HardwareUI";
+import { HardwareCard } from "./HardwareCard";
 
 export { ComparisonSection } from "./CompareSection";
 
@@ -176,30 +176,11 @@ export function ProductGridSection() {
         />
       </HwReveal>
 
-      <div className="mt-[32px] grid grid-cols-1 items-stretch gap-x-[24px] gap-y-[24px] md:grid-cols-2 md:gap-x-[32px] md:gap-y-[24px]">
+      <div className="mt-[32px] flex flex-wrap justify-center gap-[24px] md:gap-[32px]">
         {GRID_PRODUCTS.map((p, i) => (
-          <div key={p.id} id={p.anchor} className={`h-full ${HW_SCROLL_OFFSET}`}>
-            <HwReveal delay={i * 0.08} className="h-full" variant="card">
-              <HwProductCard>
-                <ProductVisual product={p.visual} size="md" />
-                <h3 className="mt-[16px] h-[56px] overflow-hidden font-sf-pro-display text-[24px] font-bold leading-[1.15] tracking-[-0.02em] text-[#111111] line-clamp-2">
-                  {p.name}
-                </h3>
-                <p className="mt-[12px] h-[72px] overflow-hidden text-[16px] leading-[1.5] text-[#666666] line-clamp-3">
-                  {p.description}
-                </p>
-                <ul className="mt-[16px] flex h-[32px] flex-wrap gap-[8px] overflow-hidden">
-                  {p.specs.slice(0, 3).map((s) => (
-                    <li key={s} className={hwType.chip}>
-                      {s}
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-auto flex flex-wrap items-center gap-[16px] pt-[20px]">
-                  <HwLink>Learn More</HwLink>
-                  <HwLink>Request Demo</HwLink>
-                </div>
-              </HwProductCard>
+          <div key={p.id} id={p.anchor} className={HW_SCROLL_OFFSET}>
+            <HwReveal delay={i * 0.06} variant="card">
+              <HardwareCard product={p} />
             </HwReveal>
           </div>
         ))}

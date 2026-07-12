@@ -1,22 +1,16 @@
 /**
- * Hardware spacing scale — the ONLY spacing values allowed on this page.
- * Do not invent ad-hoc gaps, paddings, or min-heights outside this set.
+ * Hardware card design tokens.
+ * Allowed spacing only: 8 · 12 · 20 · 24 · 32
  */
-export const HW = {
-  xs: 8,
-  sm: 12,
-  md: 16,
-  lg: 24,
-  xl: 32,
-  section: 72,
-} as const;
+export const HW_CARD_W = 540;
+export const HW_CARD_H = 480;
+export const HW_CARD_PAD = 32;
+export const HW_IMAGE_H = 210;
 
-/** Tailwind-ready pixel strings from the scale */
-export const hwS = {
-  xs: "[8px]",
-  sm: "[12px]",
-  md: "[16px]",
-  lg: "[24px]",
-  xl: "[32px]",
-  section: "[72px]",
+export const HW = {
+  8: 8,
+  12: 12,
+  20: 20,
+  24: 24,
+  32: 32,
 } as const;

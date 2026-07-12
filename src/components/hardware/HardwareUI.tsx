@@ -9,7 +9,7 @@ import {
 import { Link } from "react-router-dom";
 import type { VisualId } from "./data";
 import { ReceiptPrinterViewer } from "./ReceiptPrinterViewer";
-import { hwCardShadow, hwCardShadowHover, hwViewerWellClass, HW_EASE } from "./viewerShell";
+import { hwViewerWellStandalone, hwCardShadow, hwCardShadowHover, HW_EASE } from "./viewerShell";
 
 const HardwareModelViewer = lazy(() => import("./HardwareModelViewer"));
 
@@ -271,7 +271,7 @@ export function HwViewerWell({
   children: ReactNode;
   className?: string;
 }) {
-  return <div className={`${hwViewerWellClass} ${className}`}>{children}</div>;
+  return <div className={`${hwViewerWellStandalone} ${className}`}>{children}</div>;
 }
 
 export function HwFadeImage({
@@ -322,31 +322,37 @@ export function ProductVisual({
   className = "",
   size = "md",
   interactive = true,
+  embedded = false,
 }: {
   product: VisualId;
   className?: string;
   size?: "sm" | "md" | "lg" | "xl" | "hero";
   /** When false, always render lightweight CSS product mocks (compare headers). */
   interactive?: boolean;
+  /** Fill parent image slot — no outer well chrome (HardwareCard). */
+  embedded?: boolean;
   /** @deprecated hover-only lift is applied automatically */
   floating?: boolean;
 }) {
+  const fillClass = embedded ? `h-full w-full ${className}` : `w-full ${className}`;
+
   // Sketchfab / GLB viewers for catalogue cards only
   if (interactive) {
     if (product === "receipt-printer") {
       return (
-        <div className={`w-full ${className}`}>
-          <ReceiptPrinterViewer />
+        <div className={fillClass}>
+          <ReceiptPrinterViewer embedded={embedded} />
         </div>
       );
     }
 
     if (product === "barcode-scanner") {
       return (
-        <div className={`w-full ${className}`}>
+        <div className={fillClass}>
           <ReceiptPrinterViewer
             modelId="31fdf834a70b42b084c7041870252488"
             title="Barcode Scanner"
+            embedded={embedded}
           />
         </div>
       );
@@ -354,10 +360,11 @@ export function ProductVisual({
 
     if (product === "cash-drawer") {
       return (
-        <div className={`w-full ${className}`}>
+        <div className={fillClass}>
           <ReceiptPrinterViewer
             modelId="61f07e0842134434a07426891f904353"
             title="Cash Register Drawer for POS System open"
+            embedded={embedded}
           />
         </div>
       );
@@ -365,10 +372,11 @@ export function ProductVisual({
 
     if (product === "customer-display") {
       return (
-        <div className={`w-full ${className}`}>
+        <div className={fillClass}>
           <ReceiptPrinterViewer
             modelId="d0753b3a481f45999426dab7dc5870ab"
             title="Galaxy Tab S9+"
+            embedded={embedded}
           />
         </div>
       );
@@ -376,12 +384,13 @@ export function ProductVisual({
 
     if (product === "kitchen-display") {
       return (
-        <div className={`w-full ${className}`}>
+        <div className={fillClass}>
           <Suspense fallback={null}>
             <HardwareModelViewer
               src="/models/tv_screen.glb"
               title="Kitchen Display"
               frame="raised"
+              embedded={embedded}
             />
           </Suspense>
         </div>
@@ -390,11 +399,12 @@ export function ProductVisual({
 
     if (product === "display-stand") {
       return (
-        <div className={`w-full ${className}`}>
+        <div className={fillClass}>
           <Suspense fallback={null}>
             <HardwareModelViewer
               src="/models/mobile_stand.glb"
               title="Customer Display Stand"
+              embedded={embedded}
             />
           </Suspense>
         </div>
@@ -403,7 +413,15 @@ export function ProductVisual({
   }
 
   const heightKey = size === "xl" && product === "workstation" ? "hero" : size;
-  const useCatalogueWell = interactive && (size === "md" || size === "lg");
+  const useCatalogueWell = interactive && (size === "md" || size === "lg") && !embedded;
+
+  if (embedded) {
+    return (
+      <div className={`flex h-full w-full items-center justify-center ${className}`}>
+        <DeviceRender product={product} size={size} />
+      </div>
+    );
+  }
 
   if (useCatalogueWell) {
     return (

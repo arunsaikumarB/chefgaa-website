@@ -8,7 +8,7 @@ import {
   OrbitControls,
   useGLTF,
 } from "@react-three/drei";
-import { hwViewerWellClass, hwStageShadow, hwStageShadowHover } from "./viewerShell";
+import { hwViewerWellClass, hwViewerWellStandalone, hwStageShadow, hwStageShadowHover } from "./viewerShell";
 
 const IDLE_RESUME_MS = 3000;
 const AUTO_ROTATE_SPEED = 0.15;
@@ -22,6 +22,8 @@ type HardwareModelViewerProps = {
   title?: string;
   frame?: "default" | "raised";
   variant?: ViewerVariant;
+  /** Fill parent image slot without catalogue well chrome */
+  embedded?: boolean;
 };
 
 const STAGE_SHELL =
@@ -72,8 +74,8 @@ function SceneContent({
   frame: "default" | "raised";
   variant: ViewerVariant;
 }) {
-  // Stage ~80% occupancy; catalogue well ~78%
-  const fitMargin = variant === "stage" ? 1.12 : 1.1;
+  // Stage ~80% occupancy; catalogue / embedded ~80%
+  const fitMargin = variant === "stage" ? 1.12 : 1.08;
   const spinSpeed =
     variant === "stage" ? STAGE_AUTO_ROTATE_SPEED : AUTO_ROTATE_SPEED;
 
@@ -142,6 +144,7 @@ export function HardwareModelViewer({
   title = "Hardware product",
   frame = "default",
   variant = "well",
+  embedded = false,
 }: HardwareModelViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const idleTimerRef = useRef<number | null>(null);
@@ -213,7 +216,11 @@ export function HardwareModelViewer({
       role="img"
       aria-label={title}
       className={
-        variant === "stage" ? STAGE_SHELL : `${hwViewerWellClass} shrink-0`
+        variant === "stage"
+          ? STAGE_SHELL
+          : embedded
+            ? `${hwViewerWellClass} h-full w-full`
+            : `${hwViewerWellStandalone} shrink-0`
       }
       style={
         variant === "stage"

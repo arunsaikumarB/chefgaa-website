@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { hwViewerWellClass } from "./viewerShell";
+import { hwViewerWellClass, hwViewerWellStandalone } from "./viewerShell";
 
 const EMBED_PARAMS =
   "?autostart=1" +
@@ -24,18 +24,16 @@ function buildEmbedSrc(modelId: string) {
 }
 
 type ReceiptPrinterViewerProps = {
-  /** Sketchfab model id — defaults to the Receipt Printer model */
   modelId?: string;
-  /** iframe title for accessibility */
   title?: string;
+  /** When true, fill parent (HardwareCard image slot) — no outer chrome */
+  embedded?: boolean;
 };
 
-/**
- * Premium Sketchfab 3D viewer used by hardware product cards (image area only).
- */
 export function ReceiptPrinterViewer({
   modelId = DEFAULT_MODEL_ID,
   title = DEFAULT_TITLE,
+  embedded = false,
 }: ReceiptPrinterViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [shouldLoad, setShouldLoad] = useState(false);
@@ -63,8 +61,10 @@ export function ReceiptPrinterViewer({
     setLoaded(false);
   }, [modelId]);
 
+  const shell = embedded ? hwViewerWellClass : `${hwViewerWellStandalone} shrink-0`;
+
   return (
-    <div ref={containerRef} className={`${hwViewerWellClass} shrink-0`}>
+    <div ref={containerRef} className={shell}>
       <div className="relative h-full w-full">
         {!loaded && (
           <div
