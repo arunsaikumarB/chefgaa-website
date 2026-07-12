@@ -53,7 +53,7 @@ export function ComparisonSection() {
   const tableMinWidth = LABEL_W + colCount * (CARD_W + GAP);
 
   return (
-    <section className="bg-white py-[72px]" aria-labelledby="compare-heading">
+    <section className="bg-white py-[24px] md:py-[32px] lg:py-[40px]" aria-labelledby="compare-heading">
       <div className="mx-auto w-full max-w-[1440px] px-6 md:px-10 lg:px-20">
         <HwReveal>
           <div className="mx-auto max-w-[720px] text-center">

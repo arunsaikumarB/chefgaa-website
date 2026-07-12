@@ -23,6 +23,7 @@ import {
   HW_SCROLL_OFFSET,
 } from "./HardwareUI";
 import { HardwareCard } from "./HardwareCard";
+import { HW_NAV_TO_HERO, HW_HERO_BOTTOM } from "./spacing";
 
 export { ComparisonSection } from "./CompareSection";
 
@@ -34,7 +35,10 @@ const easeOut = [0.22, 1, 0.36, 1] as const;
 
 export function FeaturedSection() {
   return (
-    <section id="register" className={`bg-white pt-[32px] pb-[48px] ${HW_SCROLL_OFFSET}`}>
+    <section
+      id="register"
+      className={`bg-white ${HW_NAV_TO_HERO} ${HW_HERO_BOTTOM} ${HW_SCROLL_OFFSET}`}
+    >
       <div className="mx-auto w-full max-w-[1600px] px-6 md:px-10 lg:px-20">
         <div className="mx-auto w-full max-w-[1440px]">
           <div className="overflow-hidden rounded-[24px] bg-[#F5F6F8]">
@@ -172,7 +176,7 @@ export function ProductGridSection() {
         />
       </HwReveal>
 
-      <div className="mx-auto mt-[40px] grid w-full max-w-[1120px] grid-cols-1 items-stretch gap-[24px] md:grid-cols-2 md:gap-[32px]">
+      <div className="mx-auto mt-[32px] grid w-full max-w-[1120px] grid-cols-1 items-stretch gap-[24px] md:grid-cols-2 md:gap-[32px]">
         {GRID_PRODUCTS.map((p, i) => (
           <div key={p.id} id={p.anchor} className={`h-full ${HW_SCROLL_OFFSET}`}>
             <HwReveal delay={i * 0.05} className="h-full" variant="card">
@@ -339,7 +343,7 @@ export function FaqSection() {
 
 export function CtaSection() {
   return (
-    <section className="relative overflow-hidden bg-[#FAFAFA] py-[72px]">
+    <section className="relative overflow-hidden bg-[#FAFAFA] py-[24px] md:py-[32px] lg:py-[40px]">
       <div
         className="pointer-events-none absolute left-1/2 top-1/2 h-[320px] w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.03]"
         style={{

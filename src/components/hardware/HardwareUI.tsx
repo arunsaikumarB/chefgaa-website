@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import type { VisualId } from "./data";
 import { ReceiptPrinterViewer } from "./ReceiptPrinterViewer";
 import { hwViewerWellStandalone, hwCardShadow, hwCardShadowHover, HW_EASE } from "./viewerShell";
+import { HW_SECTION_Y } from "./spacing";
 
 const HardwareModelViewer = lazy(() => import("./HardwareModelViewer"));
 
@@ -51,7 +52,7 @@ export function HwShell({
   return (
     <section
       id={id}
-      className={`${className} py-[72px] ${id ? HW_SCROLL_OFFSET : ""}`}
+      className={`${className} ${HW_SECTION_Y} ${id ? HW_SCROLL_OFFSET : ""}`}
     >
       <div className="mx-auto w-full max-w-[1600px] px-6 md:px-10 lg:px-20">
         <div className="mx-auto w-full max-w-[1440px]">{children}</div>
