@@ -43,12 +43,14 @@ Keys are read via `import.meta.env` and are never hardcoded in source.
 
 ## Supabase
 
-The database schema lives in `supabase/migrations/001_init.sql`:
+The database schema lives in `supabase/migrations/`:
 
-- **`demo_requests`** — stores submissions from the contact/demo form. RLS enabled; the `anon` role may only `INSERT`.
-- **`site_content`** — optional CMS-style content table. RLS enabled; the `anon` role may only `SELECT` rows where `status = 'active'`.
+- **`001_init.sql`** — creates `demo_requests` and `site_content`.
+- **`002_tighten_demo_requests.sql`** — length, email, and required-field checks on `demo_requests`, an insert-only `anon` policy, and insert rate limits.
 
-Run the migration against your Supabase project (SQL editor or CLI).
+`demo_requests` stores contact/demo form submissions. RLS is enabled. `anon` may `INSERT` a row that passes the checks, and may not `SELECT`, `UPDATE`, or `DELETE`. `site_content` is optional CMS-style content; `anon` may only `SELECT` rows where `status = 'active'`.
+
+Apply **both** migrations to the Supabase project (SQL editor or CLI). Deploying the site does not run them. If `002` fails because older rows violate the new checks, clean those rows and run it again.
 
 ## Pages
 

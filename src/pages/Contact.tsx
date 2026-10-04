@@ -12,6 +12,24 @@ type FormState = DemoRequest;
 
 type Errors = Partial<Record<keyof FormState, string>>;
 
+type SubmitError = { message?: string; code?: string };
+
+// Keep in sync with supabase/migrations/002_tighten_demo_requests.sql
+const LIMITS = {
+  name: 120,
+  email: 254,
+  phone: 40,
+  restaurant_name: 200,
+  message: 2000,
+} as const;
+
+const REQUEST_TIMEOUT_MS = 12_000;
+
+const EMAIL_RATE_LIMIT_MESSAGE =
+  "You have sent a few requests recently. Please wait a bit and try again.";
+const GLOBAL_RATE_LIMIT_MESSAGE =
+  "We cannot accept another request right now. Please try again later.";
+
 const initialState: FormState = {
   name: "",
   email: "",
@@ -24,15 +42,64 @@ const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function validate(values: FormState): Errors {
   const errors: Errors = {};
-  if (!values.name.trim()) errors.name = "Please enter your name.";
-  if (!values.email.trim()) {
+  const name = values.name.trim();
+  const email = values.email.trim();
+  const phone = values.phone.trim();
+  const restaurant = values.restaurant_name.trim();
+  const message = values.message.trim();
+
+  if (!name) errors.name = "Please enter your name.";
+  else if (name.length > LIMITS.name)
+    errors.name = `Name must be ${LIMITS.name} characters or fewer.`;
+
+  if (!email) {
     errors.email = "Please enter your email.";
-  } else if (!emailPattern.test(values.email.trim())) {
+  } else if (email.length > LIMITS.email) {
+    errors.email = `Email must be ${LIMITS.email} characters or fewer.`;
+  } else if (!emailPattern.test(email)) {
     errors.email = "Please enter a valid email address.";
   }
-  if (!values.restaurant_name.trim())
-    errors.restaurant_name = "Please enter your restaurant name.";
+
+  if (phone.length > LIMITS.phone)
+    errors.phone = `Phone must be ${LIMITS.phone} characters or fewer.`;
+
+  if (!restaurant) errors.restaurant_name = "Please enter your restaurant name.";
+  else if (restaurant.length > LIMITS.restaurant_name)
+    errors.restaurant_name = `Restaurant name must be ${LIMITS.restaurant_name} characters or fewer.`;
+
+  if (message.length > LIMITS.message)
+    errors.message = `Message must be ${LIMITS.message} characters or fewer.`;
+
   return errors;
+}
+
+function looksLikeTimeout(error: SubmitError | null, thrown?: unknown): boolean {
+  const thrownName = thrown instanceof Error ? thrown.name : "";
+  const thrownMessage = thrown instanceof Error ? thrown.message : "";
+  const text = `${thrownName} ${thrownMessage} ${error?.message ?? ""}`;
+  return /AbortError|The user aborted a request|The operation was aborted|signal is aborted|statement timeout/i.test(
+    text,
+  );
+}
+
+function messageForSubmitError(error: SubmitError | null, thrown?: unknown): string {
+  if (looksLikeTimeout(error, thrown)) {
+    return "This is taking too long. Please check your connection and try again.";
+  }
+
+  const message = error?.message ?? "";
+  if (
+    error?.code === "P0001" &&
+    (message === EMAIL_RATE_LIMIT_MESSAGE || message === GLOBAL_RATE_LIMIT_MESSAGE)
+  ) {
+    return message;
+  }
+
+  if (error?.code === "23514") {
+    return "Some of the information doesn't look right. Please check the form and try again.";
+  }
+
+  return "Something went wrong sending your request. Please try again.";
 }
 
 const fieldClass =
@@ -40,6 +107,7 @@ const fieldClass =
 
 export function Contact() {
   const [values, setValues] = useState<FormState>(initialState);
+  const [honeypot, setHoneypot] = useState("");
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">(
     "idle"
@@ -60,25 +128,46 @@ export function Contact() {
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
-    setStatus("submitting");
-    const { error } = await supabase.from("demo_requests").insert({
-      name: values.name.trim(),
-      email: values.email.trim(),
-      phone: values.phone.trim(),
-      restaurant_name: values.restaurant_name.trim(),
-      message: values.message.trim(),
-    });
-
-    if (error) {
-      setStatus("error");
-      setServerError(
-        "Something went wrong sending your request. Please try again."
-      );
+    // Bots that fill every field never reach Supabase. Show the same
+    // success state so the trap is not obvious.
+    if (honeypot.trim()) {
+      setStatus("success");
+      setValues(initialState);
+      setHoneypot("");
       return;
     }
 
-    setStatus("success");
-    setValues(initialState);
+    setStatus("submitting");
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+    try {
+      const { error } = await supabase
+        .from("demo_requests")
+        .insert({
+          name: values.name.trim(),
+          email: values.email.trim(),
+          phone: values.phone.trim(),
+          restaurant_name: values.restaurant_name.trim(),
+          message: values.message.trim(),
+        })
+        .abortSignal(controller.signal);
+
+      if (error) {
+        setStatus("error");
+        setServerError(messageForSubmitError(error));
+        return;
+      }
+
+      setStatus("success");
+      setValues(initialState);
+      setHoneypot("");
+    } catch (err) {
+      setStatus("error");
+      setServerError(messageForSubmitError(null, err));
+    } finally {
+      window.clearTimeout(timer);
+    }
   };
 
   return (
@@ -118,6 +207,20 @@ export function Contact() {
             </motion.div>
           ) : (
             <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
+              <div className="sr-only" aria-hidden="true">
+                <label>
+                  Fax
+                  <input
+                    type="text"
+                    name="company_fax"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                  />
+                </label>
+              </div>
+
               <Field label="Name" error={errors.name}>
                 <input
                   type="text"
@@ -126,6 +229,8 @@ export function Contact() {
                   placeholder="Your full name"
                   className={fieldClass}
                   autoComplete="name"
+                  maxLength={LIMITS.name}
+                  required
                 />
               </Field>
 
@@ -137,6 +242,8 @@ export function Contact() {
                   placeholder="you@restaurant.com"
                   className={fieldClass}
                   autoComplete="email"
+                  maxLength={LIMITS.email}
+                  required
                 />
               </Field>
 
@@ -148,6 +255,7 @@ export function Contact() {
                   placeholder="Optional"
                   className={fieldClass}
                   autoComplete="tel"
+                  maxLength={LIMITS.phone}
                 />
               </Field>
 
@@ -159,6 +267,8 @@ export function Contact() {
                   placeholder="Your restaurant"
                   className={fieldClass}
                   autoComplete="organization"
+                  maxLength={LIMITS.restaurant_name}
+                  required
                 />
               </Field>
 
@@ -169,6 +279,7 @@ export function Contact() {
                   placeholder="Tell us what you're looking for (optional)"
                   rows={4}
                   className={`${fieldClass} resize-none`}
+                  maxLength={LIMITS.message}
                 />
               </Field>
 
